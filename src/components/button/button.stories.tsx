@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { Button } from "./button"
+import { Button } from "@/components/button"
 
 const meta = {
   title: "Components/Button",
@@ -11,10 +11,9 @@ const meta = {
   },
 } satisfies Meta<typeof Button>
 
-export default meta
-
 type Story = StoryObj<typeof meta>
 
+// --- Variants ---
 export const Primary: Story = {
   args: {
     variant: "primary",
@@ -27,46 +26,4 @@ export const Secondary: Story = {
   },
 }
 
-export const Outline: Story = {
-  args: {
-    variant: "outline",
-  },
-}
-
-export const Ghost: Story = {
-  args: {
-    variant: "ghost",
-  },
-}
-
-export const Destructive: Story = {
-  args: {
-    variant: "destructive",
-  },
-}
-
-export const Link: Story = {
-  args: {
-    variant: "link",
-  },
-}
-
-export const Small: Story = {
-  args: {
-    size: "sm",
-    children: "Small",
-  },
-}
-
-export const Large: Story = {
-  args: {
-    size: "lg",
-    children: "Large",
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
-}
+export default meta

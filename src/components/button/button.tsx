@@ -6,48 +6,90 @@ import { cn } from "@/utils/cn"
 
 const buttonVariants = cva(
   [
+    // positioning
+    "group",
+    "isolate",
+    "relative",
+
+    // layout
     "inline-flex",
     "items-center",
     "justify-center",
     "gap-2",
 
-    "rounded-md",
+    // visual
     "font-medium",
+    "cursor-pointer",
+    "select-none",
+    "overflow-hidden",
 
+    // transitions
     "transition-colors",
+    "duration-300",
 
-    "focus-visible:outline-none",
+    // focus states
+    "outline-none",
     "focus-visible:ring-2",
     "focus-visible:ring-offset-2",
 
+    // disabled states
     "disabled:pointer-events-none",
     "disabled:opacity-50",
   ],
   {
     variants: {
       variant: {
-        primary: ["bg-primary", "text-primary-foreground", "hover:bg-primary/90"],
-        secondary: ["bg-secondary", "text-secondary-foreground", "hover:bg-secondary/80"],
-        outline: [
-          "border",
-          "border-border",
-          "bg-transparent",
-          "hover:bg-secondary",
-          "hover:text-secondary-foreground",
+        primary: [
+          "bg-primary",
+          "text-primary-foreground",
+          "hover:bg-primary/90",
+          [
+            "after:pointer-events-none",
+            "after:absolute",
+            "after:inset-0",
+            "after:-z-10",
+            "after:rounded-inherit",
+            "after:bg-linear-to-b",
+            "after:from-white/10",
+            "after:from-46%",
+            "after:to-54%",
+            "after:mix-blend-overlay",
+          ],
+          [
+            "before:pointer-events-none",
+            "before:absolute",
+            "before:inset-0",
+            "before:-z-10",
+            "before:rounded-inherit",
+            "before:bg-linear-to-b",
+            "before:from-white/20",
+            "before:opacity-50",
+            "before:duration-300",
+            "before:ease-[cubic-bezier(0.4,0.36,0,1)]",
+          ],
         ],
-        ghost: ["hover:bg-secondary", "hover:text-secondary-foreground"],
-        destructive: [
-          "bg-destructive",
-          "text-destructive-foreground",
-          "hover:bg-destructive/90",
+        secondary: [
+          "transition",
+          "bg-secondary",
+          "shadow shadow-black/0.8",
+          "text-secondary-foreground",
+          "border-black/15 border",
+          "hover:bg-secondary/80",
+          [
+            "before:absolute",
+            "before:inset-0",
+            "before:from-50%",
+            "before:rounded-inherit",
+            "before:to-black/2",
+            "before:transition-opacity",
+            "before:bg-linear-to-b",
+            "before:from-black/0",
+          ],
         ],
-        link: ["text-primary", "underline-offset-4", "hover:underline"],
       },
       size: {
-        sm: ["h-8", "px-3", "text-sm"],
-        md: ["h-10", "px-4", "text-sm"],
-        lg: ["h-12", "px-6", "text-base"],
-        icon: "size-10",
+        sm: "h-6 rounded-[0.3125rem] px-2 text-sm",
+        md: "h-8 rounded-sm px-2.5 text-base",
       },
     },
     defaultVariants: {

@@ -44,13 +44,11 @@ describe("Button", () => {
     )
 
     await user.click(screen.getByRole("button"))
-
     expect(onClick).not.toHaveBeenCalled()
   })
 
   it("should be disabled when disabled prop is passed", () => {
     render(<Button disabled>Disabled</Button>)
-
     expect(screen.getByRole("button")).toBeDisabled()
   })
 
@@ -64,39 +62,9 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("bg-secondary")
   })
 
-  it("should apply outline variant", () => {
-    render(<Button variant="outline">Outline</Button>)
-    expect(screen.getByRole("button")).toHaveClass("border", "border-border")
-  })
-
-  it("should apply ghost variant", () => {
-    render(<Button variant="ghost">Ghost</Button>)
-    expect(screen.getByRole("button")).not.toHaveClass("bg-primary")
-  })
-
-  it("should apply destructive variant", () => {
-    render(<Button variant="destructive">Delete</Button>)
-    expect(screen.getByRole("button")).toHaveClass("bg-destructive")
-  })
-
-  it("should apply link variant", () => {
-    render(<Button variant="link">Link</Button>)
-    expect(screen.getByRole("button")).toHaveClass("underline-offset-4")
-  })
-
   it("should apply sm size", () => {
     render(<Button size="sm">Small</Button>)
     expect(screen.getByRole("button")).toHaveClass("h-8")
-  })
-
-  it("should apply lg size", () => {
-    render(<Button size="lg">Large</Button>)
-    expect(screen.getByRole("button")).toHaveClass("h-12")
-  })
-
-  it("should apply icon size", () => {
-    render(<Button size="icon">★</Button>)
-    expect(screen.getByRole("button")).toHaveClass("size-10")
   })
 
   it("should merge custom className", () => {
