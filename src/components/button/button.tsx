@@ -1,6 +1,7 @@
 import React from "react"
 
 import { cva, type VariantProps } from "class-variance-authority"
+import { AnimatePresence, motion } from "motion/react"
 
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
@@ -118,12 +119,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ intent, size }), className)}
         {...props}
       >
-        {isLoading && (
-          <span className="absolute inset-0 flex items-center justify-center">
-            <Spinner size={size === "sm" ? "xs" : "sm"} label="Loading" />
-          </span>
-        )}
-        <span className={cn(isLoading && "invisible")}>{children}</span>
+        <AnimatePresence>
+          {isLoading && (
+            <motion.span
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: "auto" }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex items-center justify-center overflow-hidden"
+            >
+              <Spinner size={size === "sm" ? "xs" : "sm"} label="Loading" />
+            </motion.span>
+          )}
+        </AnimatePresence>
+        {children}
       </button>
     )
   }
