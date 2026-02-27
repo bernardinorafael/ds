@@ -26,6 +26,8 @@
   --color-destructive: var(--color-red-900);
   --color-destructive-foreground: var(--color-zinc-50);
 
+  --color-word-primary: #171717;
+
   /* 4px */
   --radius-xs: 0.25rem;
   /* 6px */
