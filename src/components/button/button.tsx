@@ -20,6 +20,7 @@ const buttonVariants = cva(
 
     // visual
     "font-medium",
+    "whitespace-nowrap",
     "cursor-pointer",
     "select-none",
     "overflow-hidden",
@@ -40,42 +41,14 @@ const buttonVariants = cva(
   {
     variants: {
       intent: {
-        primary: [
-          "bg-primary",
-          "text-primary-foreground",
-          "hover:bg-primary/90",
-          [
-            "after:pointer-events-none",
-            "after:absolute",
-            "after:inset-0",
-            "after:-z-10",
-            "after:rounded-inherit",
-            "after:bg-linear-to-b",
-            "after:from-white/10",
-            "after:from-46%",
-            "after:to-54%",
-            "after:mix-blend-overlay",
-          ],
-          [
-            "before:pointer-events-none",
-            "before:absolute",
-            "before:inset-0",
-            "before:-z-10",
-            "before:rounded-inherit",
-            "before:bg-linear-to-b",
-            "before:from-white/20",
-            "before:opacity-50",
-            "before:duration-300",
-            "before:ease-[cubic-bezier(0.4,0.36,0,1)]",
-          ],
-        ],
+        primary: ["bg-primary", "text-primary-foreground", "hover:bg-primary/90"],
         secondary: [
           "transition",
           "bg-secondary",
           "shadow-black/0.8 shadow",
           "text-secondary-foreground",
           "border border-black/15",
-          "hover:bg-secondary/80",
+          "hover:border-black/25",
           [
             "before:absolute",
             "before:inset-0",
@@ -86,6 +59,11 @@ const buttonVariants = cva(
             "before:bg-linear-to-b",
             "before:from-black/0",
           ],
+        ],
+        danger: [
+          "bg-destructive",
+          "text-destructive-foreground",
+          "hover:bg-destructive/90",
         ],
       },
       size: {
@@ -135,7 +113,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && (
           <span className="absolute inset-0 flex items-center justify-center">
-            <Spinner size="sm" label="Loading" />
+            <Spinner size={size === "sm" ? "xs" : "sm"} label="Loading" />
           </span>
         )}
         <span className={cn(isLoading && "invisible")}>{children}</span>

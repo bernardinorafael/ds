@@ -18,6 +18,7 @@ export const Intents: Story = {
     <div className="flex items-center gap-4">
       <Button intent="primary">Primary</Button>
       <Button intent="secondary">Secondary</Button>
+      <Button intent="danger">Danger</Button>
     </div>
   ),
 }
@@ -38,6 +39,14 @@ export const Sizes: Story = {
           Small
         </Button>
         <Button intent="secondary" size="md">
+          Medium
+        </Button>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button intent="danger" size="sm">
+          Small
+        </Button>
+        <Button intent="danger" size="md">
           Medium
         </Button>
       </div>
@@ -66,6 +75,14 @@ export const Loading: Story = {
           Medium
         </Button>
       </div>
+      <div className="flex items-center gap-4">
+        <Button isLoading intent="danger" size="sm">
+          Small
+        </Button>
+        <Button isLoading intent="danger" size="md">
+          Medium
+        </Button>
+      </div>
     </div>
   ),
 }
@@ -86,6 +103,14 @@ export const Disabled: Story = {
           Small
         </Button>
         <Button disabled intent="secondary" size="md">
+          Medium
+        </Button>
+      </div>
+      <div className="flex items-center gap-4">
+        <Button disabled intent="danger" size="sm">
+          Small
+        </Button>
+        <Button disabled intent="danger" size="md">
           Medium
         </Button>
       </div>
