@@ -75,6 +75,9 @@ const badgeVariants = cva(
         sm: ["text-xs", "px-1.25", "py-px"],
         md: ["text-sm", "px-2", "py-0.5"],
       },
+      borderless: {
+        true: "border-transparent",
+      },
     },
     compoundVariants: [
       {
@@ -110,6 +113,43 @@ const badgeVariants = cva(
         size: "md",
         className: "px-1.5",
       },
+
+      // borderless — stronger background per intent
+      {
+        intent: "secondary",
+        borderless: true,
+        className: "bg-gray-300/80",
+      },
+      {
+        intent: "success",
+        borderless: true,
+        className: "bg-green-300/80",
+      },
+      {
+        intent: "warning",
+        borderless: true,
+        className: "bg-orange-300/80",
+      },
+      {
+        intent: "info",
+        borderless: true,
+        className: "bg-blue-300/80",
+      },
+      {
+        intent: "danger",
+        borderless: true,
+        className: "bg-red-300/80",
+      },
+      {
+        intent: "primary",
+        borderless: true,
+        className: "bg-purple-300/80",
+      },
+      {
+        intent: "slate",
+        borderless: true,
+        className: "bg-gray-900",
+      },
     ],
     defaultVariants: {
       intent: "secondary",
@@ -124,11 +164,11 @@ type BadgeProps = Pick<React.ComponentProps<"span">, "className"> &
   }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, intent, size, children, ...props }, forwardedRef) => {
+  ({ className, intent, size, borderless, children, ...props }, forwardedRef) => {
     return (
       <span
         ref={forwardedRef}
-        className={cn(badgeVariants({ intent, size }), className)}
+        className={cn(badgeVariants({ intent, size, borderless }), className)}
         {...props}
       >
         {intent === "pro" && <ProShimmer />}
@@ -157,11 +197,11 @@ function BetaBorder() {
     <span className="absolute inset-0">
       <DashedLine
         dashArray="3.4 1"
-        className="absolute -inset-x-0.75 -top-[0.03125rem] text-blue-700"
+        className="-inset-x-sm absolute -top-[0.03125rem] text-blue-700"
       />
       <DashedLine
         dashArray="3.4 1"
-        className="absolute -inset-x-0.75 -bottom-[0.03125rem] text-blue-700"
+        className="-inset-x-sm absolute -bottom-[0.03125rem] text-blue-700"
       />
       <DashedLine
         vertical

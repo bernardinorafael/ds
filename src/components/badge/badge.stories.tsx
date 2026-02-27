@@ -78,3 +78,31 @@ export const Sizes: Story = {
     </div>
   ),
 }
+
+export const Borderless: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-4">
+      <Badge intent="secondary" borderless>
+        Secondary
+      </Badge>
+      <Badge intent="success" borderless>
+        Success
+      </Badge>
+      <Badge intent="warning" borderless>
+        Warning
+      </Badge>
+      <Badge intent="info" borderless>
+        Info
+      </Badge>
+      <Badge intent="danger" borderless>
+        Danger
+      </Badge>
+      <Badge intent="primary" borderless>
+        Primary
+      </Badge>
+      <Badge intent="slate" borderless>
+        Slate
+      </Badge>
+    </div>
+  ),
+}
