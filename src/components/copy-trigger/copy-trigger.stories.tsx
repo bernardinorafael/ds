@@ -5,7 +5,7 @@ import { Button } from "@/components/button"
 import { CopyTrigger } from "@/components/copy-trigger"
 
 const meta = {
-  title: "Components/CopyTrigger",
+  title: "CopyTrigger",
   component: CopyTrigger,
   tags: ["autodocs"],
   args: {

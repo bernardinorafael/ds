@@ -5,7 +5,7 @@ import { Button } from "@/components/button"
 import { Tooltip, TooltipProvider } from "@/components/tooltip"
 
 const meta = {
-  title: "Components/Tooltip",
+  title: "Tooltip",
   component: Tooltip,
   tags: ["autodocs"],
   decorators: [

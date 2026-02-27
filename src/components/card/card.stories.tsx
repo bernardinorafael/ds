@@ -6,7 +6,7 @@ import { Button } from "@/components/button"
 import { Card } from "@/components/card"
 
 const meta = {
-  title: "Components/Card",
+  title: "Card",
   component: Card,
   tags: ["autodocs"],
 } satisfies Meta<typeof Card>
