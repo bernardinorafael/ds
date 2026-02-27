@@ -23,6 +23,9 @@ const spinnerVariants = cva("relative inline-block", {
 
 type SpinnerProps = Pick<React.ComponentProps<"div">, "className"> &
   VariantProps<typeof spinnerVariants> & {
+    /**
+     * Accessible label for screen readers @default "Loading"
+     */
     label?: string
   }
 

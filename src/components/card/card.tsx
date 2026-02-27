@@ -41,6 +41,9 @@ type CardRootProps = Pick<
   "id" | "aria-label" | "aria-labelledby" | "className" | "children"
 > &
   VariantProps<typeof cardRootVariants> & {
+    /**
+     * Inner padding applied to Body, Row, and Footer @default "compact"
+     */
     spacing?: Spacing
   }
 
@@ -200,8 +203,17 @@ CardActions.displayName = "Card.Actions"
 // ---------------------------------------------------------------------------
 
 type CollapsibleProps = {
+  /**
+   * Initial open state for uncontrolled usage @default true
+   */
   defaultOpen?: boolean
+  /**
+   * Controlled open state
+   */
   open?: boolean
+  /**
+   * Callback fired when the open state changes
+   */
   onOpenChange?: (open: boolean) => void
 }
 

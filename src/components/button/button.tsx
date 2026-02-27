@@ -93,7 +93,13 @@ type ButtonProps = Pick<
   | "type"
 > &
   VariantProps<typeof buttonVariants> & {
+    /**
+     * Button content
+     */
     children: React.ReactNode
+    /**
+     * Shows a spinner overlay and disables interaction
+     */
     isLoading?: boolean
   }
 

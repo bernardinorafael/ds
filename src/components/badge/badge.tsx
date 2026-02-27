@@ -160,6 +160,9 @@ const badgeVariants = cva(
 
 type BadgeProps = Pick<React.ComponentProps<"span">, "className"> &
   VariantProps<typeof badgeVariants> & {
+    /**
+     * Badge content
+     */
     children: React.ReactNode
   }
 
