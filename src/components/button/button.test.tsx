@@ -64,7 +64,7 @@ describe("Button", () => {
 
   it("should apply sm size", () => {
     render(<Button size="sm">Small</Button>)
-    expect(screen.getByRole("button")).toHaveClass("h-8")
+    expect(screen.getByRole("button")).toHaveClass("h-6")
   })
 
   it("should merge custom className", () => {
