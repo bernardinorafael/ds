@@ -19,7 +19,6 @@ const badgeVariants = cva(
     "rounded-sm",
     "bg-clip-border",
     "whitespace-nowrap",
-    "text-xs",
     "font-medium",
 
     // overlay
@@ -72,6 +71,10 @@ const badgeVariants = cva(
           "text-blue-1000",
         ],
       },
+      size: {
+        sm: ["text-xs", "px-1.25", "py-px"],
+        md: ["text-sm", "px-2", "py-0.5"],
+      },
     },
     compoundVariants: [
       {
@@ -85,19 +88,32 @@ const badgeVariants = cva(
           "slate",
           "add-on",
         ],
-        className: ["border", "px-1.25", "py-px"],
+        className: "border",
       },
       {
         intent: "pro",
+        size: "sm",
         className: ["px-1.5", "py-0.5"],
       },
       {
+        intent: "pro",
+        size: "md",
+        className: ["px-2.5", "py-1"],
+      },
+      {
         intent: "beta",
+        size: "sm",
         className: "px-1",
+      },
+      {
+        intent: "beta",
+        size: "md",
+        className: "px-1.5",
       },
     ],
     defaultVariants: {
       intent: "secondary",
+      size: "sm",
     },
   }
 )
@@ -108,11 +124,11 @@ type BadgeProps = Pick<React.ComponentProps<"span">, "className"> &
   }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, intent, children, ...props }, forwardedRef) => {
+  ({ className, intent, size, children, ...props }, forwardedRef) => {
     return (
       <span
         ref={forwardedRef}
-        className={cn(badgeVariants({ intent }), className)}
+        className={cn(badgeVariants({ intent, size }), className)}
         {...props}
       >
         {intent === "pro" && <ProShimmer />}

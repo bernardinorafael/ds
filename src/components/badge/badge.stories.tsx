@@ -31,3 +31,50 @@ export const Intents: Story = {
     </div>
   ),
 }
+
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge intent="secondary" size="sm">
+          Small
+        </Badge>
+        <Badge intent="success" size="sm">
+          Small
+        </Badge>
+        <Badge intent="primary" size="sm">
+          Small
+        </Badge>
+        <Badge intent="slate" size="sm">
+          Small
+        </Badge>
+        <Badge intent="pro" size="sm">
+          Small
+        </Badge>
+        <Badge intent="beta" size="sm">
+          Small
+        </Badge>
+      </div>
+      <div className="flex flex-wrap items-center gap-4">
+        <Badge intent="secondary" size="md">
+          Medium
+        </Badge>
+        <Badge intent="success" size="md">
+          Medium
+        </Badge>
+        <Badge intent="primary" size="md">
+          Medium
+        </Badge>
+        <Badge intent="slate" size="md">
+          Medium
+        </Badge>
+        <Badge intent="pro" size="md">
+          Medium
+        </Badge>
+        <Badge intent="beta" size="md">
+          Medium
+        </Badge>
+      </div>
+    </div>
+  ),
+}
