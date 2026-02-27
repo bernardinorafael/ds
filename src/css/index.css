@@ -230,6 +230,36 @@
     }
   }
 
+  .bg-warning-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      white,
+      white 6px,
+      rgba(255, 165, 0, 0.1) 6px,
+      rgba(255, 165, 0, 0.1) 12px
+    );
+  }
+
+  .bg-danger-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      white,
+      white 6px,
+      rgba(255, 0, 0, 0.1) 6px,
+      rgba(255, 0, 0, 0.1) 12px
+    );
+  }
+
+  .bg-neutral-stripes {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      white,
+      white 6px,
+      rgba(128, 128, 128, 0.1) 6px,
+      rgba(128, 128, 128, 0.1) 12px
+    );
+  }
+
   .spinner-blade {
     position: absolute;
     top: 37%;

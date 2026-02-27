@@ -22,46 +22,46 @@ export const InsideCard: Story = {
   render: () => (
     <Card spacing="cozy" className="max-w-4xl">
       <Card.Header>
-        <Card.Title>Configurações do Perfil</Card.Title>
+        <Card.Title>Profile Settings</Card.Title>
         <Card.Description>
-          Gerencie suas informações pessoais e preferências de conta
+          Manage your personal information and account preferences
         </Card.Description>
       </Card.Header>
       <Card.Body>
         <Card.Row>
           <Fieldset
-            legend="Este é o seu avatar"
-            description="Para melhores resultados, use uma imagem quadrada com menos de 3MB"
+            legend="Your avatar"
+            description="For best results, use a square image under 3MB"
           >
             <div className="flex flex-col gap-2">
               <p className="text-word-primary text-base font-medium">Avatar</p>
               <p className="text-word-secondary text-sm">
-                Formatos suportados: PNG, JPG, JPEG
+                Supported formats: PNG, JPG, JPEG
               </p>
             </div>
           </Fieldset>
         </Card.Row>
         <Card.Row>
           <Fieldset
-            legend="Notificações por email"
-            description="Escolha quais emails você gostaria de receber"
+            legend="Email notifications"
+            description="Choose which emails you would like to receive"
           >
             <div className="flex flex-col gap-5">
               <CheckboxWithLabel id="product" defaultChecked>
-                Atualizações de produto
+                Product updates
               </CheckboxWithLabel>
               <CheckboxWithLabel
                 id="news"
-                description="Receba novidades sobre lançamentos, promoções e ofertas exclusivas diretamente no seu email"
+                description="Receive news about launches, promotions and exclusive offers directly in your email"
               >
-                Novidades e promoções
+                News and promotions
               </CheckboxWithLabel>
               <CheckboxWithLabel
                 id="security"
                 defaultChecked
-                description="Alertas sobre atividades suspeitas na sua conta"
+                description="Alerts about suspicious activity on your account"
               >
-                Alertas de segurança
+                Security alerts
               </CheckboxWithLabel>
             </div>
           </Fieldset>

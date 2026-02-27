@@ -39,6 +39,7 @@ const buttonVariants = cva(
     "disabled:opacity-50",
   ],
   {
+    // TODO: add ghost intent, then add close (X) button to Dialog.Header
     variants: {
       intent: {
         primary: ["bg-primary", "text-primary-foreground", "hover:bg-primary/90"],
