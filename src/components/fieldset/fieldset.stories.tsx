@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Card } from "@/components/card"
-import { Checkbox } from "@/components/checkbox"
+import { CheckboxWithLabel } from "@/components/checkbox-with-label"
 import { Fieldset } from "@/components/fieldset"
 
 const meta = {
@@ -83,30 +83,22 @@ export const InsideCard: Story = {
             description="Escolha quais emails você gostaria de receber"
           >
             <div className="flex flex-col gap-3">
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox defaultChecked />
+              <CheckboxWithLabel id="product" defaultChecked>
                 Atualizações de produto
-              </label>
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox />
+              </CheckboxWithLabel>
+              <CheckboxWithLabel
+                id="news"
+                description="Receba novidades sobre lançamentos, promoções e ofertas exclusivas diretamente no seu email"
+              >
                 Novidades e promoções
-              </label>
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox defaultChecked />
+              </CheckboxWithLabel>
+              <CheckboxWithLabel
+                id="security"
+                defaultChecked
+                description="Alertas sobre atividades suspeitas na sua conta"
+              >
                 Alertas de segurança
-              </label>
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox />
-                Resumo semanal
-              </label>
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox defaultChecked />
-                Atividade do time
-              </label>
-              <label className="text-foreground flex items-center gap-2 text-sm">
-                <Checkbox />
-                Relatórios mensais
-              </label>
+              </CheckboxWithLabel>
             </div>
           </Fieldset>
         </Card.Row>

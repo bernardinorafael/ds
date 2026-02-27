@@ -65,7 +65,7 @@ const checkboxVariants = cva(
   }
 )
 
-type CheckboxProps = Pick<
+export type CheckboxProps = Pick<
   RadixCheckbox.CheckboxProps,
   | "id"
   | "name"
