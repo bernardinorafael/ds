@@ -10,6 +10,7 @@ const BASE_DELAY = -1.667
 const spinnerVariants = cva("relative inline-block", {
   variants: {
     size: {
+      xs: "size-3.5",
       sm: "size-5",
       md: "size-6",
       lg: "size-12",
