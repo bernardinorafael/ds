@@ -145,11 +145,7 @@ function ProShimmer() {
   return (
     <span
       className={cn(
-        "absolute",
-        "inset-y-0",
-        "right-full",
-        "w-full",
-        "animate-badge-shimmer",
+        "animate-badge-shimmer absolute inset-y-0 right-full w-full",
         "bg-[linear-gradient(60deg,transparent,rgba(255,255,255,0.4)_50%,transparent_51%)]"
       )}
     />
@@ -190,23 +186,23 @@ function DashedLine({
   dashArray?: string
   vertical?: boolean
 }) {
-  const strokeWidth = 1
+  const STROKE_WIDTH = 1
 
   return (
     <span className={cn("block transform-gpu", className)}>
       <svg
-        width={vertical ? strokeWidth : "100%"}
-        height={vertical ? "100%" : strokeWidth}
+        width={vertical ? STROKE_WIDTH : "100%"}
+        height={vertical ? "100%" : STROKE_WIDTH}
       >
         <line
-          x1={vertical ? strokeWidth / 2 : 0}
-          y1={vertical ? 0 : strokeWidth / 2}
-          x2={vertical ? strokeWidth / 2 : "100%"}
-          y2={vertical ? "100%" : strokeWidth / 2}
+          x1={vertical ? STROKE_WIDTH / 2 : 0}
+          y1={vertical ? 0 : STROKE_WIDTH / 2}
+          x2={vertical ? STROKE_WIDTH / 2 : "100%"}
+          y2={vertical ? "100%" : STROKE_WIDTH / 2}
           style={{
             stroke: "currentColor",
             strokeDasharray: dashArray,
-            strokeWidth,
+            strokeWidth: STROKE_WIDTH,
           }}
         />
       </svg>
