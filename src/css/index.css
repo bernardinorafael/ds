@@ -185,6 +185,30 @@
   --animate-badge-shimmer: badge-shimmer 3.3s infinite;
 }
 
+@layer components {
+  .spinner-blade {
+    position: absolute;
+    top: 37%;
+    left: 44%;
+    width: 8%;
+    height: 20%;
+    background: currentColor;
+    border-radius: 1px;
+    will-change: opacity;
+    animation: spinner-blade 1s linear infinite;
+  }
+}
+
+@keyframes spinner-blade {
+  0% {
+    opacity: 0.85;
+  }
+  50%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
 @keyframes badge-shimmer {
   0% {
     transform: translateX(-100%);

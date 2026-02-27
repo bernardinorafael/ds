@@ -52,13 +52,13 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toBeDisabled()
   })
 
-  it("should apply primary variant by default", () => {
+  it("should apply primary intent by default", () => {
     render(<Button>Primary</Button>)
     expect(screen.getByRole("button")).toHaveClass("bg-primary")
   })
 
-  it("should apply secondary variant", () => {
-    render(<Button variant="secondary">Secondary</Button>)
+  it("should apply secondary intent", () => {
+    render(<Button intent="secondary">Secondary</Button>)
     expect(screen.getByRole("button")).toHaveClass("bg-secondary")
   })
 
@@ -75,5 +75,41 @@ describe("Button", () => {
   it("should forward additional HTML attributes", () => {
     render(<Button aria-label="Close dialog">✕</Button>)
     expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Close dialog")
+  })
+
+  it("should be disabled when isLoading", () => {
+    render(<Button isLoading>Save</Button>)
+    expect(screen.getByRole("button")).toBeDisabled()
+  })
+
+  it("should show spinner when isLoading", () => {
+    render(<Button isLoading>Save</Button>)
+    expect(screen.getByRole("status")).toBeInTheDocument()
+  })
+
+  it("should set aria-busy when isLoading", () => {
+    render(<Button isLoading>Save</Button>)
+    expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true")
+  })
+
+  it("should not set aria-busy when not loading", () => {
+    render(<Button>Save</Button>)
+    expect(screen.getByRole("button")).not.toHaveAttribute("aria-busy")
+  })
+
+  it("should keep children in DOM when isLoading for consistent width", () => {
+    render(<Button isLoading>Save</Button>)
+    expect(screen.getByText("Save")).toBeInTheDocument()
+  })
+
+  it("should not call onClick when isLoading", async () => {
+    const onClick = vi.fn()
+    render(
+      <Button isLoading onClick={onClick}>
+        Save
+      </Button>
+    )
+    await user.click(screen.getByRole("button"))
+    expect(onClick).not.toHaveBeenCalled()
   })
 })

@@ -2,6 +2,7 @@ import React from "react"
 
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
 
 const buttonVariants = cva(
@@ -38,7 +39,7 @@ const buttonVariants = cva(
   ],
   {
     variants: {
-      variant: {
+      intent: {
         primary: [
           "bg-primary",
           "text-primary-foreground",
@@ -93,7 +94,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "primary",
+      intent: "primary",
       size: "md",
     },
   }
@@ -119,16 +120,28 @@ type ButtonProps = Pick<
   }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, type = "button", ...props }, forwardedRef) => {
+  (
+    { className, intent, size, type = "button", isLoading, disabled, children, ...props },
+    forwardedRef
+  ) => {
     return (
       <button
         ref={forwardedRef}
         type={type}
-        className={cn(buttonVariants({ variant, size }), className)}
+        disabled={disabled || isLoading}
+        aria-busy={isLoading || undefined}
+        className={cn(buttonVariants({ intent, size }), className)}
         {...props}
       >
-        {props.children}
+        {isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <Spinner size="sm" label="Loading" />
+          </span>
+        )}
+        <span className={cn(isLoading && "invisible")}>{children}</span>
       </button>
     )
   }
 )
+
+Button.displayName = "Button"

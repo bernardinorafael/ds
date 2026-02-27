@@ -33,7 +33,7 @@ const badgeVariants = cva(
   ],
   {
     variants: {
-      variant: {
+      intent: {
         secondary: ["border-gray-500", "bg-gray-200", "text-gray-1000"],
         success: ["border-green-500", "bg-green-200", "text-green-1000"],
         warning: ["border-orange-500", "bg-orange-200", "text-orange-1000"],
@@ -75,7 +75,7 @@ const badgeVariants = cva(
     },
     compoundVariants: [
       {
-        variant: [
+        intent: [
           "secondary",
           "success",
           "warning",
@@ -88,16 +88,16 @@ const badgeVariants = cva(
         className: ["border", "px-1.25", "py-px"],
       },
       {
-        variant: "pro",
+        intent: "pro",
         className: ["px-1.5", "py-0.5"],
       },
       {
-        variant: "beta",
+        intent: "beta",
         className: "px-1",
       },
     ],
     defaultVariants: {
-      variant: "secondary",
+      intent: "secondary",
     },
   }
 )
@@ -108,20 +108,22 @@ type BadgeProps = Pick<React.ComponentProps<"span">, "className"> &
   }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant, children, ...props }, forwardedRef) => {
+  ({ className, intent, children, ...props }, forwardedRef) => {
     return (
       <span
         ref={forwardedRef}
-        className={cn(badgeVariants({ variant }), className)}
+        className={cn(badgeVariants({ intent }), className)}
         {...props}
       >
-        {variant === "pro" && <ProShimmer />}
-        {variant === "beta" && <BetaBorder />}
+        {intent === "pro" && <ProShimmer />}
+        {intent === "beta" && <BetaBorder />}
         <span className="relative">{children}</span>
       </span>
     )
   }
 )
+
+Badge.displayName = "Badge"
 
 function ProShimmer() {
   return (

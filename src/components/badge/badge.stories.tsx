@@ -15,73 +15,19 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-// --- Variants ---
-
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-  },
-}
-
-export const Success: Story = {
-  args: {
-    variant: "success",
-    children: "Success",
-  },
-}
-
-export const Warning: Story = {
-  args: {
-    variant: "warning",
-    children: "Warning",
-  },
-}
-
-export const Info: Story = {
-  args: {
-    variant: "info",
-    children: "Info",
-  },
-}
-
-export const Danger: Story = {
-  args: {
-    variant: "danger",
-    children: "Danger",
-  },
-}
-
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-    children: "Primary",
-  },
-}
-
-export const Beta: Story = {
-  args: {
-    variant: "beta",
-    children: "Beta",
-  },
-}
-
-export const Slate: Story = {
-  args: {
-    variant: "slate",
-    children: "Slate",
-  },
-}
-
-export const Pro: Story = {
-  args: {
-    variant: "pro",
-    children: "Pro",
-  },
-}
-
-export const AddOn: Story = {
-  args: {
-    variant: "add-on",
-    children: "Add-on",
-  },
+export const Intents: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-4">
+      <Badge intent="secondary">Secondary</Badge>
+      <Badge intent="success">Success</Badge>
+      <Badge intent="warning">Warning</Badge>
+      <Badge intent="info">Info</Badge>
+      <Badge intent="danger">Danger</Badge>
+      <Badge intent="primary">Primary</Badge>
+      <Badge intent="beta">Beta</Badge>
+      <Badge intent="slate">Slate</Badge>
+      <Badge intent="pro">Pro</Badge>
+      <Badge intent="add-on">Add-on</Badge>
+    </div>
+  ),
 }

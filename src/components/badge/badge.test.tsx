@@ -21,23 +21,23 @@ describe("Badge", () => {
     expect(screen.getByText("Custom").parentElement).toHaveClass("mt-2")
   })
 
-  it("should render shimmer effect for pro variant", () => {
-    const { container } = render(<Badge variant="pro">Pro</Badge>)
+  it("should render shimmer effect for pro intent", () => {
+    const { container } = render(<Badge intent="pro">Pro</Badge>)
     expect(container.querySelector(".animate-badge-shimmer")).toBeInTheDocument()
   })
 
-  it("should render dashed border for beta variant", () => {
-    const { container } = render(<Badge variant="beta">Beta</Badge>)
+  it("should render dashed border for beta intent", () => {
+    const { container } = render(<Badge intent="beta">Beta</Badge>)
     expect(container.querySelectorAll("svg")).toHaveLength(4)
   })
 
-  it("should not render shimmer for non-pro variants", () => {
-    const { container } = render(<Badge variant="success">Success</Badge>)
+  it("should not render shimmer for non-pro intents", () => {
+    const { container } = render(<Badge intent="success">Success</Badge>)
     expect(container.querySelector(".animate-badge-shimmer")).not.toBeInTheDocument()
   })
 
-  it("should not render dashed border for non-beta variants", () => {
-    const { container } = render(<Badge variant="info">Info</Badge>)
+  it("should not render dashed border for non-beta intents", () => {
+    const { container } = render(<Badge intent="info">Info</Badge>)
     expect(container.querySelectorAll("svg")).toHaveLength(0)
   })
 })
