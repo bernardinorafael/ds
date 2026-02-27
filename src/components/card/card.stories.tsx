@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>
 export const Backgrounds: Story = {
   render: () => (
     <div className="flex flex-wrap gap-6">
-      <Card background="soft" spacing="cozy" className="w-80">
+      <Card background="soft" className="w-80">
         <Card.Header>
           <Card.Title>Soft background</Card.Title>
           <Card.Description>Uses surface-100 as the background</Card.Description>
@@ -28,7 +28,7 @@ export const Backgrounds: Story = {
         </Card.Body>
       </Card>
 
-      <Card background="intense" spacing="cozy" className="w-80">
+      <Card background="intense" className="w-80">
         <Card.Header>
           <Card.Title>Intense background</Card.Title>
           <Card.Description>Uses surface-50 as the background</Card.Description>
@@ -44,15 +44,6 @@ export const Backgrounds: Story = {
 export const Spacing: Story = {
   render: () => (
     <div className="flex flex-wrap items-start gap-6">
-      <Card spacing="none" className="w-64">
-        <Card.Header>
-          <Card.Title>None</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          <p className="text-foreground text-sm">No padding.</p>
-        </Card.Body>
-      </Card>
-
       <Card spacing="compact" className="w-64">
         <Card.Header>
           <Card.Title>Compact</Card.Title>

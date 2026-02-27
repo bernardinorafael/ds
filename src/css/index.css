@@ -17,13 +17,13 @@
   --color-muted: var(--color-zinc-500);
   --color-border: var(--color-zinc-200);
 
-  --color-primary: var(--color-purple-900);
+  --color-primary: #523afd;
   --color-primary-foreground: var(--color-white);
 
   --color-secondary: var(--color-white);
   --color-secondary-foreground: var(--color-zinc-900);
 
-  --color-destructive: var(--color-red-500);
+  --color-destructive: var(--color-red-900);
   --color-destructive-foreground: var(--color-zinc-50);
 
   /* 4px */
@@ -83,8 +83,10 @@
     0px 8px 30px -4px rgb(0 0 0 / 0.08), 0px 10px 24px -4px rgb(0 0 0 / 0.08);
 
   --color-surface-50: #eeeef0;
-  --color-surface-100: #f7f7f8;
+  --color-surface-100: #f6f6f6;
   --color-surface-200: var(--color-white);
+
+  --color-word-secondary: #666666;
 
   --color-gray-0: #ffffff;
   --color-gray-100: #fcfcfc;
@@ -195,11 +197,20 @@
 }
 
 @layer components {
+  [data-card-background="soft"] [data-card-row] + [data-card-row] {
+    border-color: var(--color-surface-100);
+  }
+
+  [data-card-background="intense"] [data-card-row] + [data-card-row] {
+    border-color: var(--color-surface-50);
+  }
+
   [data-card-header]:has([data-card-title]):has([data-card-description]) {
     grid-template-rows: repeat(2, minmax(0, min-content));
   }
 
-  [data-card-header]:has([data-card-actions]) {
+  [data-card-header]:has([data-card-actions]),
+  [data-card-footer] div:has([data-card-actions]) {
     grid-template-columns: 1fr minmax(0, min-content);
   }
 

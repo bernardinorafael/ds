@@ -10,6 +10,8 @@ import { cn } from "@/utils/cn"
 // CardRoot
 // ---------------------------------------------------------------------------
 
+type Spacing = "compact" | "cozy"
+
 const cardRootVariants = cva(
   [
     // positioning
@@ -18,7 +20,7 @@ const cardRootVariants = cva(
 
     // visual
     "overflow-hidden",
-    "rounded-2xl",
+    "rounded-3xl",
     "p-1",
   ],
   {
@@ -38,14 +40,18 @@ type CardRootProps = Pick<
   React.ComponentProps<"section">,
   "id" | "aria-label" | "aria-labelledby" | "className" | "children"
 > &
-  VariantProps<typeof cardRootVariants>
+  VariantProps<typeof cardRootVariants> & {
+    spacing?: Spacing
+  }
 
 const CardRoot = React.forwardRef<HTMLElement, CardRootProps>(
-  ({ className, background, children, ...props }, forwardedRef) => {
+  ({ className, background, spacing = "compact", children, ...props }, forwardedRef) => {
     return (
       <section
         ref={forwardedRef}
         data-card-root=""
+        data-card-spacing={spacing}
+        data-card-background={background ?? "soft"}
         className={cn(cardRootVariants({ background }), className)}
         {...props}
       >
@@ -136,13 +142,13 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionPr
         ref={forwardedRef}
         data-card-description=""
         className={cn(
-          "col-start-1",
-          "row-start-2",
-          "text-balance",
-          "font-sans",
           "text-sm",
           "font-normal",
-          "text-secondary-foreground",
+          "text-word-secondary",
+          "col-start-1",
+          "row-start-1",
+          "text-balance",
+          "[[data-card-title]~&]:row-start-2",
           className
         )}
         {...props}
@@ -176,6 +182,7 @@ const CardActions = React.forwardRef<HTMLDivElement, CardActionsProps>(
           "shrink-0",
           "items-start",
           "gap-3",
+          "[[data-card-title]~[data-card-description]~&]:mt-0.5",
           className
         )}
         {...props}
@@ -233,9 +240,11 @@ const CardBody = React.forwardRef<HTMLDivElement, CardBodyProps>(
               className={cn(
                 "rounded-xl",
                 "bg-surface-200",
-                "px-8",
-                "py-6",
                 "shadow-xs",
+                "in-data-[card-spacing=compact]:px-4",
+                "in-data-[card-spacing=compact]:py-4",
+                "in-data-[card-spacing=cozy]:px-8",
+                "in-data-[card-spacing=cozy]:py-6",
                 className
               )}
             >
@@ -263,12 +272,22 @@ const CardRow = React.forwardRef<HTMLDivElement, CardRowProps>(
         ref={forwardedRef}
         data-card-row=""
         className={cn(
-          "py-6",
           "[&+&]:border-t",
-          "-mx-8",
-          "px-8",
-          "first:-mt-6",
-          "last:-mb-6",
+
+          // compact
+          "in-data-[card-spacing=compact]:-mx-4",
+          "in-data-[card-spacing=compact]:px-4",
+          "in-data-[card-spacing=compact]:py-4",
+          "in-data-[card-spacing=compact]:first:-mt-4",
+          "in-data-[card-spacing=compact]:last:-mb-4",
+
+          // cozy
+          "in-data-[card-spacing=cozy]:-mx-8",
+          "in-data-[card-spacing=cozy]:px-8",
+          "in-data-[card-spacing=cozy]:py-6",
+          "in-data-[card-spacing=cozy]:first:-mt-6",
+          "in-data-[card-spacing=cozy]:last:-mb-6",
+
           className
         )}
         {...props}

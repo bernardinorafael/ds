@@ -12,7 +12,7 @@ describe("Card", () => {
     expect(section).toHaveTextContent("Content")
   })
 
-  it("should forward ref to the section element", () => {
+  it("should forward ref", () => {
     const ref = createRef<HTMLElement>()
     render(<Card ref={ref}>Content</Card>)
     expect(ref.current).toBeInstanceOf(HTMLElement)
@@ -27,6 +27,22 @@ describe("Card", () => {
   it("should apply intense background", () => {
     const { container } = render(<Card background="intense">Content</Card>)
     expect(container.querySelector("section")).toHaveClass("bg-surface-50")
+  })
+
+  it("should set compact spacing by default", () => {
+    const { container } = render(<Card>Content</Card>)
+    expect(container.querySelector("section")).toHaveAttribute(
+      "data-card-spacing",
+      "compact"
+    )
+  })
+
+  it("should set cozy spacing", () => {
+    const { container } = render(<Card spacing="cozy">Content</Card>)
+    expect(container.querySelector("section")).toHaveAttribute(
+      "data-card-spacing",
+      "cozy"
+    )
   })
 
   it("should merge custom className", () => {
