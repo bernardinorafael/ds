@@ -46,8 +46,7 @@ export const CheckboxWithLabel = React.forwardRef<
       <span
         id={`${id}-label`}
         className={cn(
-          "text-base font-medium transition-colors select-none",
-          "text-word-primary",
+          "text-word-primary text-base font-medium transition-colors select-none",
           disabled ? "opacity-50" : "opacity-80 group-hover:opacity-100"
         )}
       >

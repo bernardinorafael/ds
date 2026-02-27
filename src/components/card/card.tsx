@@ -78,15 +78,7 @@ const CardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(
       <header
         ref={forwardedRef}
         data-card-header=""
-        className={cn(
-          "grid",
-          "grid-rows-1",
-          "items-center",
-          "gap-x-6",
-          "gap-y-0.5",
-          "p-4",
-          className
-        )}
+        className={cn("grid grid-rows-1 items-center gap-x-6 gap-y-0.5 p-4", className)}
         {...props}
       >
         {children}
@@ -110,13 +102,7 @@ const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
         ref={forwardedRef}
         data-card-title=""
         className={cn(
-          "col-start-1",
-          "row-start-1",
-          "text-balance",
-          "font-sans",
-          "text-lg",
-          "font-medium",
-          "text-foreground",
+          "text-foreground col-start-1 row-start-1 font-sans text-xl font-medium text-balance",
           className
         )}
         {...props}
@@ -145,12 +131,7 @@ const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionPr
         ref={forwardedRef}
         data-card-description=""
         className={cn(
-          "text-sm",
-          "font-normal",
-          "text-word-secondary",
-          "col-start-1",
-          "row-start-1",
-          "text-balance",
+          "text-word-secondary col-start-1 row-start-1 text-base font-normal text-balance",
           "[[data-card-title]~&]:row-start-2",
           className
         )}
@@ -177,14 +158,7 @@ const CardActions = React.forwardRef<HTMLDivElement, CardActionsProps>(
         ref={forwardedRef}
         data-card-actions=""
         className={cn(
-          "col-start-2",
-          "row-span-full",
-          "place-self-start",
-          "flex",
-          "min-w-0",
-          "shrink-0",
-          "items-start",
-          "gap-3",
+          "col-start-2 row-span-full flex min-w-0 shrink-0 items-start gap-3 place-self-start",
           "[[data-card-title]~[data-card-description]~&]:mt-0.5",
           className
         )}
@@ -250,13 +224,9 @@ const CardBody = React.forwardRef<HTMLDivElement, CardBodyProps>(
           >
             <div
               className={cn(
-                "rounded-xl",
-                "bg-surface-200",
-                "shadow-xs",
-                "in-data-[card-spacing=compact]:px-4",
-                "in-data-[card-spacing=compact]:py-4",
-                "in-data-[card-spacing=cozy]:px-8",
-                "in-data-[card-spacing=cozy]:py-6",
+                "bg-surface-200 rounded-xl shadow-xs",
+                "in-data-[card-spacing=compact]:px-4 in-data-[card-spacing=compact]:py-4",
+                "in-data-[card-spacing=cozy]:px-8 in-data-[card-spacing=cozy]:py-6",
                 className
               )}
             >
@@ -285,21 +255,12 @@ const CardRow = React.forwardRef<HTMLDivElement, CardRowProps>(
         data-card-row=""
         className={cn(
           "[&+&]:border-t",
-
-          // compact
-          "in-data-[card-spacing=compact]:-mx-4",
-          "in-data-[card-spacing=compact]:px-4",
-          "in-data-[card-spacing=compact]:py-4",
-          "in-data-[card-spacing=compact]:first:-mt-4",
+          "in-data-[card-spacing=compact]:-mx-4 in-data-[card-spacing=compact]:px-4",
+          "in-data-[card-spacing=compact]:py-4 in-data-[card-spacing=compact]:first:-mt-4",
           "in-data-[card-spacing=compact]:last:-mb-4",
-
-          // cozy
-          "in-data-[card-spacing=cozy]:-mx-8",
-          "in-data-[card-spacing=cozy]:px-8",
-          "in-data-[card-spacing=cozy]:py-6",
-          "in-data-[card-spacing=cozy]:first:-mt-6",
+          "in-data-[card-spacing=cozy]:-mx-8 in-data-[card-spacing=cozy]:px-8",
+          "in-data-[card-spacing=cozy]:py-6 in-data-[card-spacing=cozy]:first:-mt-6",
           "in-data-[card-spacing=cozy]:last:-mb-6",
-
           className
         )}
         {...props}
@@ -345,13 +306,7 @@ const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
           >
             <div
               className={cn(
-                "-mb-1",
-                "grid",
-                "grid-rows-1",
-                "items-center",
-                "gap-6",
-                "gap-y-2",
-                "p-4",
+                "-mb-1 grid grid-rows-1 items-center gap-6 gap-y-2 p-4",
                 "[&>:not([data-card-actions])]:col-start-1",
                 className
               )}
