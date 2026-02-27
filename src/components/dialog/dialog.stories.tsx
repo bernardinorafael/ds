@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Button } from "@/components/button"
@@ -77,6 +79,39 @@ export const Centered: Story = {
   ),
 }
 
+function AsyncDialogExample() {
+  const [open, setOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSave = async () => {
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setIsLoading(false)
+    setOpen(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen} trigger={<Button>Save changes</Button>}>
+      <Dialog.Content>
+        <Dialog.Header
+          title="Save changes"
+          description="Are you sure you want to save these changes?"
+        />
+      </Dialog.Content>
+      <Dialog.Footer>
+        <Dialog.Close disabled={isLoading}>Cancel</Dialog.Close>
+        <Button isLoading={isLoading} onClick={handleSave}>
+          Save
+        </Button>
+      </Dialog.Footer>
+    </Dialog>
+  )
+}
+
+export const Async: Story = {
+  render: () => <AsyncDialogExample />,
+}
+
 export const WithNotice: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
@@ -87,9 +122,6 @@ export const WithNotice: Story = {
             description="You are changing your current plan"
           />
           <Dialog.Section>
-            <p className="text-word-secondary text-base">
-              By downgrading, some premium features will be disabled.
-            </p>
             <Dialog.Notice intent="warning">
               Your active integrations will be disconnected at the end of the cycle.
             </Dialog.Notice>
@@ -108,9 +140,6 @@ export const WithNotice: Story = {
             description="This action is irreversible"
           />
           <Dialog.Section>
-            <p className="text-word-secondary text-base">
-              By deleting your account, all your data will be permanently removed.
-            </p>
             <Dialog.Notice intent="danger">
               All projects and associated data will be permanently deleted.
             </Dialog.Notice>
@@ -129,9 +158,6 @@ export const WithNotice: Story = {
             description="Export your data in CSV format"
           />
           <Dialog.Section>
-            <p className="text-word-secondary text-base">
-              The export may take a few minutes depending on the data volume.
-            </p>
             <Dialog.Notice intent="neutral">
               You will receive an email when the export is ready.
             </Dialog.Notice>
