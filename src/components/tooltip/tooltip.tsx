@@ -1,3 +1,5 @@
+import React from "react"
+
 import * as RadixTooltip from "@radix-ui/react-tooltip"
 
 import { cn } from "@/utils/cn"
@@ -65,41 +67,50 @@ export function TooltipProvider({
   )
 }
 
-export function Tooltip({
-  label,
-  children,
-  defaultOpen,
-  onOpenChange,
-  open,
-  side = "top",
-  align,
-  sideOffset = 8,
-  delayDuration = 400,
-}: TooltipProps) {
-  return (
-    <RadixTooltip.Root
-      open={open}
-      onOpenChange={onOpenChange}
-      defaultOpen={defaultOpen}
-      delayDuration={delayDuration}
-    >
-      <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
-      <RadixTooltip.Portal>
-        <RadixTooltip.Content
-          sideOffset={sideOffset}
-          collisionPadding={5}
-          side={side}
-          align={align}
-          style={{ maxWidth: 240 }}
-          className={cn(
-            "tooltip-content",
-            "z-50 text-center font-medium text-white shadow-lg",
-            "bg-gray-1200 rounded-sm px-2 py-1 text-sm leading-relaxed"
-          )}
-        >
-          {label}
-        </RadixTooltip.Content>
-      </RadixTooltip.Portal>
-    </RadixTooltip.Root>
-  )
-}
+export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
+  (
+    {
+      label,
+      children,
+      defaultOpen,
+      onOpenChange,
+      open,
+      side = "top",
+      align,
+      sideOffset = 8,
+      delayDuration = 400,
+    },
+    forwardedRef
+  ) => {
+    return (
+      <RadixTooltip.Root
+        open={open}
+        onOpenChange={onOpenChange}
+        defaultOpen={defaultOpen}
+        delayDuration={delayDuration}
+      >
+        <RadixTooltip.Trigger ref={forwardedRef} asChild>
+          {children}
+        </RadixTooltip.Trigger>
+        <RadixTooltip.Portal>
+          <RadixTooltip.Content
+            sideOffset={sideOffset}
+            collisionPadding={5}
+            side={side}
+            align={align}
+            style={{ maxWidth: 240 }}
+            className={cn(
+              "tooltip-content",
+              "z-50 text-center font-medium text-white shadow-lg",
+              "bg-gray-1200 rounded-sm px-2 py-1 text-sm leading-relaxed"
+            )}
+          >
+            {label}
+          </RadixTooltip.Content>
+        </RadixTooltip.Portal>
+      </RadixTooltip.Root>
+    )
+  }
+)
+
+Tooltip.displayName = "Tooltip"

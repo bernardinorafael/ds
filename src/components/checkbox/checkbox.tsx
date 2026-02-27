@@ -54,7 +54,7 @@ const checkboxVariants = cva(
           // focus
           "focus-visible:border-primary/20",
           "focus-visible:ring-1",
-          "focus-visible:ring-purple-800",
+          "focus-visible:ring-primary",
         ],
       },
     },

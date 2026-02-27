@@ -18,10 +18,16 @@ type CheckboxWithLabelProps = Omit<CheckboxProps, "aria-label" | "aria-labelledb
   description?: string
 }
 
+const descriptionPaddingMap = {
+  sm: "pl-6",
+  md: "pl-7",
+  lg: "pl-8",
+} as const
+
 export const CheckboxWithLabel = React.forwardRef<
   HTMLButtonElement,
   CheckboxWithLabelProps
->(({ id, children, description, className, disabled, ...props }, forwardedRef) => (
+>(({ id, children, description, className, disabled, size, ...props }, forwardedRef) => (
   <label
     htmlFor={id}
     className={cn(
@@ -40,6 +46,7 @@ export const CheckboxWithLabel = React.forwardRef<
         id={id}
         aria-labelledby={`${id}-label`}
         disabled={disabled}
+        size={size}
         {...props}
       />
 
@@ -57,7 +64,8 @@ export const CheckboxWithLabel = React.forwardRef<
     {description && (
       <p
         className={cn(
-          "text-word-secondary pl-6 text-sm font-normal transition-colors select-none",
+          "text-word-secondary text-sm font-normal transition-colors select-none",
+          descriptionPaddingMap[size ?? "sm"],
           disabled && "opacity-50"
         )}
       >

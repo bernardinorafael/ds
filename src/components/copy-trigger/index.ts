@@ -1,1 +1,1 @@
-export { CopyTrigger } from "./copy-trigger"
+export { CopyTrigger, type CopyTriggerProps } from "./copy-trigger"

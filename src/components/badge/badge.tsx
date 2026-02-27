@@ -158,7 +158,7 @@ const badgeVariants = cva(
   }
 )
 
-type BadgeProps = Pick<React.ComponentProps<"span">, "className"> &
+type BadgeProps = Pick<React.ComponentProps<"span">, "id" | "aria-label" | "className"> &
   VariantProps<typeof badgeVariants> & {
     /**
      * Badge content
