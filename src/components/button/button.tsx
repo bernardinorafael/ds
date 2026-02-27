@@ -72,9 +72,9 @@ const buttonVariants = cva(
         secondary: [
           "transition",
           "bg-secondary",
-          "shadow shadow-black/0.8",
+          "shadow-black/0.8 shadow",
           "text-secondary-foreground",
-          "border-black/15 border",
+          "border border-black/15",
           "hover:bg-secondary/80",
           [
             "before:absolute",

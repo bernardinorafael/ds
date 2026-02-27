@@ -3,6 +3,15 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
+  /* 1px */
+  --spacing-px: 0.0625rem;
+  /* 2px */
+  --spacing-xs: 0.125rem;
+  /* 3px */
+  --spacing-sm: 0.1875rem;
+  /* 18px */
+  --spacing-4-5: 1.125rem;
+
   --color-background: var(--color-zinc-50);
   --color-foreground: var(--color-zinc-950);
   --color-muted: var(--color-zinc-500);
@@ -186,6 +195,14 @@
 }
 
 @layer components {
+  [data-card-header]:has([data-card-title]):has([data-card-description]) {
+    grid-template-rows: repeat(2, minmax(0, min-content));
+  }
+
+  [data-card-header]:has([data-card-actions]) {
+    grid-template-columns: 1fr minmax(0, min-content);
+  }
+
   .spinner-blade {
     position: absolute;
     top: 37%;
