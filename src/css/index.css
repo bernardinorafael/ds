@@ -214,6 +214,20 @@
     grid-template-columns: 1fr minmax(0, min-content);
   }
 
+  .tooltip-content {
+    transform-origin: var(--radix-tooltip-content-transform-origin);
+    animation-duration: 0.125s;
+    animation-timing-function: ease-out;
+
+    &[data-state="open"] {
+      animation-name: tooltip-in;
+    }
+
+    &[data-state="closed"] {
+      animation-name: tooltip-out;
+    }
+  }
+
   .spinner-blade {
     position: absolute;
     top: 37%;
@@ -234,6 +248,20 @@
   50%,
   100% {
     opacity: 0.25;
+  }
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@keyframes tooltip-out {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
   }
 }
 
