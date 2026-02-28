@@ -2,7 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Card } from "@/components/card"
 import { CheckboxWithLabel } from "@/components/checkbox-with-label"
+import { Field } from "@/components/field"
 import { Fieldset } from "@/components/fieldset"
+import { Input } from "@/components/input"
 
 const meta = {
   title: "Fieldset",
@@ -28,6 +30,16 @@ export const InsideCard: Story = {
         </Card.Description>
       </Card.Header>
       <Card.Body>
+        <Card.Row>
+          <Fieldset
+            legend="Personal information"
+            description="Your name and contact details"
+          >
+            <Field label="Full name" description="As it appears on your official ID">
+              <Input placeholder="John Doe" />
+            </Field>
+          </Fieldset>
+        </Card.Row>
         <Card.Row>
           <Fieldset
             legend="Your avatar"

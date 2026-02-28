@@ -22,21 +22,28 @@ interface FieldContextType {
 
 const FieldContext = createContext<FieldContextType | null>(null)
 
-const useField = () => {
-  const context = useContext(FieldContext)
-  if (!context) throw new Error("useFieldControl must be used within a Field")
-  return context
-}
-
 /**
  * Returns ARIA props to wire a form control inside a Field.
  * Spread the result onto your input/select/textarea.
+ * Safe to call outside a Field — returns neutral defaults.
  */
 export const useFieldControl = ({ props = {} }: { props?: { id?: string } } = {}) => {
-  const { id, hasDescription, messages } = useField()
+  const context = useContext(FieldContext)
+
+  if (!context) {
+    return {
+      id: props.id,
+      "aria-describedby": undefined,
+      "aria-invalid": undefined,
+      messageIntent: null,
+    }
+  }
+
+  const { id, hasDescription, messages } = context
 
   const hasMessage = messages.length > 0
   const hasError = messages.some((m) => m.intent === "error")
+  const messageIntent = messages.length > 0 ? messages[0].intent : null
 
   const describedBy = [
     hasDescription ? id.description : null,
@@ -49,6 +56,7 @@ export const useFieldControl = ({ props = {} }: { props?: { id?: string } } = {}
     id: props.id ?? id.control,
     "aria-describedby": describedBy || undefined,
     "aria-invalid": hasError ? (true as const) : undefined,
+    messageIntent,
   }
 }
 
