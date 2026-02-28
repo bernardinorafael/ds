@@ -2,15 +2,14 @@ import React from "react"
 
 import { cva } from "class-variance-authority"
 
-import { cn } from "@/utils/cn"
-
 import { getIconId, VIEWBOX, type IconName } from "./icons"
 
 const iconVariants = cva("shrink-0 overflow-visible stroke-[1.25]", {
   variants: {
     size: {
       sm: "size-4",
-      base: "size-5",
+      md: "size-5",
+      lg: "size-6",
     },
     fill: {
       /**
@@ -21,7 +20,7 @@ const iconVariants = cva("shrink-0 overflow-visible stroke-[1.25]", {
     },
   },
   defaultVariants: {
-    size: "base",
+    size: "md",
   },
 })
 
@@ -31,14 +30,13 @@ export type IconProps = {
    */
   name: IconName
   /**
-   * Size variant @default "base"
+   * Size variant @default "md"
    */
-  size?: "sm" | "base"
+  size?: "sm" | "md" | "lg"
   /**
    * Removes secondary fill from two-tone icons
    */
   fill?: "transparent"
-  className?: string
   /**
    * Accessible label for screen readers.
    * When provided, removes `aria-hidden` and adds `role="img"`.
@@ -52,8 +50,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
     {
       name,
       fill,
-      className,
-      size = "base",
+      size = "md",
       "aria-label": ariaLabel,
       "aria-hidden": ariaHidden = true,
     },
@@ -69,7 +66,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
       aria-hidden={ariaLabel ? undefined : ariaHidden}
       aria-label={ariaLabel}
       role={ariaLabel ? "img" : undefined}
-      className={cn(iconVariants({ size, fill }), className)}
+      className={iconVariants({ size, fill })}
       data-icon=""
     >
       <use href={`#${getIconId(name, size)}`} />

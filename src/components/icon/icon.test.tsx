@@ -34,12 +34,12 @@ describe("Icon", () => {
   it("should reference the correct sprite symbol", () => {
     const { container } = render(
       <WithSprite>
-        <Icon name="info" size="base" />
+        <Icon name="info" size="md" />
       </WithSprite>
     )
     expect(container.querySelector("[data-icon] use")).toHaveAttribute(
       "href",
-      "#icon__info--base"
+      "#icon__info--md"
     )
   })
 
@@ -55,6 +55,18 @@ describe("Icon", () => {
     )
   })
 
+  it("should reference the lg symbol when size is lg", () => {
+    const { container } = render(
+      <WithSprite>
+        <Icon name="info" size="lg" />
+      </WithSprite>
+    )
+    expect(container.querySelector("[data-icon] use")).toHaveAttribute(
+      "href",
+      "#icon__info--lg"
+    )
+  })
+
   it("should apply size-4 for sm", () => {
     const { container } = render(
       <WithSprite>
@@ -64,13 +76,22 @@ describe("Icon", () => {
     expect(container.querySelector("[data-icon]")).toHaveClass("size-4")
   })
 
-  it("should apply size-5 for base", () => {
+  it("should apply size-5 for md", () => {
     const { container } = render(
       <WithSprite>
-        <Icon name="info" size="base" />
+        <Icon name="info" size="md" />
       </WithSprite>
     )
     expect(container.querySelector("[data-icon]")).toHaveClass("size-5")
+  })
+
+  it("should apply size-6 for lg", () => {
+    const { container } = render(
+      <WithSprite>
+        <Icon name="info" size="lg" />
+      </WithSprite>
+    )
+    expect(container.querySelector("[data-icon]")).toHaveClass("size-6")
   })
 
   it("should be aria-hidden by default", () => {
@@ -102,12 +123,14 @@ describe("Icon", () => {
     expect(screen.getByRole("img", { name: "Information" })).toBeInTheDocument()
   })
 
-  it("should merge custom className", () => {
+  it("should inherit color from parent", () => {
     const { container } = render(
       <WithSprite>
-        <Icon name="info" className="text-red-500" />
+        <span className="text-red-500">
+          <Icon name="info" />
+        </span>
       </WithSprite>
     )
-    expect(container.querySelector("[data-icon]")).toHaveClass("text-red-500")
+    expect(container.querySelector("span")).toHaveClass("text-red-500")
   })
 })
