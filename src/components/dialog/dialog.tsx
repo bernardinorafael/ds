@@ -23,7 +23,7 @@ const dialogPanelVariants = cva(
     "p-1",
     "shadow-lg",
     "ring-1",
-    "ring-black/[0.06]",
+    "ring-black/6",
 
     // focus
     "outline-none",
@@ -31,9 +31,9 @@ const dialogPanelVariants = cva(
   {
     variants: {
       size: {
-        sm: "max-w-[420px]",
-        base: "max-w-[490px]",
-        lg: "max-w-[610px]",
+        sm: "max-w-105",
+        base: "max-w-122.5",
+        lg: "max-w-152.5",
       },
     },
     defaultVariants: {
@@ -140,8 +140,8 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
       ref={forwardedRef}
       data-dialog-content=""
       className={cn(
-        "overflow-hidden rounded-lg bg-white shadow shadow-black/[.06]",
-        "ring-1 ring-black/[0.06]",
+        "overflow-hidden rounded-lg bg-white shadow shadow-black/6",
+        "ring-1 ring-black/6",
         className
       )}
       {...props}
@@ -211,7 +211,7 @@ const DialogSection = React.forwardRef<HTMLElement, DialogSectionProps>(
     <section
       ref={forwardedRef}
       data-dialog-section=""
-      className={cn("space-y-5 px-5 pt-4.5 pb-6", className)}
+      className={cn("pt-4-5 space-y-5 px-5 pb-6", className)}
       {...props}
     >
       {children}
@@ -300,11 +300,11 @@ const DialogNotice = React.forwardRef<HTMLElement, DialogNoticeProps>(
       ref={forwardedRef}
       data-dialog-notice=""
       className={cn(
-        "border-surface-100 relative mt-4.5 block border-t",
-        "only:-mt-4.5 only:border-t-0",
+        "border-surface-100 mt-4-5 relative block border-t",
+        "only:-mt-4-5 only:border-t-0",
         "-mx-5 -mb-6",
         "after:pointer-events-none after:absolute after:inset-0",
-        "after:bg-gradient-to-r after:from-white after:via-white/80 after:to-transparent",
+        "after:bg-linear-to-r after:from-white after:via-white/80 after:to-transparent",
         intent === "warning" && "bg-warning-stripes",
         intent === "danger" && "bg-danger-stripes",
         intent === "neutral" && "bg-neutral-stripes"
@@ -313,7 +313,7 @@ const DialogNotice = React.forwardRef<HTMLElement, DialogNoticeProps>(
     >
       <div
         className={cn(
-          "relative flex gap-1.5 px-4 py-3 text-[0.8125rem] leading-[1.125rem] font-medium",
+          "leading-4-5 relative flex gap-1.5 px-4 py-3 text-[0.8125rem] font-medium",
           intent === "warning" && "text-orange-900",
           intent === "danger" && "text-red-900",
           intent === "neutral" && "text-word-secondary"
