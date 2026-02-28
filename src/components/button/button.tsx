@@ -3,6 +3,7 @@ import React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { AnimatePresence, motion } from "motion/react"
 
+import { Icon, type IconName } from "@/components/icon"
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
 
@@ -17,7 +18,6 @@ export const buttonVariants = cva(
     "inline-flex",
     "items-center",
     "justify-center",
-    "gap-2",
 
     // visual
     "font-medium",
@@ -42,13 +42,12 @@ export const buttonVariants = cva(
     "disabled:opacity-50",
   ],
   {
-    // TODO: add ghost intent, then add close (X) button to Dialog.Header
     variants: {
       intent: {
         primary: [
           "bg-primary",
           "text-primary-foreground",
-          "hover:bg-primary/90",
+          "not-disabled:hover:bg-primary/90",
           "[--focus-ring-color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]",
           "[--focus-offset-color:var(--color-primary)]",
         ],
@@ -58,7 +57,8 @@ export const buttonVariants = cva(
           "shadow-black/0.8 shadow",
           "text-secondary-foreground",
           "border border-black/15",
-          "hover:border-black/25",
+          "not-disabled:hover:border-black/25",
+          "[--btn-icon-color:var(--color-word-secondary)]",
           [
             "before:absolute",
             "before:inset-0",
@@ -75,14 +75,22 @@ export const buttonVariants = cva(
         danger: [
           "bg-destructive",
           "text-destructive-foreground",
-          "hover:bg-destructive/90",
+          "not-disabled:hover:bg-destructive/90",
           "[--focus-ring-color:color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
           "[--focus-offset-color:var(--color-destructive)]",
         ],
+        ghost: [
+          "bg-transparent",
+          "text-foreground",
+          "not-disabled:hover:bg-black/6",
+          "[--btn-icon-color:var(--color-word-secondary)]",
+          "[--focus-ring-color:color-mix(in_srgb,black_13%,transparent)]",
+          "[--focus-offset-color:color-mix(in_srgb,black_15%,transparent)]",
+        ],
       },
       size: {
-        sm: "h-6 rounded-[0.3125rem] px-2 text-sm",
-        md: "h-8 rounded-sm px-2.5 text-base",
+        sm: "h-6 gap-1.5 rounded-[0.3125rem] px-2 text-sm",
+        md: "h-8 gap-2 rounded-sm px-2.5 text-base",
       },
     },
     defaultVariants: {
@@ -91,6 +99,14 @@ export const buttonVariants = cva(
     },
   }
 )
+
+const ICON_SIZE: Record<
+  NonNullable<VariantProps<typeof buttonVariants>["size"]>,
+  "sm" | "md" | "lg"
+> = {
+  sm: "sm",
+  md: "sm",
+}
 
 export type ButtonProps = Pick<
   React.ComponentProps<"button">,
@@ -115,11 +131,30 @@ export type ButtonProps = Pick<
      * Shows a spinner overlay and disables interaction
      */
     isLoading?: boolean
+    /**
+     * Icon rendered before the button text
+     */
+    leftIcon?: IconName
+    /**
+     * Icon rendered after the button text
+     */
+    rightIcon?: IconName
   }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, intent, size, type = "button", isLoading, disabled, children, ...props },
+    {
+      className,
+      intent,
+      size,
+      type = "button",
+      isLoading,
+      disabled,
+      leftIcon,
+      rightIcon,
+      children,
+      ...props
+    },
     forwardedRef
   ) => {
     return (
@@ -144,7 +179,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             </motion.span>
           )}
         </AnimatePresence>
+
+        {leftIcon && (
+          <span className="shrink-0 text-(--btn-icon-color)">
+            <Icon name={leftIcon} size={ICON_SIZE[size ?? "md"]} />
+          </span>
+        )}
+
         {children}
+
+        {rightIcon && (
+          <span className="shrink-0 text-(--btn-icon-color)">
+            <Icon name={rightIcon} size={ICON_SIZE[size ?? "md"]} />
+          </span>
+        )}
       </button>
     )
   }

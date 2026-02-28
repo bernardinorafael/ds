@@ -62,6 +62,35 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("bg-secondary")
   })
 
+  it("should apply ghost intent", () => {
+    render(<Button intent="ghost">Ghost</Button>)
+    expect(screen.getByRole("button")).toHaveClass("bg-transparent")
+  })
+
+  it("should render left icon", () => {
+    render(<Button leftIcon="arrow-right">Next</Button>)
+    expect(document.querySelector("[data-icon]")).toBeInTheDocument()
+  })
+
+  it("should render right icon", () => {
+    render(<Button rightIcon="arrow-right">Next</Button>)
+    expect(document.querySelector("[data-icon]")).toBeInTheDocument()
+  })
+
+  it("should render both icons", () => {
+    render(
+      <Button leftIcon="arrow-left" rightIcon="arrow-right">
+        Both
+      </Button>
+    )
+    expect(document.querySelectorAll("[data-icon]")).toHaveLength(2)
+  })
+
+  it("should not render icons when not provided", () => {
+    render(<Button>No icon</Button>)
+    expect(document.querySelector("[data-icon]")).not.toBeInTheDocument()
+  })
+
   it("should apply sm size", () => {
     render(<Button size="sm">Small</Button>)
     expect(screen.getByRole("button")).toHaveClass("h-6")
