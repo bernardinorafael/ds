@@ -38,9 +38,6 @@ const checkboxVariants = cva(
 
     // focus
     "outline-none",
-    "focus-visible:ring-2",
-    "focus-visible:ring-primary/50",
-    "focus-visible:ring-offset-2",
   ],
   {
     variants: {

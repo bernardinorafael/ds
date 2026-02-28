@@ -32,9 +32,6 @@ export const buttonVariants = cva(
 
     // focus states
     "outline-none",
-    "focus-visible:ring-2",
-    "focus-visible:ring-primary/50",
-    "focus-visible:ring-offset-2",
 
     // disabled states
     "disabled:cursor-not-allowed",
