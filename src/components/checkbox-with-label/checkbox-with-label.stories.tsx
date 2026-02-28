@@ -18,72 +18,59 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
+const SIZES = ["sm", "md", "lg"] as const
+
+const STATES = [
+  { label: "default", props: {} },
+  { label: "checked", props: { defaultChecked: true } },
+  { label: "disabled", props: { disabled: true } },
+  { label: "disabled + checked", props: { disabled: true, defaultChecked: true } },
+] as const
+
 export const States: Story = {
   render: () => (
-    <div className="flex flex-col gap-4 p-4">
-      <CheckboxWithLabel id="without-desc" defaultChecked>
-        Product updates
-      </CheckboxWithLabel>
-      <CheckboxWithLabel
-        id="with-desc"
-        description="Alerts about suspicious activity on your account"
-      >
-        Security alerts
-      </CheckboxWithLabel>
-      <CheckboxWithLabel id="disabled-without-desc" disabled>
-        Product updates
-      </CheckboxWithLabel>
-      <CheckboxWithLabel
-        id="disabled-with-desc"
-        disabled
-        defaultChecked
-        description="Alerts about suspicious activity on your account"
-      >
-        Security alerts
-      </CheckboxWithLabel>
+    <div className="flex flex-col gap-4">
+      {STATES.map(({ label, props }) => (
+        <div key={label} className="flex items-start gap-3">
+          <span className="text-word-secondary w-28 pt-0.5 text-sm">{label}</span>
+          <div className="flex items-start gap-6">
+            <CheckboxWithLabel id={`${label}-plain`} {...props}>
+              Receive updates
+            </CheckboxWithLabel>
+            <CheckboxWithLabel
+              id={`${label}-desc`}
+              description="Alerts about suspicious activity"
+              {...props}
+            >
+              Security alerts
+            </CheckboxWithLabel>
+          </div>
+        </div>
+      ))}
     </div>
   ),
 }
 
 export const Sizes: Story = {
   render: () => (
-    <div className="flex flex-col gap-6 p-4">
-      <div className="flex flex-col gap-3">
-        <CheckboxWithLabel id="sm-1" size="sm" defaultChecked>
-          Small checkbox
-        </CheckboxWithLabel>
-        <CheckboxWithLabel
-          id="sm-2"
-          size="sm"
-          description="Helper text aligned with the small checkbox"
-        >
-          Small with description
-        </CheckboxWithLabel>
-      </div>
-      <div className="flex flex-col gap-3">
-        <CheckboxWithLabel id="md-1" size="md" defaultChecked>
-          Medium checkbox
-        </CheckboxWithLabel>
-        <CheckboxWithLabel
-          id="md-2"
-          size="md"
-          description="Helper text aligned with the medium checkbox"
-        >
-          Medium with description
-        </CheckboxWithLabel>
-      </div>
-      <div className="flex flex-col gap-3">
-        <CheckboxWithLabel id="lg-1" size="lg" defaultChecked>
-          Large checkbox
-        </CheckboxWithLabel>
-        <CheckboxWithLabel
-          id="lg-2"
-          size="lg"
-          description="Helper text aligned with the large checkbox"
-        >
-          Large with description
-        </CheckboxWithLabel>
-      </div>
+    <div className="flex flex-col gap-4">
+      {SIZES.map((size) => (
+        <div key={size} className="flex items-start gap-3">
+          <span className="text-word-secondary w-28 pt-0.5 text-sm">{size}</span>
+          <div className="flex items-start gap-6">
+            <CheckboxWithLabel id={`${size}-plain`} size={size} defaultChecked>
+              Receive updates
+            </CheckboxWithLabel>
+            <CheckboxWithLabel
+              id={`${size}-desc`}
+              size={size}
+              description="Alerts about suspicious activity"
+            >
+              Security alerts
+            </CheckboxWithLabel>
+          </div>
+        </div>
+      ))}
     </div>
   ),
 }

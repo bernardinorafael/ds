@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react"
 
 import { Icon, type IconName } from "@/components/icon"
 import { Spinner } from "@/components/spinner"
+import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 export const buttonVariants = cva(
@@ -139,6 +140,14 @@ export type ButtonProps = Pick<
      * Icon rendered after the button text
      */
     rightIcon?: IconName
+    /**
+     * Tooltip label shown on hover. When provided, wraps the button in a Tooltip.
+     */
+    tooltip?: React.ReactNode
+    /**
+     * Tooltip placement relative to the button @default "top"
+     */
+    tooltipSide?: "top" | "right" | "bottom" | "left"
   }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -152,12 +161,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       leftIcon,
       rightIcon,
+      tooltip,
+      tooltipSide,
       children,
       ...props
     },
     forwardedRef
   ) => {
-    return (
+    const button = (
       <button
         ref={forwardedRef}
         type={type}
@@ -194,6 +205,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           </span>
         )}
       </button>
+    )
+
+    if (!tooltip) return button
+
+    return (
+      <Tooltip label={tooltip} side={tooltipSide}>
+        {button}
+      </Tooltip>
     )
   }
 )

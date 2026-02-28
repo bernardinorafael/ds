@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Checkbox } from "@/components/checkbox"
@@ -17,79 +15,43 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const States: Story = {
-  render: () => {
-    const [indeterminate, setIndeterminate] = useState<boolean | "indeterminate">(
-      "indeterminate"
-    )
-    return (
-      <div className="flex items-center gap-6 p-4">
-        <Checkbox aria-label="Unchecked" />
-        <Checkbox aria-label="Checked" defaultChecked />
-        <Checkbox
-          aria-label="Indeterminate"
-          checked={indeterminate}
-          onCheckedChange={setIndeterminate}
-        />
-      </div>
-    )
-  },
-}
+const SIZES = ["sm", "md", "lg"] as const
 
-export const Sizes: Story = {
-  render: () => {
-    const [indeterminateSm, setIndeterminateSm] = useState<boolean | "indeterminate">(
-      "indeterminate"
-    )
-    const [indeterminateMd, setIndeterminateMd] = useState<boolean | "indeterminate">(
-      "indeterminate"
-    )
-    const [indeterminateLg, setIndeterminateLg] = useState<boolean | "indeterminate">(
-      "indeterminate"
-    )
-    return (
-      <div className="flex flex-col gap-6 p-4">
-        <div className="flex items-center gap-6">
-          <Checkbox aria-label="Small unchecked" size="sm" />
-          <Checkbox aria-label="Small checked" size="sm" defaultChecked />
-          <Checkbox
-            aria-label="Small indeterminate"
-            size="sm"
-            checked={indeterminateSm}
-            onCheckedChange={setIndeterminateSm}
-          />
+export const States: Story = {
+  render: () => (
+    <div className="flex flex-col gap-4">
+      {SIZES.map((size) => (
+        <div key={size} className="flex items-center gap-3">
+          <span className="text-word-secondary w-8 text-sm">{size}</span>
+          <div className="flex items-center gap-4">
+            <Checkbox aria-label="Unchecked" size={size} />
+            <Checkbox aria-label="Checked" size={size} defaultChecked />
+            <Checkbox aria-label="Indeterminate" size={size} checked="indeterminate" />
+          </div>
         </div>
-        <div className="flex items-center gap-6">
-          <Checkbox aria-label="Medium unchecked" size="md" />
-          <Checkbox aria-label="Medium checked" size="md" defaultChecked />
-          <Checkbox
-            aria-label="Medium indeterminate"
-            size="md"
-            checked={indeterminateMd}
-            onCheckedChange={setIndeterminateMd}
-          />
-        </div>
-        <div className="flex items-center gap-6">
-          <Checkbox aria-label="Large unchecked" size="lg" />
-          <Checkbox aria-label="Large checked" size="lg" defaultChecked />
-          <Checkbox
-            aria-label="Large indeterminate"
-            size="lg"
-            checked={indeterminateLg}
-            onCheckedChange={setIndeterminateLg}
-          />
-        </div>
-      </div>
-    )
-  },
+      ))}
+    </div>
+  ),
 }
 
 export const Disabled: Story = {
   render: () => (
-    <div className="flex items-center gap-6 p-4">
-      <Checkbox aria-label="Disabled unchecked" disabled />
-      <Checkbox aria-label="Disabled checked" disabled defaultChecked />
-      <Checkbox aria-label="Disabled indeterminate" disabled checked="indeterminate" />
+    <div className="flex flex-col gap-4">
+      {SIZES.map((size) => (
+        <div key={size} className="flex items-center gap-3">
+          <span className="text-word-secondary w-8 text-sm">{size}</span>
+          <div className="flex items-center gap-4">
+            <Checkbox aria-label="Unchecked" size={size} disabled />
+            <Checkbox aria-label="Checked" size={size} disabled defaultChecked />
+            <Checkbox
+              aria-label="Indeterminate"
+              size={size}
+              disabled
+              checked="indeterminate"
+            />
+          </div>
+        </div>
+      ))}
     </div>
   ),
 }
