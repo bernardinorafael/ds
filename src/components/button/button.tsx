@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   [
     // positioning
     "group",
@@ -37,7 +37,7 @@ const buttonVariants = cva(
     "focus-visible:ring-offset-2",
 
     // disabled states
-    "disabled:pointer-events-none",
+    "disabled:cursor-not-allowed",
     "disabled:opacity-50",
   ],
   {

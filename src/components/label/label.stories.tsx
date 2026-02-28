@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>
 
 // TODO: when Input component is created, pair each Label with an <Input> so
 // stories show labels associated with real controls instead of floating alone.
-export const Default: Story = {
+export const States: Story = {
   render: () => (
     <div className="flex w-64 flex-col gap-4">
       <Label htmlFor="a">Default</Label>
