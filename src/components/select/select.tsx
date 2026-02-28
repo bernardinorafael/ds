@@ -4,6 +4,7 @@ import * as RadixSelect from "@radix-ui/react-select"
 import { Check, ChevronsUpDown } from "lucide-react"
 
 import { buttonVariants } from "@/components/button"
+import { useFieldControl } from "@/components/field"
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
 
@@ -39,6 +40,10 @@ export type SelectProps = Pick<
      * Available options
      */
     items: SelectItem[]
+    /**
+     * Visual validity state. Overrides Field context detection.
+     */
+    validity?: "initial" | "error" | "warning" | "success"
   }
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
@@ -52,10 +57,19 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       loading = false,
       position = "popper",
       disabled,
+      validity: validityProp,
+      "aria-invalid": ariaInvalidProp,
+      "aria-describedby": ariaDescribedByProp,
+      "aria-label": ariaLabel,
       ...props
     },
     forwardedRef
   ) => {
+    const field = useFieldControl({ props: { id } })
+    const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
+    const validity =
+      validityProp ?? field.messageIntent ?? (ariaInvalid === true ? "error" : "initial")
+
     return (
       <RadixSelect.Root
         disabled={disabled || loading}
@@ -66,14 +80,40 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       >
         <RadixSelect.Trigger
           ref={forwardedRef}
-          id={id}
-          aria-describedby={props["aria-describedby"]}
-          aria-invalid={props["aria-invalid"]}
-          aria-label={props["aria-label"]}
+          id={field.id}
+          aria-describedby={ariaDescribedByProp ?? field["aria-describedby"]}
+          aria-invalid={ariaInvalid}
+          aria-label={ariaLabel}
           aria-busy={loading || undefined}
           className={cn(
             buttonVariants({ intent: "secondary", size: "md" }),
             "w-full justify-start",
+            // replace border with ring approach
+            "border-0",
+            "ring-1",
+            "ring-(--select-border-color)",
+            // focus ring
+            "focus-visible:ring-[3px]",
+            "focus-visible:ring-(--select-ring-color)",
+            "focus-visible:ring-offset-1",
+            "focus-visible:ring-offset-(--select-border-color)",
+            // validity CSS vars
+            validity === "initial" && [
+              "[--select-border-color:color-mix(in_srgb,black_10%,transparent)]",
+              "[--select-ring-color:color-mix(in_srgb,black_13%,transparent)]",
+            ],
+            validity === "error" && [
+              "[--select-border-color:var(--color-destructive)]",
+              "[--select-ring-color:color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
+            ],
+            validity === "warning" && [
+              "[--select-border-color:var(--color-orange-900)]",
+              "[--select-ring-color:color-mix(in_srgb,var(--color-orange-900)_20%,transparent)]",
+            ],
+            validity === "success" && [
+              "[--select-border-color:var(--color-green-900)]",
+              "[--select-ring-color:color-mix(in_srgb,var(--color-green-900)_20%,transparent)]",
+            ],
             className
           )}
         >

@@ -32,6 +32,10 @@ export const buttonVariants = cva(
 
     // focus states
     "outline-none",
+    "focus-visible:ring-[3px]",
+    "focus-visible:ring-(--focus-ring-color)",
+    "focus-visible:ring-offset-1",
+    "focus-visible:ring-offset-(--focus-offset-color)",
 
     // disabled states
     "disabled:cursor-not-allowed",
@@ -41,7 +45,13 @@ export const buttonVariants = cva(
     // TODO: add ghost intent, then add close (X) button to Dialog.Header
     variants: {
       intent: {
-        primary: ["bg-primary", "text-primary-foreground", "hover:bg-primary/90"],
+        primary: [
+          "bg-primary",
+          "text-primary-foreground",
+          "hover:bg-primary/90",
+          "[--focus-ring-color:color-mix(in_srgb,var(--color-primary)_20%,transparent)]",
+          "[--focus-offset-color:var(--color-primary)]",
+        ],
         secondary: [
           "transition",
           "bg-secondary",
@@ -59,11 +69,15 @@ export const buttonVariants = cva(
             "before:bg-linear-to-b",
             "before:from-black/0",
           ],
+          "[--focus-ring-color:color-mix(in_srgb,black_13%,transparent)]",
+          "[--focus-offset-color:color-mix(in_srgb,black_15%,transparent)]",
         ],
         danger: [
           "bg-destructive",
           "text-destructive-foreground",
           "hover:bg-destructive/90",
+          "[--focus-ring-color:color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
+          "[--focus-offset-color:var(--color-destructive)]",
         ],
       },
       size: {
