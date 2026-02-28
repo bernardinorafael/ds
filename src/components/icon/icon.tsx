@@ -7,9 +7,9 @@ import { getIconId, VIEWBOX, type IconName } from "./icons"
 const iconVariants = cva("shrink-0 overflow-visible stroke-[1.25]", {
   variants: {
     size: {
-      sm: "size-4",
-      md: "size-5",
-      lg: "size-6",
+      sm: "size-3.5",
+      md: "size-4.5",
+      lg: "size-5.5",
     },
     fill: {
       /**

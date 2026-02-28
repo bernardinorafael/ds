@@ -67,31 +67,31 @@ describe("Icon", () => {
     )
   })
 
-  it("should apply size-4 for sm", () => {
+  it("should apply size-3.5 for sm", () => {
     const { container } = render(
       <WithSprite>
         <Icon name="info" size="sm" />
       </WithSprite>
     )
-    expect(container.querySelector("[data-icon]")).toHaveClass("size-4")
+    expect(container.querySelector("[data-icon]")).toHaveClass("size-3.5")
   })
 
-  it("should apply size-5 for md", () => {
+  it("should apply size-4.5 for md", () => {
     const { container } = render(
       <WithSprite>
         <Icon name="info" size="md" />
       </WithSprite>
     )
-    expect(container.querySelector("[data-icon]")).toHaveClass("size-5")
+    expect(container.querySelector("[data-icon]")).toHaveClass("size-4.5")
   })
 
-  it("should apply size-6 for lg", () => {
+  it("should apply size-5.5 for lg", () => {
     const { container } = render(
       <WithSprite>
         <Icon name="info" size="lg" />
       </WithSprite>
     )
-    expect(container.querySelector("[data-icon]")).toHaveClass("size-6")
+    expect(container.querySelector("[data-icon]")).toHaveClass("size-5.5")
   })
 
   it("should be aria-hidden by default", () => {
