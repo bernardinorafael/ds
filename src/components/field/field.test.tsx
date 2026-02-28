@@ -7,11 +7,12 @@ import { Field, useFieldControl } from "@/components/field"
 
 // Helper component that exposes useFieldControl results via data attributes
 const ControlProbe = () => {
-  const fieldProps = useFieldControl()
+  const { messageIntent, ...fieldProps } = useFieldControl()
   return (
     <input
       {...fieldProps}
       aria-invalid={fieldProps["aria-invalid"] ? "true" : undefined}
+      data-messageintent={messageIntent ?? "none"}
       data-testid="control"
     />
   )
@@ -107,6 +108,15 @@ describe("Field", () => {
 })
 
 describe("useFieldControl", () => {
+  it("should return safe defaults when used outside a Field", () => {
+    render(<ControlProbe />)
+    const control = screen.getByTestId("control")
+    expect(control).not.toHaveAttribute("id")
+    expect(control).not.toHaveAttribute("aria-describedby")
+    expect(control).not.toHaveAttribute("aria-invalid")
+    expect(control).toHaveAttribute("data-messageintent", "none")
+  })
+
   it("should return control id wired to the label htmlFor", () => {
     render(
       <Field id="email-field" label="Email">
@@ -118,7 +128,7 @@ describe("useFieldControl", () => {
     expect(screen.getByText("Email")).toHaveAttribute("for", "email-field-control")
   })
 
-  it("should include description id in aria-describedby when description is present", () => {
+  it("should include description id in aria-describedby when only description is present", () => {
     render(
       <Field id="email-field" label="Email" description="Your email address">
         <ControlProbe />
@@ -128,6 +138,34 @@ describe("useFieldControl", () => {
       "aria-describedby",
       "email-field-description"
     )
+  })
+
+  it("should include message id in aria-describedby when only message is present", async () => {
+    render(
+      <Field id="email-field" label="Email" message="Required">
+        <ControlProbe />
+      </Field>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("control")).toHaveAttribute(
+        "aria-describedby",
+        "email-field-message"
+      )
+    })
+  })
+
+  it("should include both ids in aria-describedby when description and message are present", async () => {
+    render(
+      <Field id="email-field" label="Email" description="Your email" message="Required">
+        <ControlProbe />
+      </Field>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("control")).toHaveAttribute(
+        "aria-describedby",
+        "email-field-description email-field-message"
+      )
+    })
   })
 
   it("should not set aria-describedby when no description and no message", () => {
@@ -158,6 +196,54 @@ describe("useFieldControl", () => {
     )
     await waitFor(() => {
       expect(screen.getByTestId("control")).not.toHaveAttribute("aria-invalid")
+    })
+  })
+
+  it("should return messageIntent as null when no message", () => {
+    render(
+      <Field id="email-field" label="Email">
+        <ControlProbe />
+      </Field>
+    )
+    expect(screen.getByTestId("control")).toHaveAttribute("data-messageintent", "none")
+  })
+
+  it("should return messageIntent as error for error message", async () => {
+    render(
+      <Field id="email-field" label="Email" message="Required" messageIntent="error">
+        <ControlProbe />
+      </Field>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("control")).toHaveAttribute("data-messageintent", "error")
+    })
+  })
+
+  it("should return messageIntent as warning for warning message", async () => {
+    render(
+      <Field id="email-field" label="Email" message="Check this" messageIntent="warning">
+        <ControlProbe />
+      </Field>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("control")).toHaveAttribute(
+        "data-messageintent",
+        "warning"
+      )
+    })
+  })
+
+  it("should return messageIntent as success for success message", async () => {
+    render(
+      <Field id="email-field" label="Email" message="All good" messageIntent="success">
+        <ControlProbe />
+      </Field>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId("control")).toHaveAttribute(
+        "data-messageintent",
+        "success"
+      )
     })
   })
 })
