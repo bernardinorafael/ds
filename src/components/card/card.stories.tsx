@@ -137,7 +137,7 @@ export const Collapsible: Story = {
 
 export const Complete: Story = {
   render: () => (
-    <Card className="w-[28rem]">
+    <Card className="w-md">
       <Card.Header>
         <Card.Title>Project overview</Card.Title>
         <Card.Description>Summary of your project status and metrics</Card.Description>

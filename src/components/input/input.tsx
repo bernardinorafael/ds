@@ -110,8 +110,7 @@ const inputVariants = cva(
     "pr-(--input-px)",
     "pl-(--input-pl,var(--input-px))",
 
-    // placeholder
-    "placeholder:text-sm",
+    // placeholder color — size set per variant
     "placeholder:text-word-placeholder",
 
     // disabled
@@ -130,9 +129,9 @@ const inputVariants = cva(
   {
     variants: {
       size: {
-        sm: "text-sm",
-        md: "text-base",
-        lg: "text-base",
+        sm: ["text-sm", "placeholder:text-sm"],
+        md: ["text-base", "placeholder:text-sm"],
+        lg: ["text-base", "placeholder:text-base"],
       },
     },
     defaultVariants: {
