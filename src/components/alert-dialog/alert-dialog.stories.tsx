@@ -9,6 +9,9 @@ const meta = {
   title: "AlertDialog",
   component: AlertDialog,
   tags: ["autodocs"],
+  args: {
+    children: null,
+  },
 } satisfies Meta<typeof AlertDialog>
 
 export default meta

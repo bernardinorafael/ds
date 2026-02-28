@@ -38,6 +38,9 @@ const checkboxVariants = cva(
 
     // focus
     "outline-none",
+    "focus-visible:ring-2",
+    "focus-visible:ring-primary/50",
+    "focus-visible:ring-offset-2",
   ],
   {
     variants: {
@@ -48,14 +51,7 @@ const checkboxVariants = cva(
       },
       disabled: {
         true: "cursor-not-allowed opacity-60",
-        false: [
-          "cursor-pointer",
-
-          // focus
-          "focus-visible:border-primary/20",
-          "focus-visible:ring-1",
-          "focus-visible:ring-primary",
-        ],
+        false: "cursor-pointer",
       },
     },
     defaultVariants: {
