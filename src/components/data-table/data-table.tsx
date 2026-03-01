@@ -195,7 +195,7 @@ const cellVariants = cva(
 
     // background
     "bg-(--data-table-cell-bg)",
-    "group-data-[selected]/table-row:bg-(--data-table-selected-bg)",
+    "group-data-selected/table-row:bg-(--data-table-selected-bg)",
 
     // border color for row separators (border-width is controlled by Row's sibling selector)
     "border-border",
