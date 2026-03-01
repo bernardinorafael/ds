@@ -1,22 +1,32 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { Button } from "@/components/button"
-import { IconSprite } from "@/components/icon"
 import { toast, Toaster } from "@/components/toast"
+
+function ToastStoryWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Toaster />
+      <div className="flex flex-wrap gap-3">{children}</div>
+    </>
+  )
+}
+
+function TriggerButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="bg-gray-1200 rounded-md px-3 py-1.5 text-sm font-medium text-white"
+    >
+      {label}
+    </button>
+  )
+}
 
 const meta = {
   title: "Toast",
   component: Toaster,
   tags: ["autodocs"],
-  decorators: [
-    (Story) => (
-      <>
-        <IconSprite />
-        <Story />
-        <Toaster />
-      </>
-    ),
-  ],
 } satisfies Meta<typeof Toaster>
 
 export default meta
@@ -25,195 +35,159 @@ type Story = StoryObj<typeof meta>
 
 export const Intents: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button intent="secondary" onClick={() => toast.info("Info message")}>
-        Info
-      </Button>
-      <Button intent="secondary" onClick={() => toast.success("Changes saved")}>
-        Success
-      </Button>
-      <Button
-        intent="secondary"
-        onClick={() => toast.warning("This action is irreversible")}
-      >
-        Warning
-      </Button>
-      <Button intent="secondary" onClick={() => toast.error("Something went wrong")}>
-        Error
-      </Button>
-    </div>
+    <ToastStoryWrapper>
+      <TriggerButton label="Info" onClick={() => toast("This is an info message")} />
+      <TriggerButton
+        label="Success"
+        onClick={() => toast.success("Operation completed")}
+      />
+      <TriggerButton
+        label="Warning"
+        onClick={() => toast.warning("Approaching rate limit")}
+      />
+      <TriggerButton label="Error" onClick={() => toast.error("Something went wrong")} />
+    </ToastStoryWrapper>
   ),
 }
 
 export const WithAction: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show toast with action"
         onClick={() =>
-          toast.success("Amet mollit nostrud minim", {
-            action: {
-              label: "Action",
-              onClick: () => toast.info("Ipsum consectetur et exercitation exercitation"),
-            },
+          toast.success("Item created", {
+            action: { label: "Undo", onClick: () => toast("Undone!") },
           })
         }
-      >
-        With action
-      </Button>
-    </div>
+      />
+    </ToastStoryWrapper>
   ),
 }
 
-export const WithCancel: Story = {
+export const WithConfirmDeny: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show confirm/deny toast"
         onClick={() =>
-          toast.warning("Delete this item?", {
+          toast("Unsaved changes", {
             duration: Infinity,
-            action: {
+            confirm: { label: "Save", onClick: () => toast.success("Saved!") },
+            deny: { label: "Discard", onClick: () => toast("Discarded") },
+            disableCloseAction: true,
+          })
+        }
+      />
+    </ToastStoryWrapper>
+  ),
+}
+
+export const WithIconButtons: Story = {
+  render: () => (
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show icon button toast"
+        onClick={() =>
+          toast("Delete this item?", {
+            duration: Infinity,
+            confirmIcon: {
               label: "Confirm",
               onClick: () => toast.success("Deleted"),
             },
-            cancel: { label: "Cancel" },
+            denyIcon: { label: "Cancel" },
           })
         }
-      >
-        With cancel
-      </Button>
-    </div>
+      />
+    </ToastStoryWrapper>
   ),
 }
 
-export const Singleton: Story = {
+export const WithMutedAction: Story = {
   render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show muted action toast"
         onClick={() =>
-          toast.warning("You have unsaved changes", {
-            id: "unsaved",
-            duration: Infinity,
-            cancel: { label: "Dismiss" },
+          toast.success("File exported", {
+            action: { label: "Open", onClick: () => toast("Opening...") },
+            mutedAction: {
+              label: "Copy link",
+              onClick: () => toast("Link copied!"),
+            },
           })
         }
-      >
-        Show singleton
-      </Button>
-      <p className="text-word-secondary w-full text-sm">
-        Click multiple times — only one toast appears. Duplicates trigger a jingle instead
-        of stacking.
-      </p>
-    </div>
+      />
+    </ToastStoryWrapper>
   ),
 }
 
-export const Jingle: Story = {
+export const AutoDismiss: Story = {
+  render: () => (
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show toast (3s auto-dismiss)"
+        onClick={() => toast("This will disappear in 3 seconds")}
+      />
+      <TriggerButton
+        label="Show toast (1s auto-dismiss)"
+        onClick={() => toast("Quick flash", { duration: 1000 })}
+      />
+    </ToastStoryWrapper>
+  ),
+}
+
+export const Persistent: Story = {
+  render: () => (
+    <ToastStoryWrapper>
+      <TriggerButton
+        label="Show persistent toast"
+        onClick={() =>
+          toast("This toast stays until dismissed", {
+            duration: Infinity,
+            action: { label: "Dismiss" },
+          })
+        }
+      />
+    </ToastStoryWrapper>
+  ),
+}
+
+export const Jiggle: Story = {
   render: () => {
-    let toastId = ""
+    let toastId: string
     return (
-      <div className="flex flex-wrap gap-3">
-        <Button
-          intent="secondary"
+      <ToastStoryWrapper>
+        <TriggerButton
+          label="Create toast"
           onClick={() => {
-            if (!toastId || !toast.get(toastId)) {
-              toastId = toast.warning("Unsaved changes", {
-                duration: Infinity,
-                cancel: { label: "Dismiss" },
-              })
-            } else {
-              toast.jingle(toastId)
-            }
+            toastId = toast("Watch me jiggle", { duration: Infinity })
           }}
-        >
-          Show or jingle
-        </Button>
-      </div>
+        />
+        <TriggerButton
+          label="Trigger jiggle"
+          onClick={() => {
+            if (toastId) toast.update(toastId, { jiggle: true })
+          }}
+        />
+      </ToastStoryWrapper>
     )
   },
-}
-
-export const HoverPause: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
-        onClick={() => toast.info("Hover me to pause the timer", { duration: 3000 })}
-      >
-        3s with hover pause
-      </Button>
-      <p className="text-word-secondary w-full text-sm">
-        Hover the toast to pause auto-dismiss. The remaining time resumes when you move
-        away.
-      </p>
-    </div>
-  ),
 }
 
 export const ToastLimit: Story = {
   render: () => {
     let count = 0
     return (
-      <div className="flex flex-wrap gap-3">
-        <Button
-          intent="secondary"
+      <ToastStoryWrapper>
+        <TriggerButton
+          label="Add toast (max 3)"
           onClick={() => {
             count++
-            toast.info(`Toast #${count}`, { duration: 8000 })
+            toast(`Toast #${count}`, { duration: Infinity })
           }}
-        >
-          Spam toasts
-        </Button>
-        <p className="text-word-secondary w-full text-sm">
-          Maximum 3 toasts visible at once. Oldest gets evicted when a 4th arrives.
-        </p>
-      </div>
+        />
+      </ToastStoryWrapper>
     )
   },
-}
-
-export const CustomDuration: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
-        onClick={() => toast.info("Disappears in 5s", { duration: 5000 })}
-      >
-        5 seconds
-      </Button>
-      <Button
-        intent="secondary"
-        onClick={() =>
-          toast.info("Stays until dismissed", {
-            duration: Infinity,
-            cancel: { label: "Dismiss" },
-          })
-        }
-      >
-        Persistent
-      </Button>
-    </div>
-  ),
-}
-
-export const DismissAll: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <Button
-        intent="secondary"
-        onClick={() => {
-          toast.info("First toast", { duration: Infinity })
-          toast.success("Second toast", { duration: Infinity })
-          toast.warning("Third toast", { duration: Infinity })
-        }}
-      >
-        Show 3 toasts
-      </Button>
-      <Button intent="secondary" onClick={() => toast.dismissAll()}>
-        Dismiss all
-      </Button>
-    </div>
-  ),
 }
