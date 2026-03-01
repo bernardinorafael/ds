@@ -124,6 +124,47 @@ export const Async: Story = {
   render: () => <AsyncDialogExample />,
 }
 
+export const Nested: Story = {
+  render: () => (
+    <Dialog trigger={<Button intent="secondary">Open dialog</Button>}>
+      <Dialog.Content>
+        <Dialog.Header title="Level 1" description="First dialog." />
+        <Dialog.Section>
+          <Dialog trigger={<Button intent="secondary">Open nested dialog</Button>}>
+            <Dialog.Content>
+              <Dialog.Header title="Level 2" description="Second dialog." />
+              <Dialog.Section>
+                <Dialog trigger={<Button intent="secondary">Open nested dialog</Button>}>
+                  <Dialog.Content>
+                    <Dialog.Header
+                      title="Level 3"
+                      description="Third dialog — maximum depth."
+                    />
+                    <Dialog.Section>
+                      <p className="text-word-secondary text-base">
+                        Maximum depth reached. A 4th dialog cannot be opened.
+                      </p>
+                    </Dialog.Section>
+                  </Dialog.Content>
+                  <Dialog.Footer>
+                    <Dialog.Close>Close</Dialog.Close>
+                  </Dialog.Footer>
+                </Dialog>
+              </Dialog.Section>
+            </Dialog.Content>
+            <Dialog.Footer>
+              <Dialog.Close>Close</Dialog.Close>
+            </Dialog.Footer>
+          </Dialog>
+        </Dialog.Section>
+      </Dialog.Content>
+      <Dialog.Footer>
+        <Dialog.Close>Close</Dialog.Close>
+      </Dialog.Footer>
+    </Dialog>
+  ),
+}
+
 export const WithNotice: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">

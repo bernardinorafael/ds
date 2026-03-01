@@ -10,6 +10,21 @@ import { useControllableState } from "@/hooks/use-controllable-state"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
+// Nesting context
+// ---------------------------------------------------------------------------
+
+const MAX_DIALOG_DEPTH = 3
+
+const DialogDepthContext = React.createContext(0)
+
+type DialogCallbacks = {
+  onNestedOpen: () => void
+  onNestedClose: () => void
+}
+
+const DialogCallbacksContext = React.createContext<DialogCallbacks | null>(null)
+
+// ---------------------------------------------------------------------------
 // DialogRoot
 // ---------------------------------------------------------------------------
 
@@ -83,11 +98,39 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
     },
     forwardedRef
   ) => {
+    const depth = React.useContext(DialogDepthContext)
+    const parentCallbacks = React.useContext(DialogCallbacksContext)
+    const [hasNestedOpen, setHasNestedOpen] = React.useState(false)
+
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
     })
+
+    const myCallbacks = React.useMemo<DialogCallbacks>(
+      () => ({
+        onNestedOpen: () => setHasNestedOpen(true),
+        onNestedClose: () => setHasNestedOpen(false),
+      }),
+      []
+    )
+
+    React.useEffect(() => {
+      if (!parentCallbacks || !open) return
+      parentCallbacks.onNestedOpen()
+      return () => parentCallbacks.onNestedClose()
+    }, [open, parentCallbacks])
+
+    if (depth >= MAX_DIALOG_DEPTH) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`Dialog: maximum nesting depth of ${MAX_DIALOG_DEPTH} reached.`)
+      }
+      return null
+    }
+
+    const isNested = depth > 0
+    const isPushedBack = open && hasNestedOpen
 
     return (
       <RadixDialog.Root defaultOpen={defaultOpen} open={open} onOpenChange={setOpen}>
@@ -101,7 +144,8 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.25 } }}
                   className={cn(
-                    "fixed inset-0 z-50 grid justify-center bg-white/60 py-40 backdrop-blur-sm",
+                    "fixed inset-0 z-50 grid justify-center py-40",
+                    !isNested && "bg-white/60 backdrop-blur-sm",
                     centeredLayout ? "items-center" : "items-start"
                   )}
                 >
@@ -109,12 +153,24 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
                     <motion.div
                       ref={forwardedRef}
                       initial={{ opacity: 0, scale: 0.95, y: 40 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      animate={
+                        isPushedBack
+                          ? { opacity: 0.85, filter: "blur(2px)", scale: 0.96, y: -20 }
+                          : { opacity: 1, filter: "blur(0px)", scale: 1, y: 0 }
+                      }
                       exit={{ opacity: 0, scale: 0.95, y: 40 }}
-                      transition={{ type: "spring", bounce: 0, duration: 0.25 }}
+                      transition={
+                        isPushedBack
+                          ? { type: "spring", bounce: 0, duration: 0.4 }
+                          : { type: "spring", bounce: 0, duration: 0.25 }
+                      }
                       className={dialogPanelVariants({ size })}
                     >
-                      {children}
+                      <DialogDepthContext.Provider value={depth + 1}>
+                        <DialogCallbacksContext.Provider value={myCallbacks}>
+                          {children}
+                        </DialogCallbacksContext.Provider>
+                      </DialogDepthContext.Provider>
                     </motion.div>
                   </RadixDialog.Content>
                 </motion.div>
