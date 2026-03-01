@@ -180,7 +180,7 @@ const SheetRoot = React.forwardRef<HTMLDivElement, SheetRootProps>(
                               opacity: 0.85,
                               filter: "blur(2px)",
                               scale: 0.96,
-                              x: 0,
+                              x: -24,
                               rotateY: 0,
                             }
                           : {
