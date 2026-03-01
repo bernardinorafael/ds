@@ -122,6 +122,35 @@ export const Basic: Story = {
   ),
 }
 
+export const Compact: Story = {
+  render: () => (
+    <DataTable spacing="compact">
+      <DataTable.Head>
+        <DataTable.Header>Name</DataTable.Header>
+        <DataTable.Header>Email</DataTable.Header>
+        <DataTable.Header width="6rem">Role</DataTable.Header>
+        <DataTable.Header width="6rem">Status</DataTable.Header>
+      </DataTable.Head>
+      <DataTable.Body>
+        {USERS.map((user) => (
+          <DataTable.Row key={user.id}>
+            <DataTable.Cell className="text-word-primary font-medium">
+              {user.name}
+            </DataTable.Cell>
+            <DataTable.Cell className="text-word-secondary">{user.email}</DataTable.Cell>
+            <DataTable.Cell>{user.role}</DataTable.Cell>
+            <DataTable.Cell>
+              <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+                {user.status}
+              </Badge>
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable.Body>
+    </DataTable>
+  ),
+}
+
 export const WithPagination: Story = {
   render: () => {
     const Demo = () => {
@@ -189,35 +218,6 @@ export const WithPagination: Story = {
 
     return <Demo />
   },
-}
-
-export const Compact: Story = {
-  render: () => (
-    <DataTable spacing="compact">
-      <DataTable.Head>
-        <DataTable.Header>Name</DataTable.Header>
-        <DataTable.Header>Email</DataTable.Header>
-        <DataTable.Header width="6rem">Role</DataTable.Header>
-        <DataTable.Header width="6rem">Status</DataTable.Header>
-      </DataTable.Head>
-      <DataTable.Body>
-        {USERS.map((user) => (
-          <DataTable.Row key={user.id}>
-            <DataTable.Cell className="text-word-primary font-medium">
-              {user.name}
-            </DataTable.Cell>
-            <DataTable.Cell className="text-word-secondary">{user.email}</DataTable.Cell>
-            <DataTable.Cell>{user.role}</DataTable.Cell>
-            <DataTable.Cell>
-              <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
-                {user.status}
-              </Badge>
-            </DataTable.Cell>
-          </DataTable.Row>
-        ))}
-      </DataTable.Body>
-    </DataTable>
-  ),
 }
 
 export const WithSorting: Story = {
