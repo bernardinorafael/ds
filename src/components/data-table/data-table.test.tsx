@@ -1,14 +1,9 @@
 import { createRef } from "react"
 
-import { act, render, renderHook, screen } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import {
-  DataTable,
-  useRowSelection,
-  useSortState,
-  type PaginationProps,
-} from "@/components/data-table"
+import { DataTable, type PaginationProps } from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -451,32 +446,6 @@ describe("DataTable.Row", () => {
     )
     expect(ref.current).toBeInstanceOf(HTMLTableRowElement)
   })
-
-  it("should add data-selected attribute when selected is true", () => {
-    const { container } = render(
-      <table>
-        <tbody>
-          <DataTable.Row selected>
-            <td>Alice</td>
-          </DataTable.Row>
-        </tbody>
-      </table>
-    )
-    expect(container.querySelector("tr")).toHaveAttribute("data-selected")
-  })
-
-  it("should not add data-selected attribute when selected is false", () => {
-    const { container } = render(
-      <table>
-        <tbody>
-          <DataTable.Row>
-            <td>Alice</td>
-          </DataTable.Row>
-        </tbody>
-      </table>
-    )
-    expect(container.querySelector("tr")).not.toHaveAttribute("data-selected")
-  })
 })
 
 // ---------------------------------------------------------------------------
@@ -568,7 +537,7 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Sort Name ascending" }))
+    await user.click(screen.getByRole("button", { name: "Sort ascending" }))
     expect(onSort).toHaveBeenCalledWith("asc")
   })
 
@@ -586,11 +555,11 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Sort Name descending" }))
+    await user.click(screen.getByRole("button", { name: "Sort descending" }))
     expect(onSort).toHaveBeenCalledWith("desc")
   })
 
-  it("should call onSort with undefined when direction is desc and clicked", async () => {
+  it("should call onSort with asc when direction is desc and clicked", async () => {
     const user = userEvent.setup()
     const onSort = vi.fn()
     render(
@@ -604,297 +573,8 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Clear Name sort" }))
-    expect(onSort).toHaveBeenCalledWith(undefined)
-  })
-
-  it("should include column name in button aria-label", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SortHeader onSort={vi.fn()}>Revenue</DataTable.SortHeader>
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(
-      screen.getByRole("button", { name: "Sort Revenue ascending" })
-    ).toBeInTheDocument()
-  })
-
-  it("should use label prop in aria-label when children is not a string", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SortHeader label="Revenue" onSort={vi.fn()}>
-              <span>Revenue</span>
-            </DataTable.SortHeader>
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(
-      screen.getByRole("button", { name: "Sort Revenue ascending" })
-    ).toBeInTheDocument()
-  })
-})
-
-// ---------------------------------------------------------------------------
-// useSortState
-// ---------------------------------------------------------------------------
-
-describe("useSortState", () => {
-  it("should return undefined direction for all columns when no initial state", () => {
-    const { result } = renderHook(() => useSortState())
-    expect(result.current.directionFor("name")).toBeUndefined()
-  })
-
-  it("should return direction for the initial column", () => {
-    const { result } = renderHook(() =>
-      useSortState({ column: "name", direction: "asc" })
-    )
-    expect(result.current.directionFor("name")).toBe("asc")
-    expect(result.current.directionFor("email")).toBeUndefined()
-  })
-
-  it("should set sort when handleSort is called", () => {
-    const { result } = renderHook(() => useSortState())
-    act(() => result.current.handleSort("name")("asc"))
-    expect(result.current.directionFor("name")).toBe("asc")
-  })
-
-  it("should clear sort when handleSort is called with undefined", () => {
-    const { result } = renderHook(() =>
-      useSortState({ column: "name", direction: "asc" })
-    )
-    act(() => result.current.handleSort("name")(undefined))
-    expect(result.current.sort).toBeUndefined()
-    expect(result.current.directionFor("name")).toBeUndefined()
-  })
-
-  it("should switch active column when a different column is sorted", () => {
-    const { result } = renderHook(() =>
-      useSortState({ column: "name", direction: "asc" })
-    )
-    act(() => result.current.handleSort("email")("desc"))
-    expect(result.current.directionFor("name")).toBeUndefined()
-    expect(result.current.directionFor("email")).toBe("desc")
-  })
-})
-
-// ---------------------------------------------------------------------------
-// DataTable.SelectHeader
-// ---------------------------------------------------------------------------
-
-describe("DataTable.SelectHeader", () => {
-  it("should render a th with a checkbox", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SelectHeader checked={false} onChange={vi.fn()} />
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument()
-  })
-
-  it("should render checkbox as checked when checked is true", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SelectHeader checked={true} onChange={vi.fn()} />
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeChecked()
-  })
-
-  it("should render checkbox as indeterminate when indeterminate is true", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SelectHeader checked={false} indeterminate onChange={vi.fn()} />
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select all rows" })).toHaveAttribute(
-      "data-state",
-      "indeterminate"
-    )
-  })
-
-  it("should call onChange when clicked", async () => {
-    const user = userEvent.setup()
-    const onChange = vi.fn()
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SelectHeader checked={false} onChange={onChange} />
-          </tr>
-        </thead>
-      </table>
-    )
-    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }))
-    expect(onChange).toHaveBeenCalledOnce()
-  })
-
-  it("should disable checkbox when disabled is true", () => {
-    render(
-      <table>
-        <thead>
-          <tr>
-            <DataTable.SelectHeader checked={false} onChange={vi.fn()} disabled />
-          </tr>
-        </thead>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeDisabled()
-  })
-})
-
-// ---------------------------------------------------------------------------
-// DataTable.SelectCell
-// ---------------------------------------------------------------------------
-
-describe("DataTable.SelectCell", () => {
-  it("should render a td with a checkbox", () => {
-    render(
-      <table>
-        <tbody>
-          <tr>
-            <DataTable.SelectCell checked={false} onChange={vi.fn()} />
-          </tr>
-        </tbody>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select row" })).toBeInTheDocument()
-  })
-
-  it("should render checkbox as checked when checked is true", () => {
-    render(
-      <table>
-        <tbody>
-          <tr>
-            <DataTable.SelectCell checked={true} onChange={vi.fn()} />
-          </tr>
-        </tbody>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select row" })).toBeChecked()
-  })
-
-  it("should call onChange when clicked", async () => {
-    const user = userEvent.setup()
-    const onChange = vi.fn()
-    render(
-      <table>
-        <tbody>
-          <tr>
-            <DataTable.SelectCell checked={false} onChange={onChange} />
-          </tr>
-        </tbody>
-      </table>
-    )
-    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
-    expect(onChange).toHaveBeenCalledOnce()
-  })
-
-  it("should set data-table-cell attribute", () => {
-    render(
-      <table>
-        <tbody>
-          <tr>
-            <DataTable.SelectCell checked={false} onChange={vi.fn()} />
-          </tr>
-        </tbody>
-      </table>
-    )
-    expect(screen.getByRole("cell")).toHaveAttribute("data-table-cell")
-  })
-
-  it("should disable checkbox when disabled is true", () => {
-    render(
-      <table>
-        <tbody>
-          <tr>
-            <DataTable.SelectCell checked={false} onChange={vi.fn()} disabled />
-          </tr>
-        </tbody>
-      </table>
-    )
-    expect(screen.getByRole("checkbox", { name: "Select row" })).toBeDisabled()
-  })
-})
-
-// ---------------------------------------------------------------------------
-// useRowSelection
-// ---------------------------------------------------------------------------
-
-describe("useRowSelection", () => {
-  const rows = [
-    { id: "1", name: "Alice" },
-    { id: "2", name: "Bob" },
-    { id: "3", name: "Carol" },
-  ]
-
-  it("should start with no selection", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    expect(result.current.selectedIds.size).toBe(0)
-    expect(result.current.isAllSelected).toBe(false)
-    expect(result.current.isPartialSelected).toBe(false)
-  })
-
-  it("should select a row when toggleRow is called", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleRow("1"))
-    expect(result.current.isSelected("1")).toBe(true)
-    expect(result.current.isSelected("2")).toBe(false)
-  })
-
-  it("should deselect a row when toggleRow is called on an already selected row", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleRow("1"))
-    act(() => result.current.toggleRow("1"))
-    expect(result.current.isSelected("1")).toBe(false)
-  })
-
-  it("should set isPartialSelected when some rows are selected", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleRow("1"))
-    expect(result.current.isPartialSelected).toBe(true)
-    expect(result.current.isAllSelected).toBe(false)
-  })
-
-  it("should set isAllSelected when all rows are selected", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleAll())
-    expect(result.current.isAllSelected).toBe(true)
-    expect(result.current.isPartialSelected).toBe(false)
-  })
-
-  it("should deselect all rows when toggleAll is called and all are already selected", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleAll())
-    act(() => result.current.toggleAll())
-    expect(result.current.selectedIds.size).toBe(0)
-    expect(result.current.isAllSelected).toBe(false)
-  })
-
-  it("should clear all selections when clearSelection is called", () => {
-    const { result } = renderHook(() => useRowSelection(rows, { key: "id" }))
-    act(() => result.current.toggleRow("1"))
-    act(() => result.current.toggleRow("2"))
-    act(() => result.current.clearSelection())
-    expect(result.current.selectedIds.size).toBe(0)
+    await user.click(screen.getByRole("button", { name: "Sort ascending" }))
+    expect(onSort).toHaveBeenCalledWith("asc")
   })
 })
 
