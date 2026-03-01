@@ -1,9 +1,9 @@
 import { createRef } from "react"
 
-import { render, screen } from "@testing-library/react"
+import { act, render, renderHook, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import { DataTable, type PaginationProps } from "@/components/data-table"
+import { DataTable, useSortState, type PaginationProps } from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -13,10 +13,8 @@ function SimpleTable({ children }: { children?: React.ReactNode }) {
   return (
     <DataTable>
       <DataTable.Head>
-        <tr>
-          <DataTable.Header>Name</DataTable.Header>
-          <DataTable.Header>Email</DataTable.Header>
-        </tr>
+        <DataTable.Header>Name</DataTable.Header>
+        <DataTable.Header>Email</DataTable.Header>
       </DataTable.Head>
       <DataTable.Body>
         <DataTable.Row>
@@ -59,9 +57,7 @@ describe("DataTable", () => {
     render(
       <DataTable ref={ref}>
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -85,9 +81,7 @@ describe("DataTable", () => {
         limitOptions={[10, 25, 50]}
       >
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -106,9 +100,7 @@ describe("DataTable", () => {
         limitOptions={[10, 25, 50]}
       >
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -124,9 +116,7 @@ describe("DataTable", () => {
     render(
       <DataTable pagination={{ ...basePagination, count: 50, page: 1, limit: 10 }}>
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -142,9 +132,7 @@ describe("DataTable", () => {
     render(
       <DataTable pagination={{ ...basePagination, count: 50, page: 2, limit: 10 }}>
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -161,9 +149,7 @@ describe("DataTable", () => {
     render(
       <DataTable pagination={{ ...basePagination, hasPreviousPage: false }}>
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -179,9 +165,7 @@ describe("DataTable", () => {
     render(
       <DataTable pagination={{ ...basePagination, hasNextPage: false }}>
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -201,9 +185,7 @@ describe("DataTable", () => {
         pagination={{ ...basePagination, page: 1, hasNextPage: true, onPageChange }}
       >
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -224,9 +206,7 @@ describe("DataTable", () => {
         pagination={{ ...basePagination, page: 3, hasPreviousPage: true, onPageChange }}
       >
         <DataTable.Head>
-          <tr>
-            <DataTable.Header>Name</DataTable.Header>
-          </tr>
+          <DataTable.Header>Name</DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
           <DataTable.Row>
@@ -370,6 +350,306 @@ describe("DataTable.Cell", () => {
       </table>
     )
     expect(screen.getByRole("cell")).toHaveAttribute("data-table-cell")
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.Head
+// ---------------------------------------------------------------------------
+
+describe("DataTable.Head", () => {
+  it("should render a thead element", () => {
+    const { container } = render(
+      <table>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+      </table>
+    )
+    expect(container.querySelector("thead")).toBeInTheDocument()
+  })
+
+  it("should forward ref to thead element", () => {
+    const ref = createRef<HTMLTableSectionElement>()
+    render(
+      <table>
+        <DataTable.Head ref={ref}>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+      </table>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLTableSectionElement)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.Body
+// ---------------------------------------------------------------------------
+
+describe("DataTable.Body", () => {
+  it("should render a tbody element", () => {
+    const { container } = render(
+      <table>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>Alice</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </table>
+    )
+    expect(container.querySelector("tbody")).toBeInTheDocument()
+  })
+
+  it("should forward ref to tbody element", () => {
+    const ref = createRef<HTMLTableSectionElement>()
+    render(
+      <table>
+        <DataTable.Body ref={ref}>
+          <DataTable.Row>
+            <DataTable.Cell>Alice</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </table>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLTableSectionElement)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.Row
+// ---------------------------------------------------------------------------
+
+describe("DataTable.Row", () => {
+  it("should render a tr element", () => {
+    const { container } = render(
+      <table>
+        <tbody>
+          <DataTable.Row>
+            <td>Alice</td>
+          </DataTable.Row>
+        </tbody>
+      </table>
+    )
+    expect(container.querySelector("tr")).toBeInTheDocument()
+  })
+
+  it("should forward ref to tr element", () => {
+    const ref = createRef<HTMLTableRowElement>()
+    render(
+      <table>
+        <tbody>
+          <DataTable.Row ref={ref}>
+            <td>Alice</td>
+          </DataTable.Row>
+        </tbody>
+      </table>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLTableRowElement)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.SortHeader
+// ---------------------------------------------------------------------------
+
+describe("DataTable.SortHeader", () => {
+  it("should render a th element", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader onSort={vi.fn()}>Name</DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(screen.getByRole("columnheader")).toBeInTheDocument()
+  })
+
+  it("should forward ref to th element", () => {
+    const ref = createRef<HTMLTableCellElement>()
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader ref={ref} onSort={vi.fn()}>
+              Name
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(ref.current).toBeInstanceOf(HTMLTableCellElement)
+  })
+
+  it("should set aria-sort none when no direction is provided", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader onSort={vi.fn()}>Name</DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(screen.getByRole("columnheader")).toHaveAttribute("aria-sort", "none")
+  })
+
+  it("should set aria-sort ascending when direction is asc", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader direction="asc" onSort={vi.fn()}>
+              Name
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(screen.getByRole("columnheader")).toHaveAttribute("aria-sort", "ascending")
+  })
+
+  it("should set aria-sort descending when direction is desc", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader direction="desc" onSort={vi.fn()}>
+              Name
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(screen.getByRole("columnheader")).toHaveAttribute("aria-sort", "descending")
+  })
+
+  it("should call onSort with asc when unsorted and clicked", async () => {
+    const user = userEvent.setup()
+    const onSort = vi.fn()
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader onSort={onSort}>Name</DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    await user.click(screen.getByRole("button", { name: "Sort Name ascending" }))
+    expect(onSort).toHaveBeenCalledWith("asc")
+  })
+
+  it("should call onSort with desc when direction is asc and clicked", async () => {
+    const user = userEvent.setup()
+    const onSort = vi.fn()
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader direction="asc" onSort={onSort}>
+              Name
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    await user.click(screen.getByRole("button", { name: "Sort Name descending" }))
+    expect(onSort).toHaveBeenCalledWith("desc")
+  })
+
+  it("should call onSort with undefined when direction is desc and clicked", async () => {
+    const user = userEvent.setup()
+    const onSort = vi.fn()
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader direction="desc" onSort={onSort}>
+              Name
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    await user.click(screen.getByRole("button", { name: "Clear Name sort" }))
+    expect(onSort).toHaveBeenCalledWith(undefined)
+  })
+
+  it("should include column name in button aria-label", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader onSort={vi.fn()}>Revenue</DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(
+      screen.getByRole("button", { name: "Sort Revenue ascending" })
+    ).toBeInTheDocument()
+  })
+
+  it("should use label prop in aria-label when children is not a string", () => {
+    render(
+      <table>
+        <thead>
+          <tr>
+            <DataTable.SortHeader label="Revenue" onSort={vi.fn()}>
+              <span>Revenue</span>
+            </DataTable.SortHeader>
+          </tr>
+        </thead>
+      </table>
+    )
+    expect(
+      screen.getByRole("button", { name: "Sort Revenue ascending" })
+    ).toBeInTheDocument()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// useSortState
+// ---------------------------------------------------------------------------
+
+describe("useSortState", () => {
+  it("should return undefined direction for all columns when no initial state", () => {
+    const { result } = renderHook(() => useSortState())
+    expect(result.current.directionFor("name")).toBeUndefined()
+  })
+
+  it("should return direction for the initial column", () => {
+    const { result } = renderHook(() =>
+      useSortState({ column: "name", direction: "asc" })
+    )
+    expect(result.current.directionFor("name")).toBe("asc")
+    expect(result.current.directionFor("email")).toBeUndefined()
+  })
+
+  it("should set sort when handleSort is called", () => {
+    const { result } = renderHook(() => useSortState())
+    act(() => result.current.handleSort("name")("asc"))
+    expect(result.current.directionFor("name")).toBe("asc")
+  })
+
+  it("should clear sort when handleSort is called with undefined", () => {
+    const { result } = renderHook(() =>
+      useSortState({ column: "name", direction: "asc" })
+    )
+    act(() => result.current.handleSort("name")(undefined))
+    expect(result.current.sort).toBeUndefined()
+    expect(result.current.directionFor("name")).toBeUndefined()
+  })
+
+  it("should switch active column when a different column is sorted", () => {
+    const { result } = renderHook(() =>
+      useSortState({ column: "name", direction: "asc" })
+    )
+    act(() => result.current.handleSort("email")("desc"))
+    expect(result.current.directionFor("name")).toBeUndefined()
+    expect(result.current.directionFor("email")).toBe("desc")
   })
 })
 

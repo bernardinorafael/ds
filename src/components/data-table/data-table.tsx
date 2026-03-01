@@ -3,6 +3,7 @@ import React, { type CSSProperties } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { AnimatePresence, motion } from "motion/react"
 
+import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
 import { Select } from "@/components/select"
 import { cn } from "@/utils/cn"
@@ -61,6 +62,25 @@ export type DataTableCellProps = Pick<
   "children" | "className" | "colSpan" | "headers" | "rowSpan"
 > &
   VariantProps<typeof cellVariants>
+
+export type SortDirection = "asc" | "desc"
+
+export type DataTableSortHeaderProps = Omit<DataTableHeaderProps, "srOnly"> & {
+  /**
+   * Current sort direction. `undefined` means this column is not actively sorted.
+   */
+  direction?: SortDirection
+  /**
+   * Called when the user clicks to sort. Receives the next direction, or
+   * `undefined` when the third click clears the sort.
+   */
+  onSort: (direction: SortDirection | undefined) => void
+  /**
+   * Accessible label for the column used in the sort button's aria-label.
+   * Auto-derived from `children` when it is a plain string.
+   */
+  label?: string
+}
 
 // ---------------------------------------------------------------------------
 // SlidingNumber (internal — not exported)
@@ -374,7 +394,11 @@ DataTableRoot.displayName = "DataTable"
 const DataTableHead = React.forwardRef<
   HTMLTableSectionElement,
   Pick<React.HTMLAttributes<HTMLTableSectionElement>, "children" | "className">
->((props, ref) => <thead ref={ref} {...props} />)
+>(({ children, ...rest }, ref) => (
+  <thead ref={ref} {...rest}>
+    <tr>{children}</tr>
+  </thead>
+))
 
 DataTableHead.displayName = "DataTable.Head"
 
@@ -394,7 +418,7 @@ const DataTableHeader = React.forwardRef<HTMLTableCellElement, DataTableHeaderPr
         // typography
         "text-sm font-medium",
         "leading-(--data-table-header-leading)",
-        "text-word-secondary",
+        "text-word-primary",
         // spacing
         "px-(--data-table-header-px)",
         "pt-(--data-table-header-pt)",
@@ -417,6 +441,97 @@ const DataTableHeader = React.forwardRef<HTMLTableCellElement, DataTableHeaderPr
 )
 
 DataTableHeader.displayName = "DataTable.Header"
+
+// ---------------------------------------------------------------------------
+// DataTableSortHeader
+// ---------------------------------------------------------------------------
+
+function nextDirection(d?: SortDirection): SortDirection | undefined {
+  if (!d) return "asc"
+  if (d === "asc") return "desc"
+  return undefined
+}
+
+const SORT_ICON: Record<string, "chevron-up" | "chevron-down"> = {
+  asc: "chevron-up",
+  desc: "chevron-down",
+}
+
+const DataTableSortHeader = React.forwardRef<
+  HTMLTableCellElement,
+  DataTableSortHeaderProps
+>(({ width, children, className, direction, onSort, label, ...rest }, ref) => {
+  const active = !!direction
+  const columnLabel = label ?? (typeof children === "string" ? children : "")
+
+  const handleClick = () => onSort(nextDirection(direction))
+
+  return (
+    <th
+      ref={ref}
+      aria-sort={
+        direction === "asc" ? "ascending" : direction === "desc" ? "descending" : "none"
+      }
+      className={cn(
+        // layout
+        "overflow-hidden text-left",
+        // typography
+        "text-sm font-medium",
+        "leading-(--data-table-header-leading)",
+        "text-word-primary",
+        // spacing
+        "px-(--data-table-header-px)",
+        "pt-(--data-table-header-pt)",
+        "pb-(--data-table-header-pb)",
+        // width (set via CSS var so table-fixed respects it)
+        width && "w-(--data-table-header-w)",
+        className
+      )}
+      style={
+        width ? ({ "--data-table-header-w": width } as React.CSSProperties) : undefined
+      }
+      {...rest}
+    >
+      <button
+        type="button"
+        data-table-sort=""
+        aria-label={
+          !direction
+            ? `Sort ${columnLabel} ascending`
+            : direction === "asc"
+              ? `Sort ${columnLabel} descending`
+              : `Clear ${columnLabel} sort`
+        }
+        onClick={handleClick}
+        className={cn(
+          "inline-flex cursor-pointer items-center gap-1",
+          "rounded-xs outline-none",
+          "focus-visible:ring-primary/50 focus-visible:ring-2 focus-visible:ring-offset-1"
+        )}
+      >
+        {children}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={direction ?? "idle"}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: active ? 1 : 0.4, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.15 }}
+            className="inline-flex shrink-0"
+          >
+            <Icon
+              name={active ? SORT_ICON[direction!] : "chevron-down"}
+              size="sm"
+              aria-hidden
+            />
+          </motion.span>
+        </AnimatePresence>
+      </button>
+    </th>
+  )
+})
+
+DataTableSortHeader.displayName = "DataTable.SortHeader"
 
 // ---------------------------------------------------------------------------
 // DataTableBody
@@ -497,12 +612,39 @@ const DataTableActions = React.forwardRef<
 DataTableActions.displayName = "DataTable.Actions"
 
 // ---------------------------------------------------------------------------
+// useSortState
+// ---------------------------------------------------------------------------
+
+/**
+ * Manages single-column sort state for DataTable.SortHeader.
+ *
+ * @example
+ * const { directionFor, handleSort } = useSortState({ column: "name", direction: "asc" })
+ *
+ * <DataTable.SortHeader direction={directionFor("name")} onSort={handleSort("name")}>
+ *   Name
+ * </DataTable.SortHeader>
+ */
+export function useSortState(initial?: { column: string; direction: SortDirection }) {
+  const [sort, setSort] = React.useState(initial)
+
+  const directionFor = (column: string) =>
+    sort?.column === column ? sort.direction : undefined
+
+  const handleSort = (column: string) => (direction: SortDirection | undefined) =>
+    setSort(direction ? { column, direction } : undefined)
+
+  return { sort, directionFor, handleSort }
+}
+
+// ---------------------------------------------------------------------------
 // Compound export
 // ---------------------------------------------------------------------------
 
 export const DataTable = Object.assign(DataTableRoot, {
   Head: DataTableHead,
   Header: DataTableHeader,
+  SortHeader: DataTableSortHeader,
   Body: DataTableBody,
   Row: DataTableRow,
   Cell: DataTableCell,
