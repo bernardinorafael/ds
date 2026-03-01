@@ -10,13 +10,20 @@ import { useControllableState } from "@/hooks/use-controllable-state"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
-// DialogRoot
+// SheetRoot
 // ---------------------------------------------------------------------------
 
-const dialogPanelVariants = cva(
+const sheetPanelVariants = cva(
   [
     // layout
     "w-[94vw]",
+    "flex",
+    "flex-col",
+
+    // position — right side panel
+    "absolute",
+    "inset-y-2",
+    "right-2",
 
     // visual
     "rounded-xl",
@@ -32,9 +39,8 @@ const dialogPanelVariants = cva(
   {
     variants: {
       size: {
-        sm: "max-w-105",
         base: "max-w-122.5",
-        lg: "max-w-152.5",
+        lg: "max-w-180",
       },
     },
     defaultVariants: {
@@ -43,7 +49,7 @@ const dialogPanelVariants = cva(
   }
 )
 
-type DialogRootProps = VariantProps<typeof dialogPanelVariants> & {
+type SheetRootProps = VariantProps<typeof sheetPanelVariants> & {
   /**
    * Controlled open state
    */
@@ -57,20 +63,20 @@ type DialogRootProps = VariantProps<typeof dialogPanelVariants> & {
    */
   onOpenChange?: (open: boolean) => void
   /**
-   * Element that triggers the dialog when clicked
+   * Element that triggers the sheet when clicked
    */
   trigger?: React.ReactNode
   /**
-   * Dialog content (Content, Header, Section, Footer, etc.)
+   * Sheet content (Content, Header, Section, Footer, etc.)
    */
   children: React.ReactNode
   /**
-   * Vertically center the dialog in the viewport @default false
+   * Allow closing by clicking outside or pressing Escape @default true
    */
-  centeredLayout?: boolean
+  dismissible?: boolean
 }
 
-const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
+const SheetRoot = React.forwardRef<HTMLDivElement, SheetRootProps>(
   (
     {
       trigger,
@@ -78,8 +84,8 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
       defaultOpen,
       size,
       open: openProp,
-      centeredLayout = false,
       onOpenChange,
+      dismissible = true,
     },
     forwardedRef
   ) => {
@@ -100,19 +106,28 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, transition: { duration: 0.25 } }}
-                  className={cn(
-                    "fixed inset-0 z-50 grid justify-center bg-white/60 py-40 backdrop-blur-sm",
-                    centeredLayout ? "items-center" : "items-start"
-                  )}
+                  className="fixed inset-0 z-50 bg-white/60 backdrop-blur-sm"
+                  style={{ perspective: "1200px" }}
                 >
-                  <RadixDialog.Content asChild>
+                  <RadixDialog.Content
+                    asChild
+                    onInteractOutside={
+                      dismissible ? undefined : (e) => e.preventDefault()
+                    }
+                    onEscapeKeyDown={dismissible ? undefined : (e) => e.preventDefault()}
+                  >
                     <motion.div
                       ref={forwardedRef}
-                      initial={{ opacity: 0, scale: 0.95, y: 40 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: 40 }}
-                      transition={{ type: "spring", bounce: 0, duration: 0.25 }}
-                      className={dialogPanelVariants({ size })}
+                      initial={{ opacity: 0, x: "100%", rotateY: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, rotateY: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: "100%", rotateY: -8, scale: 0.95 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 350,
+                        damping: 30,
+                        mass: 0.9,
+                      }}
+                      className={sheetPanelVariants({ size })}
                     >
                       {children}
                     </motion.div>
@@ -127,22 +142,23 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
   }
 )
 
-DialogRoot.displayName = "Dialog"
+SheetRoot.displayName = "Sheet"
 
 // ---------------------------------------------------------------------------
-// DialogContent
+// SheetContent
 // ---------------------------------------------------------------------------
 
-type DialogContentProps = Pick<React.ComponentProps<"div">, "className" | "children">
+type SheetContentProps = Pick<React.ComponentProps<"div">, "className" | "children">
 
-const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
+const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
   ({ className, children, ...props }, forwardedRef) => (
     <div
       ref={forwardedRef}
-      data-dialog-content=""
+      data-sheet-content=""
       className={cn(
         "overflow-hidden rounded-lg bg-white shadow shadow-black/6",
         "ring-1 ring-black/6",
+        "flex flex-1 flex-col overflow-hidden",
         className
       )}
       {...props}
@@ -152,15 +168,15 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
   )
 )
 
-DialogContent.displayName = "Dialog.Content"
+SheetContent.displayName = "Sheet.Content"
 
 // ---------------------------------------------------------------------------
-// DialogHeader
+// SheetHeader
 // ---------------------------------------------------------------------------
 
-type DialogHeaderProps = Pick<React.ComponentProps<"div">, "className"> & {
+type SheetHeaderProps = Pick<React.ComponentProps<"div">, "className"> & {
   /**
-   * Dialog title text or element
+   * Sheet title text or element
    */
   title: React.ReactNode
   /**
@@ -168,16 +184,16 @@ type DialogHeaderProps = Pick<React.ComponentProps<"div">, "className"> & {
    */
   description?: React.ReactNode
   /**
-   * Show a bottom border @default false
+   * Show a bottom border @default true
    */
   hasBorder?: boolean
 }
 
-const DialogHeader = React.forwardRef<HTMLDivElement, DialogHeaderProps>(
+const SheetHeader = React.forwardRef<HTMLDivElement, SheetHeaderProps>(
   ({ className, title, description, hasBorder = true, ...props }, forwardedRef) => (
     <div
       ref={forwardedRef}
-      data-dialog-header=""
+      data-sheet-header=""
       className={cn(
         "relative flex items-start gap-6 px-5 py-4",
         hasBorder && "border-surface-100 border-b",
@@ -202,20 +218,20 @@ const DialogHeader = React.forwardRef<HTMLDivElement, DialogHeaderProps>(
   )
 )
 
-DialogHeader.displayName = "Dialog.Header"
+SheetHeader.displayName = "Sheet.Header"
 
 // ---------------------------------------------------------------------------
-// DialogSection
+// SheetSection
 // ---------------------------------------------------------------------------
 
-type DialogSectionProps = Pick<React.ComponentProps<"section">, "className" | "children">
+type SheetSectionProps = Pick<React.ComponentProps<"section">, "className" | "children">
 
-const DialogSection = React.forwardRef<HTMLElement, DialogSectionProps>(
+const SheetSection = React.forwardRef<HTMLElement, SheetSectionProps>(
   ({ className, children, ...props }, forwardedRef) => (
     <section
       ref={forwardedRef}
-      data-dialog-section=""
-      className={cn("pt-4-5 space-y-5 px-5 pb-6", className)}
+      data-sheet-section=""
+      className={cn("pt-4-5 flex-1 space-y-5 overflow-auto px-5 pb-6", className)}
       {...props}
     >
       {children}
@@ -223,20 +239,23 @@ const DialogSection = React.forwardRef<HTMLElement, DialogSectionProps>(
   )
 )
 
-DialogSection.displayName = "Dialog.Section"
+SheetSection.displayName = "Sheet.Section"
 
 // ---------------------------------------------------------------------------
-// DialogFooter
+// SheetFooter
 // ---------------------------------------------------------------------------
 
-type DialogFooterProps = Pick<React.ComponentProps<"div">, "className" | "children">
+type SheetFooterProps = Pick<React.ComponentProps<"div">, "className" | "children">
 
-const DialogFooter = React.forwardRef<HTMLDivElement, DialogFooterProps>(
+const SheetFooter = React.forwardRef<HTMLDivElement, SheetFooterProps>(
   ({ className, children, ...props }, forwardedRef) => (
     <div
       ref={forwardedRef}
-      data-dialog-footer=""
-      className={cn("flex items-center justify-end gap-3 px-5 py-4", className)}
+      data-sheet-footer=""
+      className={cn(
+        "border-surface-100 flex items-center justify-end gap-3 border-t px-5 py-4",
+        className
+      )}
       {...props}
     >
       {children}
@@ -244,13 +263,13 @@ const DialogFooter = React.forwardRef<HTMLDivElement, DialogFooterProps>(
   )
 )
 
-DialogFooter.displayName = "Dialog.Footer"
+SheetFooter.displayName = "Sheet.Footer"
 
 // ---------------------------------------------------------------------------
-// DialogClose
+// SheetClose
 // ---------------------------------------------------------------------------
 
-type DialogCloseProps = {
+type SheetCloseProps = {
   /**
    * Button label
    */
@@ -265,7 +284,7 @@ type DialogCloseProps = {
   disabled?: boolean
 }
 
-const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
+const SheetClose = React.forwardRef<HTMLButtonElement, SheetCloseProps>(
   ({ children, size, disabled }, forwardedRef) => (
     <RadixDialog.Close asChild>
       <Button
@@ -281,75 +300,25 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
   )
 )
 
-DialogClose.displayName = "Dialog.Close"
-
-// ---------------------------------------------------------------------------
-// DialogNotice
-// ---------------------------------------------------------------------------
-
-type DialogNoticeProps = {
-  /**
-   * Notice content
-   */
-  children: React.ReactNode
-  /**
-   * Visual intent for the notice @default "warning"
-   */
-  intent?: "neutral" | "warning" | "danger"
-}
-
-const DialogNotice = React.forwardRef<HTMLElement, DialogNoticeProps>(
-  ({ children, intent = "warning", ...props }, forwardedRef) => (
-    <section
-      ref={forwardedRef}
-      data-dialog-notice=""
-      className={cn(
-        "border-surface-100 mt-4-5 relative block border-t",
-        "only:-mt-4-5 only:border-t-0",
-        "-mx-5 -mb-6",
-        "after:pointer-events-none after:absolute after:inset-0",
-        "after:bg-linear-to-r after:from-white after:via-white/80 after:to-transparent",
-        intent === "warning" && "bg-warning-stripes",
-        intent === "danger" && "bg-danger-stripes",
-        intent === "neutral" && "bg-neutral-stripes"
-      )}
-      {...props}
-    >
-      <div
-        className={cn(
-          "leading-4-5 relative flex gap-1.5 px-4 py-3 text-[0.8125rem] font-medium",
-          intent === "warning" && "text-orange-900",
-          intent === "danger" && "text-red-900",
-          intent === "neutral" && "text-word-secondary"
-        )}
-      >
-        <div className="z-10">{children}</div>
-      </div>
-    </section>
-  )
-)
-
-DialogNotice.displayName = "Dialog.Notice"
+SheetClose.displayName = "Sheet.Close"
 
 // ---------------------------------------------------------------------------
 // Compound export
 // ---------------------------------------------------------------------------
 
-export const Dialog = Object.assign(DialogRoot, {
-  Content: DialogContent,
-  Header: DialogHeader,
-  Section: DialogSection,
-  Footer: DialogFooter,
-  Close: DialogClose,
-  Notice: DialogNotice,
+export const Sheet = Object.assign(SheetRoot, {
+  Content: SheetContent,
+  Header: SheetHeader,
+  Section: SheetSection,
+  Footer: SheetFooter,
+  Close: SheetClose,
 })
 
 export type {
-  DialogRootProps,
-  DialogContentProps,
-  DialogHeaderProps,
-  DialogSectionProps,
-  DialogFooterProps,
-  DialogCloseProps,
-  DialogNoticeProps,
+  SheetRootProps,
+  SheetContentProps,
+  SheetHeaderProps,
+  SheetSectionProps,
+  SheetFooterProps,
+  SheetCloseProps,
 }

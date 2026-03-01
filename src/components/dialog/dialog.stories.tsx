@@ -4,11 +4,20 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Button } from "@/components/button"
 import { Dialog } from "@/components/dialog"
+import { IconSprite } from "@/components/icon"
 
 const meta = {
   title: "Dialog",
   component: Dialog,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <>
+        <IconSprite />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     children: null,
   },

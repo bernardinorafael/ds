@@ -15,6 +15,7 @@ const iconButtonVariants = cva(
 
     // layout
     "inline-flex",
+    "shrink-0",
     "items-center",
     "justify-center",
 
