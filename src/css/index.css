@@ -1,8 +1,58 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+@font-face {
+  font-family: "Suisse Intl";
+  font-weight: 300;
+  font-display: swap;
+  src: url("../fonts/suisse/Suisse_Intl_Book_WebS.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/suisse/Suisse_Intl_Regular_WebS.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/suisse/Suisse_Intl_Medium_WebS.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/suisse/Suisse_Intl_SemiBold_WebS.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Suisse Intl";
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/suisse/Suisse_Intl_Bold_WebS.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Söhne Mono";
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/sohne-mono/soehne-mono-buch.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Söhne Mono";
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/sohne-mono/soehne-mono-kraftig.woff2") format("woff2");
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Suisse Intl", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Söhne Mono", ui-monospace, monospace;
 
   /* 1px */
   --spacing-px: 0.0625rem;
