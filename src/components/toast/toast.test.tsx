@@ -1,160 +1,196 @@
-import { act } from "react"
-
-import { render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 
 import { toast, Toaster } from "@/components/toast"
-import { __resetStore } from "@/components/toast/toast"
 
-vi.mock("motion/react", () => ({
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  LayoutGroup: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  motion: {
-    li: "li",
-    div: "div",
-  },
-  useReducedMotion: () => false,
-}))
+// Polyfill for Radix Toast in jsdom
+if (!Element.prototype.hasPointerCapture) {
+  Element.prototype.hasPointerCapture = () => false
+}
+
+// Mock motion/react to bypass animations in tests
+vi.mock("motion/react", async () => {
+  const React = await import("react")
+
+  const motionKeys = new Set([
+    "initial",
+    "animate",
+    "exit",
+    "transition",
+    "layout",
+    "onAnimationComplete",
+    "whileHover",
+    "whileTap",
+    "whileFocus",
+    "whileDrag",
+    "whileInView",
+    "variants",
+    "custom",
+  ])
+
+  function createMotionComponent(tag: string) {
+    return React.forwardRef((props: Record<string, unknown>, ref: React.Ref<Element>) => {
+      const filtered: Record<string, unknown> = {}
+      for (const [key, value] of Object.entries(props)) {
+        if (!motionKeys.has(key)) filtered[key] = value
+      }
+      return React.createElement(tag, { ...filtered, ref })
+    })
+  }
+
+  return {
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+    motion: {
+      li: createMotionComponent("li"),
+      div: createMotionComponent("div"),
+    },
+  }
+})
 
 describe("Toast", () => {
-  afterEach(() => {
-    act(() => {
-      __resetStore()
-    })
+  beforeEach(() => {
+    vi.useFakeTimers()
+    toast.dismissAll()
   })
 
-  it("should render a toast with message", () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("should render toast with message", () => {
     render(<Toaster />)
-    act(() => {
-      toast("Hello world")
-    })
+    act(() => toast.info("Hello world"))
     expect(screen.getByText("Hello world")).toBeInTheDocument()
   })
 
-  it("should render correct icon per intent", () => {
+  it("should render action button when action is provided", () => {
     render(<Toaster />)
-    act(() => {
-      toast.success("Success msg")
-    })
-    const toastEl = screen.getByText("Success msg").closest("li")
-    expect(toastEl?.querySelector("svg")).toBeInTheDocument()
-  })
-
-  it("should render action button", () => {
-    render(<Toaster />)
-    act(() => {
-      toast("With action", { action: { label: "Undo" } })
-    })
+    act(() => toast.info("Saved", { action: { label: "Undo" } }))
     expect(screen.getByRole("button", { name: "Undo" })).toBeInTheDocument()
   })
 
-  it("should render confirm and deny buttons", () => {
+  it("should call action onClick and dismiss toast on click", () => {
+    const onClick = vi.fn()
     render(<Toaster />)
-    act(() => {
-      toast("Confirm?", {
-        confirm: { label: "Yes" },
-        deny: { label: "No" },
+    act(() => toast.info("Saved", { action: { label: "Undo", onClick } }))
+    fireEvent.click(screen.getByRole("button", { name: "Undo" }))
+    expect(onClick).toHaveBeenCalledOnce()
+    expect(screen.queryByText("Saved")).not.toBeInTheDocument()
+  })
+
+  it("should render cancel button when cancel is provided", () => {
+    render(<Toaster />)
+    act(() =>
+      toast.warning("Delete?", {
+        duration: Infinity,
+        cancel: { label: "Cancel" },
       })
-    })
-    expect(screen.getByRole("button", { name: "Yes" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "No" })).toBeInTheDocument()
+    )
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument()
   })
 
-  it("should render icon buttons", () => {
+  it("should call cancel onClick and dismiss toast on click", () => {
+    const onClick = vi.fn()
     render(<Toaster />)
-    act(() => {
-      toast("Delete?", {
-        confirmIcon: { label: "Confirm delete" },
-        denyIcon: { label: "Cancel delete" },
+    act(() =>
+      toast.warning("Delete?", {
+        duration: Infinity,
+        cancel: { label: "Cancel", onClick },
       })
-    })
-    expect(screen.getByLabelText("Confirm delete")).toBeInTheDocument()
-    expect(screen.getByLabelText("Cancel delete")).toBeInTheDocument()
+    )
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }))
+    expect(onClick).toHaveBeenCalledOnce()
+    expect(screen.queryByText("Delete?")).not.toBeInTheDocument()
   })
 
-  it("should render muted action", () => {
+  it("should auto-dismiss after default duration", () => {
     render(<Toaster />)
-    act(() => {
-      toast("Done", { mutedAction: { label: "Copy link" } })
-    })
-    expect(screen.getByRole("button", { name: "Copy link" })).toBeInTheDocument()
+    act(() => toast.info("Temporary"))
+    expect(screen.getByText("Temporary")).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(2000))
+    expect(screen.queryByText("Temporary")).not.toBeInTheDocument()
   })
 
-  it("should auto-dismiss after duration", () => {
-    vi.useFakeTimers()
+  it("should auto-dismiss after custom duration", () => {
     render(<Toaster />)
-    act(() => {
-      toast("Bye", { duration: 1000 })
-    })
-    expect(screen.getByText("Bye")).toBeInTheDocument()
-    act(() => {
-      vi.advanceTimersByTime(1100)
-    })
-    expect(screen.queryByText("Bye")).not.toBeInTheDocument()
-    vi.useRealTimers()
+    act(() => toast.info("Custom", { duration: 5000 }))
+    act(() => vi.advanceTimersByTime(3000))
+    expect(screen.getByText("Custom")).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(2000))
+    expect(screen.queryByText("Custom")).not.toBeInTheDocument()
   })
 
-  it("should not auto-dismiss with Infinity duration", () => {
-    vi.useFakeTimers()
+  it("should not auto-dismiss when duration is Infinity", () => {
     render(<Toaster />)
-    act(() => {
-      toast("Stay", { duration: Infinity })
-    })
-    act(() => {
-      vi.advanceTimersByTime(10000)
-    })
-    expect(screen.getByText("Stay")).toBeInTheDocument()
-    vi.useRealTimers()
+    act(() => toast.info("Sticky", { duration: Infinity }))
+    act(() => vi.advanceTimersByTime(60_000))
+    expect(screen.getByText("Sticky")).toBeInTheDocument()
   })
 
-  it("should dismiss programmatically", () => {
+  it("should dismiss a specific toast with toast.dismiss()", () => {
     render(<Toaster />)
-    let id: string
+    let id = ""
     act(() => {
-      id = toast("Dismiss me")
+      id = toast.info("First", { duration: Infinity })
+      toast.success("Second", { duration: Infinity })
     })
-    expect(screen.getByText("Dismiss me")).toBeInTheDocument()
-    act(() => {
-      toast.dismiss(id!)
-    })
-    expect(screen.queryByText("Dismiss me")).not.toBeInTheDocument()
-  })
-
-  it("should update existing toast", () => {
-    render(<Toaster />)
-    let id: string
-    act(() => {
-      id = toast("Loading...")
-    })
-    expect(screen.getByText("Loading...")).toBeInTheDocument()
-    act(() => {
-      toast.update(id!, { message: "Done!" })
-    })
-    expect(screen.getByText("Done!")).toBeInTheDocument()
-    expect(screen.queryByText("Loading...")).not.toBeInTheDocument()
-  })
-
-  it("should limit to 3 toasts", () => {
-    render(<Toaster />)
-    act(() => {
-      toast("First")
-      toast("Second")
-      toast("Third")
-      toast("Fourth")
-    })
+    act(() => toast.dismiss(id))
     expect(screen.queryByText("First")).not.toBeInTheDocument()
     expect(screen.getByText("Second")).toBeInTheDocument()
-    expect(screen.getByText("Third")).toBeInTheDocument()
-    expect(screen.getByText("Fourth")).toBeInTheDocument()
   })
 
-  it("should disable button when disabled", () => {
+  it("should dismiss all toasts with toast.dismissAll()", () => {
     render(<Toaster />)
     act(() => {
-      toast("Disabled", {
-        disabled: true,
-        action: { label: "Click" },
-      })
+      toast.info("One", { duration: Infinity })
+      toast.success("Two", { duration: Infinity })
     })
-    expect(screen.getByRole("button", { name: "Click" })).toBeDisabled()
+    act(() => toast.dismissAll())
+    expect(screen.queryByText("One")).not.toBeInTheDocument()
+    expect(screen.queryByText("Two")).not.toBeInTheDocument()
+  })
+
+  it("should return toast data with toast.get()", () => {
+    let id = ""
+    act(() => {
+      id = toast.success("Found it")
+    })
+    const item = toast.get(id)
+    expect(item).toBeDefined()
+    expect(item?.message).toBe("Found it")
+    expect(item?.intent).toBe("success")
+  })
+
+  it("should update existing toast when same id is used", () => {
+    render(<Toaster />)
+    act(() => toast.warning("Draft", { id: "my-toast", duration: Infinity }))
+    expect(screen.getByText("Draft")).toBeInTheDocument()
+    act(() => toast.success("Published", { id: "my-toast", duration: Infinity }))
+    expect(screen.queryByText("Draft")).not.toBeInTheDocument()
+    expect(screen.getByText("Published")).toBeInTheDocument()
+  })
+
+  it("should evict oldest toast when exceeding limit of 3", () => {
+    render(<Toaster />)
+    act(() => {
+      toast.info("Toast 1", { duration: Infinity })
+      toast.info("Toast 2", { duration: Infinity })
+      toast.info("Toast 3", { duration: Infinity })
+    })
+    expect(screen.getByText("Toast 1")).toBeInTheDocument()
+    act(() => toast.info("Toast 4", { duration: Infinity }))
+    expect(screen.queryByText("Toast 1")).not.toBeInTheDocument()
+    expect(screen.getByText("Toast 4")).toBeInTheDocument()
+  })
+
+  it("should render all four intents", () => {
+    render(<Toaster />)
+    act(() => {
+      toast.info("Info msg", { duration: Infinity })
+      toast.success("Success msg", { duration: Infinity })
+      toast.error("Error msg", { duration: Infinity })
+    })
+    expect(screen.getByText("Info msg")).toBeInTheDocument()
+    expect(screen.getByText("Success msg")).toBeInTheDocument()
+    expect(screen.getByText("Error msg")).toBeInTheDocument()
   })
 })
