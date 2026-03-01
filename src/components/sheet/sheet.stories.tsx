@@ -91,6 +91,47 @@ export const WithFooter: Story = {
   ),
 }
 
+export const Nested: Story = {
+  render: () => (
+    <Sheet trigger={<Button intent="secondary">Open sheet</Button>}>
+      <Sheet.Content>
+        <Sheet.Header title="Level 1" description="First sheet." />
+        <Sheet.Section>
+          <Sheet trigger={<Button intent="secondary">Open nested sheet</Button>}>
+            <Sheet.Content>
+              <Sheet.Header title="Level 2" description="Second sheet." />
+              <Sheet.Section>
+                <Sheet trigger={<Button intent="secondary">Open nested sheet</Button>}>
+                  <Sheet.Content>
+                    <Sheet.Header
+                      title="Level 3"
+                      description="Third sheet — maximum depth."
+                    />
+                    <Sheet.Section>
+                      <p className="text-word-secondary text-base">
+                        Maximum depth reached. A 4th sheet cannot be opened.
+                      </p>
+                    </Sheet.Section>
+                  </Sheet.Content>
+                  <Sheet.Footer>
+                    <Sheet.Close>Close</Sheet.Close>
+                  </Sheet.Footer>
+                </Sheet>
+              </Sheet.Section>
+            </Sheet.Content>
+            <Sheet.Footer>
+              <Sheet.Close>Close</Sheet.Close>
+            </Sheet.Footer>
+          </Sheet>
+        </Sheet.Section>
+      </Sheet.Content>
+      <Sheet.Footer>
+        <Sheet.Close>Close</Sheet.Close>
+      </Sheet.Footer>
+    </Sheet>
+  ),
+}
+
 export const NonDismissible: Story = {
   render: () => (
     <Sheet dismissible={false} trigger={<Button intent="secondary">Open sheet</Button>}>

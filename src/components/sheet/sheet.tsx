@@ -10,6 +10,21 @@ import { useControllableState } from "@/hooks/use-controllable-state"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
+// Nesting context
+// ---------------------------------------------------------------------------
+
+const MAX_SHEET_DEPTH = 3
+
+const SheetDepthContext = React.createContext(0)
+
+type SheetCallbacks = {
+  onNestedOpen: () => void
+  onNestedClose: () => void
+}
+
+const SheetCallbacksContext = React.createContext<SheetCallbacks | null>(null)
+
+// ---------------------------------------------------------------------------
 // SheetRoot
 // ---------------------------------------------------------------------------
 
@@ -89,11 +104,39 @@ const SheetRoot = React.forwardRef<HTMLDivElement, SheetRootProps>(
     },
     forwardedRef
   ) => {
+    const depth = React.useContext(SheetDepthContext)
+    const parentCallbacks = React.useContext(SheetCallbacksContext)
+    const [hasNestedOpen, setHasNestedOpen] = React.useState(false)
+
     const [open = false, setOpen] = useControllableState({
       prop: openProp,
       defaultProp: defaultOpen,
       onChange: onOpenChange,
     })
+
+    const myCallbacks = React.useMemo<SheetCallbacks>(
+      () => ({
+        onNestedOpen: () => setHasNestedOpen(true),
+        onNestedClose: () => setHasNestedOpen(false),
+      }),
+      []
+    )
+
+    React.useEffect(() => {
+      if (!parentCallbacks || !open) return
+      parentCallbacks.onNestedOpen()
+      return () => parentCallbacks.onNestedClose()
+    }, [open, parentCallbacks])
+
+    if (depth >= MAX_SHEET_DEPTH) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`Sheet: maximum nesting depth of ${MAX_SHEET_DEPTH} reached.`)
+      }
+      return null
+    }
+
+    const isNested = depth > 0
+    const isPushedBack = open && hasNestedOpen
 
     return (
       <RadixDialog.Root defaultOpen={defaultOpen} open={open} onOpenChange={setOpen}>
@@ -103,33 +146,78 @@ const SheetRoot = React.forwardRef<HTMLDivElement, SheetRootProps>(
             <RadixDialog.Portal forceMount>
               <RadixDialog.Overlay asChild>
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, transition: { duration: 0.25 } }}
-                  className="fixed inset-0 z-50 bg-white/60 backdrop-blur-sm"
-                  style={{ perspective: "1200px" }}
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    transition: { duration: 0.25 },
+                  }}
+                  className={cn(
+                    "fixed inset-0 z-50",
+                    !isNested && "bg-white/60 backdrop-blur-sm"
+                  )}
+                  style={{
+                    perspective: "1200px",
+                  }}
                 >
                   <RadixDialog.Content
                     asChild
+                    onEscapeKeyDown={dismissible ? undefined : (e) => e.preventDefault()}
                     onInteractOutside={
                       dismissible ? undefined : (e) => e.preventDefault()
                     }
-                    onEscapeKeyDown={dismissible ? undefined : (e) => e.preventDefault()}
                   >
                     <motion.div
                       ref={forwardedRef}
                       initial={{ opacity: 0, x: "100%", rotateY: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, x: 0, rotateY: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: "100%", rotateY: -8, scale: 0.95 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 350,
-                        damping: 30,
-                        mass: 0.9,
+                      animate={
+                        isPushedBack
+                          ? {
+                              opacity: 0.85,
+                              filter: "blur(2px)",
+                              scale: 0.96,
+                              x: 0,
+                              rotateY: 0,
+                            }
+                          : {
+                              opacity: 1,
+                              filter: "blur(0px)",
+                              scale: 1,
+                              x: 0,
+                              rotateY: 0,
+                            }
+                      }
+                      exit={{
+                        opacity: 0,
+                        x: "100%",
+                        rotateY: -8,
+                        scale: 0.95,
                       }}
+                      transition={
+                        isPushedBack
+                          ? {
+                              type: "spring",
+                              bounce: 0,
+                              duration: 0.4,
+                            }
+                          : {
+                              type: "spring",
+                              stiffness: 350,
+                              damping: 30,
+                              mass: 0.9,
+                            }
+                      }
                       className={sheetPanelVariants({ size })}
                     >
-                      {children}
+                      <SheetDepthContext.Provider value={depth + 1}>
+                        <SheetCallbacksContext.Provider value={myCallbacks}>
+                          {children}
+                        </SheetCallbacksContext.Provider>
+                      </SheetDepthContext.Provider>
                     </motion.div>
                   </RadixDialog.Content>
                 </motion.div>
