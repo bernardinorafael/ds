@@ -242,6 +242,8 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
     },
     forwardedRef
   ) => {
+    const limitSelectId = React.useId()
+
     const pageEnd = React.useMemo(
       () => (pagination ? Math.ceil(pagination.count / pagination.limit) : 0),
       [pagination]
@@ -345,7 +347,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
                   </span>
 
                   <label
-                    htmlFor="data-table-limit-select"
+                    htmlFor={`${limitSelectId}-limit`}
                     className="inline-flex items-center gap-2"
                   >
                     <span className="text-word-secondary text-xs">Results per page</span>
@@ -354,7 +356,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
                       className="w-14"
                       position="fixed"
                       aria-label="Rows per page"
-                      id="data-table-limit-select"
+                      id={`${limitSelectId}-limit`}
                       onValueChange={(v) => pagination!.onLimitChange(Number(v))}
                       value={String(pagination!.limit)}
                       items={limitOptions.map((v) => ({
@@ -746,13 +748,19 @@ export function useRowSelection<T>(rows: T[], { key }: { key: keyof T }) {
 
   const rowKeys = React.useMemo(() => rows.map((row) => String(row[key])), [rows, key])
 
-  const isSelected = (id: string) => selectedIds.has(id)
+  const isAllSelected = React.useMemo(
+    () => rowKeys.length > 0 && rowKeys.every((k) => selectedIds.has(k)),
+    [rowKeys, selectedIds]
+  )
 
-  const isAllSelected = rowKeys.length > 0 && rowKeys.every((k) => selectedIds.has(k))
+  const isPartialSelected = React.useMemo(
+    () => rowKeys.some((k) => selectedIds.has(k)) && !isAllSelected,
+    [rowKeys, selectedIds, isAllSelected]
+  )
 
-  const isPartialSelected = rowKeys.some((k) => selectedIds.has(k)) && !isAllSelected
+  const isSelected = React.useCallback((id: string) => selectedIds.has(id), [selectedIds])
 
-  const toggleRow = (id: string) => {
+  const toggleRow = React.useCallback((id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
       if (next.has(id)) {
@@ -762,17 +770,17 @@ export function useRowSelection<T>(rows: T[], { key }: { key: keyof T }) {
       }
       return next
     })
-  }
+  }, [])
 
-  const toggleAll = () => {
+  const toggleAll = React.useCallback(() => {
     if (isAllSelected) {
       setSelectedIds(new Set())
     } else {
       setSelectedIds(new Set(rowKeys))
     }
-  }
+  }, [isAllSelected, rowKeys])
 
-  const clearSelection = () => setSelectedIds(new Set())
+  const clearSelection = React.useCallback(() => setSelectedIds(new Set()), [])
 
   return {
     selectedIds,
