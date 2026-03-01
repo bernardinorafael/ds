@@ -15,11 +15,11 @@ export type CopyTriggerProps = {
    */
   text: string
   /**
-   * Tooltip label shown before copying @default "Copiar"
+   * Tooltip label shown before copying @default "Copy"
    */
   label?: string
   /**
-   * Tooltip label shown after copying @default "Copiado"
+   * Tooltip label shown after copying @default "Copied"
    */
   copiedLabel?: string
   /**
@@ -34,7 +34,7 @@ export type CopyTriggerProps = {
 
 export const CopyTrigger = React.forwardRef<HTMLButtonElement, CopyTriggerProps>(
   (
-    { children, text, label = "Copiar", copiedLabel = "Copiado", side, onCopy },
+    { children, text, label = "Copy", copiedLabel = "Copied", side, onCopy },
     forwardedRef
   ) => {
     const [isOpen, setIsOpen] = React.useState(false)

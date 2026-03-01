@@ -142,6 +142,7 @@ export type ButtonProps = Pick<
     rightIcon?: IconName
     /**
      * Tooltip label shown on hover. When provided, wraps the button in a Tooltip.
+     * Requires `<Provider>` at the app root for skip-delay to work correctly.
      */
     tooltip?: React.ReactNode
     /**

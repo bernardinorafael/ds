@@ -135,6 +135,7 @@ export type IconButtonProps = Pick<
     /**
      * Tooltip label shown on hover. When a string, also serves as the accessible
      * label if `aria-label` is omitted.
+     * Requires `<Provider>` at the app root for skip-delay to work correctly.
      */
     tooltip?: React.ReactNode
     /**
@@ -160,6 +161,12 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   ) => {
     const resolvedAriaLabel =
       ariaLabel ?? (typeof tooltip === "string" ? tooltip : undefined)
+
+    if (process.env.NODE_ENV !== "production" && !resolvedAriaLabel) {
+      console.warn(
+        "IconButton: missing accessible label. Provide `aria-label` or a string `tooltip`."
+      )
+    }
 
     const button = (
       <button

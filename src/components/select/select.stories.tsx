@@ -41,6 +41,19 @@ export const States: Story = {
   ),
 }
 
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      <div className="w-72">
+        <Select {...args} size="sm" placeholder="Small" />
+      </div>
+      <div className="w-72">
+        <Select {...args} size="md" placeholder="Medium (default)" />
+      </div>
+    </div>
+  ),
+}
+
 export const WithPrefix: Story = {
   render: (args) => (
     <div className="w-72">

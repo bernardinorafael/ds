@@ -83,6 +83,10 @@ type DialogRootProps = VariantProps<typeof dialogPanelVariants> & {
    * Vertically center the dialog in the viewport @default false
    */
   centeredLayout?: boolean
+  /**
+   * Allow closing by clicking outside or pressing Escape @default true
+   */
+  dismissible?: boolean
 }
 
 const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
@@ -94,6 +98,7 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
       size,
       open: openProp,
       centeredLayout = false,
+      dismissible = true,
       onOpenChange,
     },
     forwardedRef
@@ -149,7 +154,13 @@ const DialogRoot = React.forwardRef<HTMLDivElement, DialogRootProps>(
                     centeredLayout ? "items-center" : "items-start"
                   )}
                 >
-                  <RadixDialog.Content asChild>
+                  <RadixDialog.Content
+                    asChild
+                    onInteractOutside={
+                      dismissible ? undefined : (e) => e.preventDefault()
+                    }
+                    onEscapeKeyDown={dismissible ? undefined : (e) => e.preventDefault()}
+                  >
                     <motion.div
                       ref={forwardedRef}
                       initial={{ opacity: 0, scale: 0.95, y: 40 }}

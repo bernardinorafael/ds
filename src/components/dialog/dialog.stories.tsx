@@ -165,6 +165,28 @@ export const Nested: Story = {
   ),
 }
 
+export const NonDismissible: Story = {
+  render: () => (
+    <Dialog dismissible={false} trigger={<Button intent="secondary">Open dialog</Button>}>
+      <Dialog.Content>
+        <Dialog.Header
+          title="Confirm action"
+          description="You must explicitly confirm or cancel."
+        />
+        <Dialog.Section>
+          <p className="text-word-secondary text-base">
+            Clicking outside or pressing Escape will not close this dialog.
+          </p>
+        </Dialog.Section>
+      </Dialog.Content>
+      <Dialog.Footer>
+        <Dialog.Close>Cancel</Dialog.Close>
+        <Button>Confirm</Button>
+      </Dialog.Footer>
+    </Dialog>
+  ),
+}
+
 export const WithNotice: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">

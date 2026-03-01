@@ -6,6 +6,10 @@ import { cn } from "@/utils/cn"
 export type LabelProps = {
   htmlFor: string
   optional?: boolean
+  /**
+   * Text shown in the optional badge @default "Optional"
+   */
+  optionalLabel?: string
   disabled?: boolean
   omitLabel?: boolean
   id?: string
@@ -20,6 +24,7 @@ export function Label({
   omitLabel,
   disabled = false,
   optional = false,
+  optionalLabel = "Optional",
 }: LabelProps) {
   return (
     <div className="group flex items-center justify-between">
@@ -34,7 +39,7 @@ export function Label({
       >
         {children}
       </label>
-      {optional && <Badge intent="secondary">Opcional</Badge>}
+      {optional && <Badge intent="secondary">{optionalLabel}</Badge>}
     </div>
   )
 }

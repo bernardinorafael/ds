@@ -44,6 +44,10 @@ export type SelectProps = Pick<
      * Visual validity state. Overrides Field context detection.
      */
     validity?: "initial" | "error" | "warning" | "success"
+    /**
+     * Trigger size @default "md"
+     */
+    size?: "sm" | "md"
   }
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
@@ -57,6 +61,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       loading = false,
       position = "popper",
       disabled,
+      size = "md",
       validity: validityProp,
       "aria-invalid": ariaInvalidProp,
       "aria-describedby": ariaDescribedByProp,
@@ -86,7 +91,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
           aria-label={ariaLabel}
           aria-busy={loading || undefined}
           className={cn(
-            buttonVariants({ intent: "secondary", size: "md" }),
+            buttonVariants({ intent: "secondary", size }),
             "w-full justify-start",
             // replace border with ring approach
             "border-0",
@@ -122,9 +127,16 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             <RadixSelect.Value placeholder={placeholder} />
           </div>
           {loading ? (
-            <Spinner size="sm" className="ml-auto" label="Loading" />
+            <Spinner
+              size={size === "sm" ? "xs" : "sm"}
+              className="ml-auto"
+              label="Loading"
+            />
           ) : (
-            <ChevronsUpDown size={14} className="ml-auto opacity-50" />
+            <ChevronsUpDown
+              size={size === "sm" ? 12 : 14}
+              className="ml-auto opacity-50"
+            />
           )}
         </RadixSelect.Trigger>
 

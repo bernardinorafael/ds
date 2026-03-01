@@ -71,7 +71,7 @@ describe("CopyTrigger", () => {
     )
     await user.hover(screen.getByRole("button"))
     await waitFor(() => {
-      expect(screen.getAllByText("Copiar").length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText("Copy").length).toBeGreaterThanOrEqual(1)
     })
   })
 
@@ -83,7 +83,7 @@ describe("CopyTrigger", () => {
     )
     await user.click(screen.getByRole("button"))
     await waitFor(() => {
-      expect(screen.getAllByText("Copiado").length).toBeGreaterThanOrEqual(1)
+      expect(screen.getAllByText("Copied").length).toBeGreaterThanOrEqual(1)
     })
   })
 

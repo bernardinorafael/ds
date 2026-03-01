@@ -34,18 +34,27 @@ describe("Label", () => {
     expect(screen.getByText("Email").closest("label")).toHaveClass("text-gray-400")
   })
 
-  it("should render Opcional badge when optional", () => {
+  it("should render optional badge with default label when optional", () => {
     render(
       <Label htmlFor="field" optional>
+        Email
+      </Label>
+    )
+    expect(screen.getByText("Optional")).toBeInTheDocument()
+  })
+
+  it("should render optional badge with custom optionalLabel", () => {
+    render(
+      <Label htmlFor="field" optional optionalLabel="Opcional">
         Email
       </Label>
     )
     expect(screen.getByText("Opcional")).toBeInTheDocument()
   })
 
-  it("should not render Opcional badge when optional is not set", () => {
+  it("should not render optional badge when optional is not set", () => {
     render(<Label htmlFor="field">Email</Label>)
-    expect(screen.queryByText("Opcional")).not.toBeInTheDocument()
+    expect(screen.queryByText("Optional")).not.toBeInTheDocument()
   })
 
   it("should merge custom className onto the label element", () => {
