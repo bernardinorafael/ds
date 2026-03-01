@@ -3,6 +3,7 @@ import React, { type CSSProperties } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { AnimatePresence, motion } from "motion/react"
 
+import { Checkbox } from "@/components/checkbox"
 import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
 import { Select } from "@/components/select"
@@ -64,6 +65,26 @@ export type DataTableCellProps = Pick<
   VariantProps<typeof cellVariants>
 
 export type SortDirection = "asc" | "desc"
+
+export type DataTableSelectHeaderProps = {
+  /** Current checked state of the select-all checkbox */
+  checked: boolean
+  /** Shows the checkbox in indeterminate state (some rows selected) */
+  indeterminate?: boolean
+  /** Called when the checkbox is toggled */
+  onChange: () => void
+  /** Disables the checkbox */
+  disabled?: boolean
+}
+
+export type DataTableSelectCellProps = {
+  /** Current checked state of the row checkbox */
+  checked: boolean
+  /** Called when the checkbox is toggled */
+  onChange: () => void
+  /** Disables the checkbox */
+  disabled?: boolean
+}
 
 export type DataTableSortHeaderProps = Omit<DataTableHeaderProps, "srOnly"> & {
   /**
@@ -143,6 +164,10 @@ const rootVariants = cva(
     "[--data-table-header-leading:1rem]",
     "[--data-table-header-pb:calc(var(--data-table-header-pt)-var(--data-table-border-width))]",
     "[--data-table-head-height:calc(var(--data-table-header-pt)+var(--data-table-header-pb)+var(--data-table-header-leading))]",
+
+    // selection
+    "[--data-table-select-col-w:2.5rem]",
+    "[--data-table-selected-bg:var(--color-blue-100)]",
   ],
   {
     variants: {
@@ -170,6 +195,7 @@ const cellVariants = cva(
 
     // background
     "bg-(--data-table-cell-bg)",
+    "group-data-[selected]/table-row:bg-(--data-table-selected-bg)",
 
     // border color for row separators (border-width is controlled by Row's sibling selector)
     "border-border",
@@ -563,9 +589,13 @@ DataTableBody.displayName = "DataTable.Body"
 
 const DataTableRow = React.forwardRef<
   HTMLTableRowElement,
-  Pick<React.ComponentProps<"tr">, "children" | "className">
->((props, ref) => (
+  Pick<React.ComponentProps<"tr">, "children" | "className"> & {
+    /** Highlights the row as selected */
+    selected?: boolean
+  }
+>(({ selected, ...props }, ref) => (
   <tr
+    data-selected={selected ? "" : undefined}
     className={cn(
       "group/table-row text-base",
 
@@ -612,6 +642,69 @@ const DataTableActions = React.forwardRef<
 DataTableActions.displayName = "DataTable.Actions"
 
 // ---------------------------------------------------------------------------
+// DataTableSelectHeader
+// ---------------------------------------------------------------------------
+
+function DataTableSelectHeader({
+  checked,
+  indeterminate,
+  onChange,
+  disabled,
+}: DataTableSelectHeaderProps) {
+  return (
+    <th
+      className={cn(
+        "overflow-hidden",
+        "leading-(--data-table-header-leading)",
+        "pt-(--data-table-header-pt)",
+        "pb-(--data-table-header-pb)",
+        "w-(--data-table-select-col-w)"
+      )}
+    >
+      <div className="flex items-center justify-center">
+        <Checkbox
+          size="sm"
+          checked={indeterminate ? "indeterminate" : checked}
+          onCheckedChange={() => onChange()}
+          disabled={disabled}
+          aria-label="Select all rows"
+        />
+      </div>
+    </th>
+  )
+}
+
+DataTableSelectHeader.displayName = "DataTable.SelectHeader"
+
+// ---------------------------------------------------------------------------
+// DataTableSelectCell
+// ---------------------------------------------------------------------------
+
+function DataTableSelectCell({ checked, onChange, disabled }: DataTableSelectCellProps) {
+  return (
+    <td
+      data-table-cell=""
+      className={cn(
+        cellVariants({ flushLeft: true, flushRight: true }),
+        "w-(--data-table-select-col-w)"
+      )}
+    >
+      <div className="flex items-center justify-center">
+        <Checkbox
+          size="sm"
+          checked={checked}
+          onCheckedChange={() => onChange()}
+          disabled={disabled}
+          aria-label="Select row"
+        />
+      </div>
+    </td>
+  )
+}
+
+DataTableSelectCell.displayName = "DataTable.SelectCell"
+
+// ---------------------------------------------------------------------------
 // useSortState
 // ---------------------------------------------------------------------------
 
@@ -638,6 +731,61 @@ export function useSortState(initial?: { column: string; direction: SortDirectio
 }
 
 // ---------------------------------------------------------------------------
+// useRowSelection
+// ---------------------------------------------------------------------------
+
+/**
+ * Manages row selection state for visible rows.
+ *
+ * @example
+ * const { isSelected, isAllSelected, isPartialSelected, toggleRow, toggleAll } =
+ *   useRowSelection(rows, { key: "id" })
+ */
+export function useRowSelection<T>(rows: T[], { key }: { key: keyof T }) {
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
+
+  const rowKeys = React.useMemo(() => rows.map((row) => String(row[key])), [rows, key])
+
+  const isSelected = (id: string) => selectedIds.has(id)
+
+  const isAllSelected = rowKeys.length > 0 && rowKeys.every((k) => selectedIds.has(k))
+
+  const isPartialSelected = rowKeys.some((k) => selectedIds.has(k)) && !isAllSelected
+
+  const toggleRow = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const toggleAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(rowKeys))
+    }
+  }
+
+  const clearSelection = () => setSelectedIds(new Set())
+
+  return {
+    selectedIds,
+    isSelected,
+    isAllSelected,
+    isPartialSelected,
+    toggleRow,
+    toggleAll,
+    clearSelection,
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Compound export
 // ---------------------------------------------------------------------------
 
@@ -649,4 +797,6 @@ export const DataTable = Object.assign(DataTableRoot, {
   Row: DataTableRow,
   Cell: DataTableCell,
   Actions: DataTableActions,
+  SelectHeader: DataTableSelectHeader,
+  SelectCell: DataTableSelectCell,
 })

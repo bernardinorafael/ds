@@ -3,7 +3,7 @@ import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Badge } from "@/components/badge"
-import { DataTable, useSortState } from "@/components/data-table"
+import { DataTable, useRowSelection, useSortState } from "@/components/data-table"
 import { IconButton } from "@/components/icon-button"
 import { Provider } from "@/components/provider"
 
@@ -208,6 +208,54 @@ export const WithPagination: Story = {
                 <DataTable.Cell>{user.role}</DataTable.Cell>
                 <DataTable.Cell>
                   <Badge intent={statusIntent[user.status]}>{user.status}</Badge>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    return <Demo />
+  },
+}
+
+export const WithSelection: Story = {
+  render: () => {
+    const Demo = () => {
+      const { isSelected, isAllSelected, isPartialSelected, toggleRow, toggleAll } =
+        useRowSelection(USERS, { key: "id" })
+
+      return (
+        <DataTable>
+          <DataTable.Head>
+            <DataTable.SelectHeader
+              checked={isAllSelected}
+              indeterminate={isPartialSelected}
+              onChange={toggleAll}
+            />
+            <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header width="6rem">Role</DataTable.Header>
+            <DataTable.Header width="6rem">Status</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            {USERS.map((user) => (
+              <DataTable.Row key={user.id} selected={isSelected(user.id)}>
+                <DataTable.SelectCell
+                  checked={isSelected(user.id)}
+                  onChange={() => toggleRow(user.id)}
+                />
+                <DataTable.Cell>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-word-primary font-medium">{user.name}</span>
+                    <span className="text-word-secondary text-sm">{user.email}</span>
+                  </div>
+                </DataTable.Cell>
+                <DataTable.Cell>{user.role}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+                    {user.status}
+                  </Badge>
                 </DataTable.Cell>
               </DataTable.Row>
             ))}
