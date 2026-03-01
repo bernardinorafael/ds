@@ -130,7 +130,7 @@ const inputVariants = cva(
     variants: {
       size: {
         sm: ["text-sm", "placeholder:text-sm"],
-        md: ["text-base", "placeholder:text-sm"],
+        md: ["text-base", "placeholder:text-base"],
         lg: ["text-base", "placeholder:text-base"],
       },
     },
