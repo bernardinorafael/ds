@@ -46,11 +46,11 @@ const chipVariants = cva(
     "duration-150",
 
     // hover shadow
-    "not-disabled:hover:shadow-[var(--chip-shadow-active)]",
+    "not-disabled:hover:shadow-(--chip-shadow-active)",
 
     // focus states
     "outline-none",
-    "focus-visible:shadow-[var(--chip-shadow-active)]",
+    "focus-visible:shadow-(--chip-shadow-active)",
     "focus-visible:ring-[3px]",
     "focus-visible:ring-(--focus-ring-color)",
     "focus-visible:ring-offset-1",
