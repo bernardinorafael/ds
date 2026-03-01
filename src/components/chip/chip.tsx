@@ -12,8 +12,6 @@ const chipVariants = cva(
     "isolate",
     "relative",
     "inline-flex",
-    "w-full",
-    "max-w-max",
     "items-center",
     "overflow-hidden",
 
@@ -21,7 +19,6 @@ const chipVariants = cva(
     "rounded-sm",
     "font-normal",
     "text-sm",
-    "leading-none",
     "select-none",
     "cursor-pointer",
 
@@ -29,6 +26,7 @@ const chipVariants = cva(
     "[--chip-px:0.375rem]",
     "[--chip-gap:0.25rem]",
     "[--chip-icon-size:1.25rem]",
+    "[--chip-shadow-active:0_2px_3px_-1px_rgb(0_0_0/0.08),0_2px_0_-1px_rgb(0_0_0/0.04),0_0_0_1px_rgb(0_0_0/0.08)]",
 
     // spacing
     "gap-(--chip-gap)",
@@ -48,11 +46,11 @@ const chipVariants = cva(
     "duration-150",
 
     // hover shadow
-    "not-disabled:hover:shadow-[0_2px_3px_-1px_rgb(0_0_0/0.08),0_2px_0_-1px_rgb(0_0_0/0.04),0_0_0_1px_rgb(0_0_0/0.08)]",
+    "not-disabled:hover:shadow-[var(--chip-shadow-active)]",
 
     // focus states
     "outline-none",
-    "focus-visible:shadow-[0_2px_3px_-1px_rgb(0_0_0/0.08),0_2px_0_-1px_rgb(0_0_0/0.04),0_0_0_1px_rgb(0_0_0/0.08)]",
+    "focus-visible:shadow-[var(--chip-shadow-active)]",
     "focus-visible:ring-[3px]",
     "focus-visible:ring-(--focus-ring-color)",
     "focus-visible:ring-offset-1",
