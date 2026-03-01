@@ -537,7 +537,7 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Sort ascending" }))
+    await user.click(screen.getByRole("button", { name: "Sort Name ascending" }))
     expect(onSort).toHaveBeenCalledWith("asc")
   })
 
@@ -555,11 +555,11 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Sort descending" }))
+    await user.click(screen.getByRole("button", { name: "Sort Name descending" }))
     expect(onSort).toHaveBeenCalledWith("desc")
   })
 
-  it("should call onSort with asc when direction is desc and clicked", async () => {
+  it("should call onSort with clear when direction is desc and clicked", async () => {
     const user = userEvent.setup()
     const onSort = vi.fn()
     render(
@@ -573,8 +573,8 @@ describe("DataTable.SortHeader", () => {
         </thead>
       </table>
     )
-    await user.click(screen.getByRole("button", { name: "Sort ascending" }))
-    expect(onSort).toHaveBeenCalledWith("asc")
+    await user.click(screen.getByRole("button", { name: "Clear Name sort" }))
+    expect(onSort).toHaveBeenCalledWith(undefined)
   })
 })
 

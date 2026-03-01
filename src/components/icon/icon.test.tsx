@@ -82,7 +82,7 @@ describe("Icon", () => {
         <Icon name="info" size="md" />
       </WithSprite>
     )
-    expect(container.querySelector("[data-icon]")).toHaveClass("size-4.5")
+    expect(container.querySelector("[data-icon]")).toHaveClass("size-4-5")
   })
 
   it("should apply size-5.5 for lg", () => {
