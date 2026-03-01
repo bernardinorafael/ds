@@ -9,7 +9,7 @@ import { Provider } from "@/components/provider"
 import { Select } from "@/components/select"
 
 const meta = {
-  title: "DataTable/Toolbar",
+  title: "DataTableToolbar",
   component: DataTableToolbar,
   tags: ["autodocs"],
   decorators: [
