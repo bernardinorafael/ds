@@ -80,7 +80,7 @@ export const WithBackAction: Story = {
       title="User details"
       description="View and edit user information"
       backAction={
-        <Button intent="ghost" size="sm" leftIcon="arrow-left-outline">
+        <Button intent="link-underline" size="sm" leftIcon="chevron-left-outline">
           Back
         </Button>
       }
@@ -112,7 +112,7 @@ export const KitchenSink: Story = {
         </>
       }
       backAction={
-        <Button intent="ghost" size="sm" leftIcon="chevron-left-outline">
+        <Button intent="link-underline" size="sm" leftIcon="chevron-left-outline">
           Back
         </Button>
       }

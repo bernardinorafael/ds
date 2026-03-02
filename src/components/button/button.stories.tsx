@@ -23,14 +23,14 @@ const meta = {
 
 type Story = StoryObj<typeof meta>
 
-const INTENTS = ["primary", "secondary", "danger", "ghost"] as const
+const INTENTS = ["primary", "secondary", "danger", "ghost", "link", "link-underline"] as const
 
 export const Intents: Story = {
   render: () => (
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <Button intent={intent}>{intent}</Button>
         </div>
       ))}
@@ -43,7 +43,7 @@ export const Sizes: Story = {
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
             <Button intent={intent} size="sm">
               Small
@@ -63,7 +63,7 @@ export const Loading: Story = {
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
             <Button isLoading intent={intent} size="sm">
               Small
@@ -83,7 +83,7 @@ export const Disabled: Story = {
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
             <Button disabled intent={intent} size="sm">
               Small
@@ -103,7 +103,7 @@ export const WithIcons: Story = {
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
             <Button intent={intent} leftIcon="plus-outline">
               Create
@@ -126,7 +126,7 @@ export const WithTooltip: Story = {
     <div className="flex flex-col gap-3">
       {INTENTS.map((intent) => (
         <div key={intent} className="flex items-center gap-3">
-          <span className="text-word-secondary w-20 text-sm">{intent}</span>
+          <span className="text-word-secondary w-28 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
             <Button intent={intent} size="sm" tooltip="Tooltip label">
               Small

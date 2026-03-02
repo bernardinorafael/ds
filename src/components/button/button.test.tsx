@@ -67,6 +67,29 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toHaveClass("bg-transparent")
   })
 
+  it("should apply link intent", () => {
+    render(<Button intent="link">Link</Button>)
+    expect(screen.getByRole("button")).toHaveClass("text-primary")
+  })
+
+  it("should apply link-underline intent", () => {
+    render(<Button intent="link-underline">Link</Button>)
+    const button = screen.getByRole("button")
+    expect(button).toHaveClass("text-foreground")
+    expect(button).toHaveClass("underline")
+    expect(button).toHaveClass("decoration-dotted")
+  })
+
+  it("should remove padding for link intent", () => {
+    render(<Button intent="link">Link</Button>)
+    expect(screen.getByRole("button")).toHaveClass("px-0")
+  })
+
+  it("should remove padding for link-underline intent", () => {
+    render(<Button intent="link-underline">Link</Button>)
+    expect(screen.getByRole("button")).toHaveClass("px-0")
+  })
+
   it("should render left icon", () => {
     render(<Button leftIcon="arrow-right-outline">Next</Button>)
     expect(document.querySelector("[data-icon]")).toBeInTheDocument()
