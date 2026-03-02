@@ -29,10 +29,6 @@ const radioItemVariants = cva(
     "data-[state=checked]:[--radio-border-color:var(--color-word-primary)]",
     "data-[state=checked]:[--radio-ring-color:color-mix(in_srgb,var(--color-word-primary)_20%,transparent)]",
 
-    // transitions
-    "transition-colors",
-    "duration-150",
-
     // focus
     "outline-none",
     "focus-visible:ring-(--radio-ring-color)",
