@@ -449,12 +449,11 @@ describe("DataTable.Row", () => {
 
   it("should set data-selected when selection context provides selected state", () => {
     function Demo() {
-      const selection = useRowSelection(
-        [{ id: "1" }, { id: "2" }],
-        { key: "id" }
-      )
+      const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      React.useEffect(() => { selection.toggleRow("1") }, [])
+      React.useEffect(() => {
+        selection.toggleRow("1")
+      }, [])
 
       return (
         <DataTable selection={selection}>
@@ -663,9 +662,7 @@ describe("DataTable.SelectHeader (context)", () => {
     }
 
     render(<Demo />)
-    expect(
-      screen.getByRole("checkbox", { name: "Select all rows" })
-    ).toBeInTheDocument()
+    expect(screen.getByRole("checkbox", { name: "Select all rows" })).toBeInTheDocument()
   })
 })
 
@@ -678,10 +675,7 @@ describe("DataTable.SelectCell (context)", () => {
     const user = userEvent.setup()
 
     function Demo() {
-      const selection = useRowSelection(
-        [{ id: "1" }, { id: "2" }],
-        { key: "id" }
-      )
+      const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
       return (
         <DataTable selection={selection}>
           <DataTable.Head>
@@ -775,38 +769,6 @@ describe("DataTable.BulkBar", () => {
 
     expect(screen.getByText("1 selected")).toBeInTheDocument()
     expect(screen.getByText("Delete")).toBeInTheDocument()
-  })
-
-  it("should call clearSelection when clear button is clicked", async () => {
-    const user = userEvent.setup()
-
-    function Demo() {
-      const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
-      return (
-        <DataTable selection={selection}>
-          <DataTable.Head>
-            <DataTable.SelectHeader />
-            <DataTable.Header>Name</DataTable.Header>
-          </DataTable.Head>
-          <DataTable.Body>
-            <DataTable.Row rowId="1">
-              <DataTable.SelectCell />
-              <DataTable.Cell>Alice</DataTable.Cell>
-            </DataTable.Row>
-          </DataTable.Body>
-          <DataTable.BulkBar>
-            <button>Delete</button>
-          </DataTable.BulkBar>
-        </DataTable>
-      )
-    }
-
-    render(<Demo />)
-    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
-    expect(screen.getByText("1 selected")).toBeInTheDocument()
-
-    await user.click(screen.getByRole("button", { name: "Clear selection" }))
-    expect(screen.queryByText("selected")).not.toBeInTheDocument()
   })
 
   it("should render children actions", async () => {

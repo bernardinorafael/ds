@@ -907,7 +907,6 @@ export type DataTableBulkBarProps = {
 function DataTableBulkBar({
   children,
   label = (count) => `${count} selected`,
-  clearLabel = "Clear selection",
   className,
 }: DataTableBulkBarProps) {
   const selection = useSelectionContext()
@@ -954,18 +953,6 @@ function DataTableBulkBar({
           >
             {label(count)}
           </span>
-          <button
-            type="button"
-            onClick={selection.clearSelection}
-            aria-label={clearLabel}
-            className={cn(
-              "cursor-pointer rounded-sm px-2 py-1 text-base font-medium whitespace-nowrap",
-              "text-white/70 hover:text-white",
-              "focus-visible:ring-offset-gray-1200 outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2"
-            )}
-          >
-            {clearLabel}
-          </button>
 
           {/* Separator */}
           <div className="h-4 w-px bg-white/20" role="separator" />
