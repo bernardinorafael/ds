@@ -112,7 +112,7 @@ export const KitchenSink: Story = {
         </>
       }
       backAction={
-        <Button intent="ghost" size="sm" leftIcon="arrow-left-outline">
+        <Button intent="ghost" size="sm" leftIcon="chevron-left-outline">
           Back
         </Button>
       }

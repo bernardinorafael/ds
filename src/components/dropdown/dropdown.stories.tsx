@@ -171,7 +171,7 @@ export const KitchenSink: Story = {
           <Dropdown.Group>
             <Dropdown.Label>Quick actions</Dropdown.Label>
             <Dropdown.Item icon="edit-outline">Edit project</Dropdown.Item>
-            <Dropdown.Item icon="clipboard-fill">Copy to clipboard</Dropdown.Item>
+            <Dropdown.Item icon="clipboard-outline">Copy to clipboard</Dropdown.Item>
             <Dropdown.Item icon="download-outline">Export</Dropdown.Item>
           </Dropdown.Group>
 
