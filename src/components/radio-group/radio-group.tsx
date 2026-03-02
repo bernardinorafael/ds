@@ -24,11 +24,6 @@ const radioItemVariants = cva(
     "border-(--radio-border-color)",
     "bg-white",
 
-    // checked
-    "data-[state=checked]:border-word-primary",
-    "data-[state=checked]:[--radio-border-color:var(--color-word-primary)]",
-    "data-[state=checked]:[--radio-ring-color:color-mix(in_srgb,var(--color-word-primary)_20%,transparent)]",
-
     // focus
     "outline-none",
     "focus-visible:ring-(--radio-ring-color)",
@@ -183,7 +178,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   <RadixRadioGroup.Indicator asChild forceMount>
                     <span
                       className={cn(
-                        "absolute inset-0 scale-0 rounded-full",
+                        "absolute -inset-px scale-0 rounded-full",
                         "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
                         "transition-transform duration-300",
                         "ease-[cubic-bezier(.4,.36,0,1)]",
