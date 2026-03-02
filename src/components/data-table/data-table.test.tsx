@@ -3,11 +3,7 @@ import React, { createRef } from "react"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import {
-  DataTable,
-  useRowSelection,
-  type PaginationProps,
-} from "@/components/data-table"
+import { DataTable, useRowSelection, type PaginationProps } from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -714,5 +710,161 @@ describe("DataTable.SelectCell (context)", () => {
     const rows = screen.getAllByRole("row")
     expect(rows[1]).toHaveAttribute("data-selected", "")
     expect(rows[2]).not.toHaveAttribute("data-selected")
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.BulkBar
+// ---------------------------------------------------------------------------
+
+describe("DataTable.BulkBar", () => {
+  it("should not render when no rows are selected", () => {
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <button>Delete</button>
+          </DataTable.BulkBar>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    expect(screen.queryByText("selected")).not.toBeInTheDocument()
+  })
+
+  it("should render with count when rows are selected", async () => {
+    const user = userEvent.setup()
+
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+            <DataTable.Row rowId="2">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Bob</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <button>Delete</button>
+          </DataTable.BulkBar>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    const checkboxes = screen.getAllByRole("checkbox", { name: "Select row" })
+    await user.click(checkboxes[0])
+
+    expect(screen.getByText("1 selected")).toBeInTheDocument()
+    expect(screen.getByText("Delete")).toBeInTheDocument()
+  })
+
+  it("should call clearSelection when clear button is clicked", async () => {
+    const user = userEvent.setup()
+
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <button>Delete</button>
+          </DataTable.BulkBar>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
+    expect(screen.getByText("1 selected")).toBeInTheDocument()
+
+    await user.click(screen.getByRole("button", { name: "Clear selection" }))
+    expect(screen.queryByText("selected")).not.toBeInTheDocument()
+  })
+
+  it("should render children actions", async () => {
+    const user = userEvent.setup()
+    const onDelete = vi.fn()
+
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <button onClick={onDelete}>Delete</button>
+          </DataTable.BulkBar>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
+    await user.click(screen.getByText("Delete"))
+    expect(onDelete).toHaveBeenCalledOnce()
+  })
+
+  it("should use custom label when provided", async () => {
+    const user = userEvent.setup()
+
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+          <DataTable.BulkBar label={(n) => `${n} item(s)`}>
+            <button>Delete</button>
+          </DataTable.BulkBar>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
+    expect(screen.getByText("1 item(s)")).toBeInTheDocument()
   })
 })

@@ -6,6 +6,7 @@ export type {
   DataTableCellProps,
   DataTableSelectHeaderProps,
   DataTableSelectCellProps,
+  DataTableBulkBarProps,
   PaginationProps,
   SortDirection,
 } from "./data-table"

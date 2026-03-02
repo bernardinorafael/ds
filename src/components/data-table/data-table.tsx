@@ -1,4 +1,5 @@
 import React, { type CSSProperties } from "react"
+import { createPortal } from "react-dom"
 
 import { cva, type VariantProps } from "class-variance-authority"
 import { AnimatePresence, motion } from "motion/react"
@@ -885,6 +886,105 @@ export function useRowSelection<T>(rows: T[], { key }: { key: keyof T }) {
 }
 
 // ---------------------------------------------------------------------------
+// DataTable.BulkBar
+// ---------------------------------------------------------------------------
+
+export type DataTableBulkBarProps = {
+  /**
+   * Action buttons shown on the right side of the bar
+   */
+  children: React.ReactNode
+  /**
+   * Override the count label. Receives the number of selected rows.
+   * @default (count) => `${count} selected`
+   */
+  label?: (count: number) => string
+  /**
+   * Override clear button text
+   * @default "Clear selection"
+   */
+  clearLabel?: string
+  /**
+   * Additional class name for the bar container
+   */
+  className?: string
+}
+
+function DataTableBulkBar({
+  children,
+  label = (count) => `${count} selected`,
+  clearLabel = "Clear selection",
+  className,
+}: DataTableBulkBarProps) {
+  const selection = useSelectionContext()
+
+  if (!selection) return null
+
+  const count = selection.selectedIds.size
+
+  return createPortal(
+    <AnimatePresence>
+      {count > 0 && (
+        <motion.div
+          role="toolbar"
+          aria-label="Bulk actions"
+          aria-live="polite"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 16 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className={cn(
+            // positioning
+            "fixed bottom-4 left-1/2 z-50",
+            "-translate-x-1/2",
+
+            // layout
+            "flex items-center gap-3",
+
+            // sizing
+            "px-4 py-2.5",
+
+            // visual
+            "rounded-xl",
+            "bg-gray-1200",
+            "text-white",
+            "shadow-lg",
+
+            className
+          )}
+        >
+          {/* Left: count + clear */}
+          <span className="text-sm font-medium tabular-nums whitespace-nowrap">
+            {label(count)}
+          </span>
+          <button
+            type="button"
+            onClick={selection.clearSelection}
+            aria-label={clearLabel}
+            className={cn(
+              "cursor-pointer rounded-sm px-2 py-1 text-sm font-medium whitespace-nowrap",
+              "text-white/70 hover:text-white",
+              "outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            )}
+          >
+            {clearLabel}
+          </button>
+
+          {/* Separator */}
+          <div className="h-4 w-px bg-white/20" role="separator" />
+
+          {/* Right: consumer actions */}
+          <div className="flex items-center gap-2">{children}</div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
+  )
+}
+
+DataTableBulkBar.displayName = "DataTable.BulkBar"
+
+// ---------------------------------------------------------------------------
 // Compound export
 // ---------------------------------------------------------------------------
 
@@ -898,4 +998,5 @@ export const DataTable = Object.assign(DataTableRoot, {
   Actions: DataTableActions,
   SelectHeader: DataTableSelectHeader,
   SelectCell: DataTableSelectCell,
+  BulkBar: DataTableBulkBar,
 })
