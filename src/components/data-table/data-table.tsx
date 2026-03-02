@@ -452,9 +452,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
     )
 
     return selection ? (
-      <SelectionContext.Provider value={selection}>
-        {content}
-      </SelectionContext.Provider>
+      <SelectionContext.Provider value={selection}>{content}</SelectionContext.Provider>
     ) : (
       content
     )
@@ -655,7 +653,8 @@ const DataTableRow = React.forwardRef<
 >(({ selected, rowId, children, ...props }, ref) => {
   const selection = useSelectionContext()
 
-  const isSelected = selected ?? (selection && rowId ? selection.isSelected(rowId) : false)
+  const isSelected =
+    selected ?? (selection && rowId ? selection.isSelected(rowId) : false)
 
   const row = (
     <tr
@@ -673,11 +672,7 @@ const DataTableRow = React.forwardRef<
     </tr>
   )
 
-  return rowId ? (
-    <RowContext.Provider value={rowId}>{row}</RowContext.Provider>
-  ) : (
-    row
-  )
+  return rowId ? <RowContext.Provider value={rowId}>{row}</RowContext.Provider> : row
 })
 
 DataTableRow.displayName = "DataTable.Row"
@@ -771,8 +766,7 @@ function DataTableSelectCell({
   const checked =
     checkedProp ?? (selection && rowId ? selection.isSelected(rowId) : false)
   const onChange =
-    onChangeProp ??
-    (selection && rowId ? () => selection.toggleRow(rowId) : undefined)
+    onChangeProp ?? (selection && rowId ? () => selection.toggleRow(rowId) : undefined)
 
   return (
     <td
@@ -953,7 +947,11 @@ function DataTableBulkBar({
           )}
         >
           {/* Left: count + clear */}
-          <span aria-live="polite" aria-atomic="true" className="text-sm font-medium tabular-nums whitespace-nowrap">
+          <span
+            aria-live="polite"
+            aria-atomic="true"
+            className="text-base font-medium whitespace-nowrap tabular-nums"
+          >
             {label(count)}
           </span>
           <button
@@ -961,9 +959,9 @@ function DataTableBulkBar({
             onClick={selection.clearSelection}
             aria-label={clearLabel}
             className={cn(
-              "cursor-pointer rounded-sm px-2 py-1 text-sm font-medium whitespace-nowrap",
+              "cursor-pointer rounded-sm px-2 py-1 text-base font-medium whitespace-nowrap",
               "text-white/70 hover:text-white",
-              "outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-1200"
+              "focus-visible:ring-offset-gray-1200 outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2"
             )}
           >
             {clearLabel}
