@@ -10,7 +10,6 @@ import { cn } from "@/utils/cn"
 const radioItemVariants = cva(
   [
     // positioning
-    "group/radio",
     "relative",
 
     // layout
@@ -74,7 +73,7 @@ const radioItemVariants = cva(
       disabled: false,
       validity: "initial",
     },
-  },
+  }
 )
 
 const indicatorInsetMap = {
@@ -102,7 +101,12 @@ export type RadioGroupOption = {
 
 export type RadioGroupProps = Pick<
   React.ComponentProps<"div">,
-  "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "className"
+  | "id"
+  | "aria-label"
+  | "aria-labelledby"
+  | "aria-describedby"
+  | "aria-invalid"
+  | "className"
 > &
   VariantProps<typeof radioItemVariants> & {
     /** Form field name */
@@ -137,16 +141,14 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
       options,
       ...props
     },
-    forwardedRef,
+    forwardedRef
   ) => {
     const autoId = React.useId()
     const field = useFieldControl({ props: { id: props.id } })
     const baseId = field.id ?? props.id ?? autoId
     const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
     const validity =
-      validityProp ??
-      field.messageIntent ??
-      (ariaInvalid === true ? "error" : "initial")
+      validityProp ?? field.messageIntent ?? (ariaInvalid === true ? "error" : "initial")
 
     return (
       <RadixRadioGroup.Root
@@ -168,9 +170,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
               htmlFor={itemId}
               className={cn(
                 "group flex flex-col gap-0.5",
-                disabled || option.disabled
-                  ? "cursor-not-allowed"
-                  : "cursor-pointer",
+                disabled || option.disabled ? "cursor-not-allowed" : "cursor-pointer"
               )}
             >
               <div className="flex items-center gap-2">
@@ -184,17 +184,19 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                     validity,
                   })}
                 >
-                  <span
-                    className={cn(
-                      "absolute inset-0 scale-0 rounded-full",
-                      "bg-word-primary bg-gradient-to-b from-white/12 to-white/0",
-                      "transition-transform duration-300",
-                      "ease-[cubic-bezier(.4,.36,0,1)]",
-                      "group-data-[state=checked]/radio:scale-100",
-                      "before:absolute before:rounded-full before:bg-white",
-                      indicatorInsetMap[size ?? "sm"],
-                    )}
-                  />
+                  <RadixRadioGroup.Indicator asChild forceMount>
+                    <span
+                      className={cn(
+                        "absolute inset-0 scale-0 rounded-full",
+                        "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
+                        "transition-transform duration-300",
+                        "ease-[cubic-bezier(.4,.36,0,1)]",
+                        "data-[state=checked]:scale-100",
+                        "before:absolute before:rounded-full before:bg-white",
+                        indicatorInsetMap[size ?? "sm"],
+                      )}
+                    />
+                  </RadixRadioGroup.Indicator>
                 </RadixRadioGroup.Item>
 
                 <span
@@ -202,7 +204,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                     "text-word-primary text-base font-medium transition-colors select-none",
                     disabled || option.disabled
                       ? "opacity-50"
-                      : "opacity-80 group-hover:opacity-100",
+                      : "opacity-80 group-hover:opacity-100"
                   )}
                 >
                   {option.label}
@@ -216,7 +218,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   className={cn(
                     "text-word-secondary text-sm font-normal transition-colors select-none",
                     descriptionPaddingMap[size ?? "sm"],
-                    (disabled || option.disabled) && "opacity-50",
+                    (disabled || option.disabled) && "opacity-50"
                   )}
                 >
                   {option.description}
@@ -227,7 +229,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         })}
       </RadixRadioGroup.Root>
     )
-  },
+  }
 )
 
 RadioGroup.displayName = "RadioGroup"
