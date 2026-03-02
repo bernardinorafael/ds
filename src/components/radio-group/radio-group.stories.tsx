@@ -10,8 +10,14 @@ const meta = {
   args: {
     "aria-label": "Radio group",
     options: [
-      { value: "monthly", label: "Monthly" },
-      { value: "yearly", label: "Yearly" },
+      {
+        value: "monthly",
+        label: "Monthly",
+      },
+      {
+        value: "yearly",
+        label: "Yearly",
+      },
     ],
   },
 } satisfies Meta<typeof RadioGroup>
@@ -20,25 +26,33 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-const SIZES = ["sm", "md"] as const
-
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
-      {SIZES.map((size) => (
-        <div key={size} className="flex items-start gap-3">
-          <span className="text-word-secondary w-28 pt-0.5 text-sm">{size}</span>
-          <RadioGroup
-            aria-label={`Size ${size}`}
-            size={size}
-            defaultValue="yearly"
-            options={[
-              { value: "monthly", label: "Monthly" },
-              { value: "yearly", label: "Yearly" },
-            ]}
-          />
-        </div>
-      ))}
+      <div className="flex items-start gap-3">
+        <span className="text-word-secondary w-28 pt-0.5 text-sm">sm</span>
+        <RadioGroup
+          aria-label="Size sm"
+          size="sm"
+          defaultValue="yearly"
+          options={[
+            { value: "monthly", label: "Monthly" },
+            { value: "yearly", label: "Yearly" },
+          ]}
+        />
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-word-secondary w-28 pt-0.5 text-sm">md</span>
+        <RadioGroup
+          aria-label="Size md"
+          size="md"
+          defaultValue="yearly"
+          options={[
+            { value: "monthly", label: "Monthly" },
+            { value: "yearly", label: "Yearly" },
+          ]}
+        />
+      </div>
     </div>
   ),
 }
