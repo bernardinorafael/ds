@@ -79,7 +79,7 @@ const PageLayout = React.forwardRef<HTMLElement, PageLayoutProps>(
                         {React.Children.toArray(
                           React.isValidElement(badges) &&
                             badges.type === React.Fragment
-                            ? badges.props.children
+                            ? (badges.props as { children: React.ReactNode }).children
                             : badges
                         ).map((badge, index, array) => (
                           <React.Fragment key={index}>
