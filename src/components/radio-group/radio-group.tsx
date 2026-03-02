@@ -74,7 +74,7 @@ const radioItemVariants = cva(
       disabled: false,
       validity: "initial",
     },
-  }
+  },
 )
 
 const indicatorInsetMap = {
@@ -102,12 +102,7 @@ export type RadioGroupOption = {
 
 export type RadioGroupProps = Pick<
   React.ComponentProps<"div">,
-  | "id"
-  | "aria-label"
-  | "aria-labelledby"
-  | "aria-describedby"
-  | "aria-invalid"
-  | "className"
+  "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "className"
 > &
   VariantProps<typeof radioItemVariants> & {
     /** Form field name */
@@ -142,12 +137,14 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
       options,
       ...props
     },
-    forwardedRef
+    forwardedRef,
   ) => {
     const field = useFieldControl({ props: { id: props.id } })
     const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
     const validity =
-      validityProp ?? field.messageIntent ?? (ariaInvalid === true ? "error" : "initial")
+      validityProp ??
+      field.messageIntent ??
+      (ariaInvalid === true ? "error" : "initial")
 
     return (
       <RadixRadioGroup.Root
@@ -164,11 +161,14 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
           const itemId = `${field.id ?? props.id ?? ""}-${option.value}`
 
           return (
-            <div
+            <label
               key={option.value}
+              htmlFor={itemId}
               className={cn(
                 "group flex flex-col gap-0.5",
-                disabled || option.disabled ? "cursor-not-allowed" : "cursor-pointer",
+                disabled || option.disabled
+                  ? "cursor-not-allowed"
+                  : "cursor-pointer",
               )}
             >
               <div className="flex items-center gap-2">
@@ -195,17 +195,16 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   />
                 </RadixRadioGroup.Item>
 
-                <label
-                  htmlFor={itemId}
+                <span
                   className={cn(
                     "text-word-primary text-base font-medium transition-colors select-none",
                     disabled || option.disabled
-                      ? "cursor-not-allowed opacity-50"
-                      : "cursor-pointer opacity-80 group-hover:opacity-100",
+                      ? "opacity-50"
+                      : "opacity-80 group-hover:opacity-100",
                   )}
                 >
                   {option.label}
-                </label>
+                </span>
 
                 {option.badgeProps && <Badge {...option.badgeProps} />}
               </div>
@@ -221,12 +220,12 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   {option.description}
                 </p>
               )}
-            </div>
+            </label>
           )
         })}
       </RadixRadioGroup.Root>
     )
-  }
+  },
 )
 
 RadioGroup.displayName = "RadioGroup"
