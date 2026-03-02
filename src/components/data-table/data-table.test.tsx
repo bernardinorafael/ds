@@ -453,9 +453,8 @@ describe("DataTable.Row", () => {
         [{ id: "1" }, { id: "2" }],
         { key: "id" }
       )
-      React.useEffect(() => {
-        selection.toggleRow("1")
-      }, [])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      React.useEffect(() => { selection.toggleRow("1") }, [])
 
       return (
         <DataTable selection={selection}>
