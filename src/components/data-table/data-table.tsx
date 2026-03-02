@@ -193,6 +193,9 @@ const cellVariants = cva(
     "px-(--data-table-cell-px)",
     "py-(--data-table-cell-py)",
 
+    // flush left when preceded by a select column
+    "[[data-table-select]+&]:pl-0",
+
     // background
     "bg-(--data-table-cell-bg)",
     "group-data-selected/table-row:bg-(--data-table-selected-bg)",
@@ -451,6 +454,8 @@ const DataTableHeader = React.forwardRef<HTMLTableCellElement, DataTableHeaderPr
         "px-(--data-table-header-px)",
         "pt-(--data-table-header-pt)",
         "pb-(--data-table-header-pb)",
+        // flush left when preceded by a select column
+        "[[data-table-select]+&]:pl-0",
         // width (set via CSS var so table-fixed respects it)
         width && "w-(--data-table-header-w)",
         className
@@ -511,6 +516,8 @@ const DataTableSortHeader = React.forwardRef<
         "px-(--data-table-header-px)",
         "pt-(--data-table-header-pt)",
         "pb-(--data-table-header-pb)",
+        // flush left when preceded by a select column
+        "[[data-table-select]+&]:pl-0",
         // width (set via CSS var so table-fixed respects it)
         width && "w-(--data-table-header-w)",
         className
@@ -655,6 +662,7 @@ function DataTableSelectHeader({
 }: DataTableSelectHeaderProps) {
   return (
     <th
+      data-table-select=""
       className={cn(
         "overflow-hidden",
         "leading-(--data-table-header-leading)",
@@ -686,6 +694,7 @@ function DataTableSelectCell({ checked, onChange, disabled }: DataTableSelectCel
   return (
     <td
       data-table-cell=""
+      data-table-select=""
       className={cn(
         cellVariants({ flushLeft: true, flushRight: true }),
         "w-(--data-table-select-col-w)"

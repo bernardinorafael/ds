@@ -235,6 +235,7 @@ export const WithSelection: Story = {
               onChange={toggleAll}
             />
             <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header>Email</DataTable.Header>
             <DataTable.Header width="6rem">Role</DataTable.Header>
             <DataTable.Header width="6rem">Status</DataTable.Header>
           </DataTable.Head>
@@ -246,11 +247,9 @@ export const WithSelection: Story = {
                   onChange={() => toggleRow(user.id)}
                 />
                 <DataTable.Cell>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-word-primary font-medium">{user.name}</span>
-                    <span className="text-word-secondary text-sm">{user.email}</span>
-                  </div>
+                  <span className="text-word-primary font-medium">{user.name}</span>
                 </DataTable.Cell>
+                <DataTable.Cell>{user.email}</DataTable.Cell>
                 <DataTable.Cell>{user.role}</DataTable.Cell>
                 <DataTable.Cell>
                   <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
@@ -293,8 +292,8 @@ export const WithSorting: Story = {
               Name
             </DataTable.SortHeader>
             <DataTable.SortHeader
-              direction={directionFor("email-outline")}
-              onSort={handleSort("email-outline")}
+              direction={directionFor("email")}
+              onSort={handleSort("email")}
             >
               Email
             </DataTable.SortHeader>
