@@ -292,10 +292,10 @@ export const WithBulkBar: Story = {
             ))}
           </DataTable.Body>
           <DataTable.BulkBar>
-            <Button intent="secondary" size="sm">
+            <Button leftIcon="bug-fill" intent="secondary" size="sm">
               Export
             </Button>
-            <Button intent="danger" size="sm">
+            <Button leftIcon="award-fill" intent="danger" size="sm">
               Delete
             </Button>
           </DataTable.BulkBar>
