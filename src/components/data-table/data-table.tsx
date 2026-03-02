@@ -769,7 +769,7 @@ const DataTableRow = React.forwardRef<
           <td
             data-table-expand=""
             className={cn(
-              cellVariants({ flushLeft: true, flushRight: true }),
+              cellVariants({ flushLeft: false, flushRight: !!selection }),
               "w-(--data-table-expand-col-w)"
             )}
           >
