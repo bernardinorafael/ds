@@ -1077,3 +1077,124 @@ describe("Expand header column", () => {
     expect(headers[0]).toHaveTextContent("Name")
   })
 })
+
+// ---------------------------------------------------------------------------
+// DataTable.RowLink
+// ---------------------------------------------------------------------------
+
+describe("RowLink", () => {
+  it("should render an anchor with data-table-row-link attribute", () => {
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <DataTable.RowLink href="/users/1">Alice</DataTable.RowLink>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>,
+    )
+
+    const link = screen.getByRole("link", { name: "Alice" })
+    expect(link).toHaveAttribute("href", "/users/1")
+    expect(link).toHaveAttribute("data-table-row-link", "")
+  })
+
+  it("should forward ref to the anchor element", () => {
+    const ref = createRef<HTMLAnchorElement>()
+
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <DataTable.RowLink ref={ref} href="/users/1">
+                Alice
+              </DataTable.RowLink>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>,
+    )
+
+    expect(ref.current).toBeInstanceOf(HTMLAnchorElement)
+  })
+
+  it("should merge custom className", () => {
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <DataTable.RowLink href="/users/1" className="custom">
+                Alice
+              </DataTable.RowLink>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>,
+    )
+
+    expect(screen.getByRole("link")).toHaveClass("custom")
+  })
+
+  it("should render child element when asChild is true", () => {
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <DataTable.RowLink asChild>
+                <a href="/custom">Alice</a>
+              </DataTable.RowLink>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>,
+    )
+
+    const link = screen.getByRole("link", { name: "Alice" })
+    expect(link).toHaveAttribute("href", "/custom")
+    expect(link).toHaveAttribute("data-table-row-link", "")
+  })
+
+  it("should pass target and rel props", () => {
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>
+              <DataTable.RowLink
+                href="/users/1"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Alice
+              </DataTable.RowLink>
+            </DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>,
+    )
+
+    const link = screen.getByRole("link")
+    expect(link).toHaveAttribute("target", "_blank")
+    expect(link).toHaveAttribute("rel", "noopener noreferrer")
+  })
+})
