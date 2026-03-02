@@ -450,9 +450,9 @@ describe("DataTable.Row", () => {
   it("should set data-selected when selection context provides selected state", () => {
     function Demo() {
       const selection = useRowSelection([{ id: "1" }, { id: "2" }], { key: "id" })
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       React.useEffect(() => {
         selection.toggleRow("1")
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [])
 
       return (

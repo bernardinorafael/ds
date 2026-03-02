@@ -921,10 +921,31 @@ function DataTableBulkBar({
         <motion.div
           role="toolbar"
           aria-label="Bulk actions"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 16 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          initial={{
+            opacity: 0,
+            scale: 0.9,
+            y: 64,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+            scale: 0.9,
+            y: 64,
+            transition: {
+              type: "spring",
+              bounce: 0,
+              duration: 0.3,
+            },
+          }}
+          transition={{
+            type: "spring",
+            bounce: 0,
+            duration: 0.5,
+          }}
           className={cn(
             // positioning
             "fixed bottom-4 left-1/2 z-50",
