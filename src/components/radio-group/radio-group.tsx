@@ -10,6 +10,7 @@ import { cn } from "@/utils/cn"
 const radioItemVariants = cva(
   [
     // positioning
+    "group/radio",
     "relative",
 
     // layout
@@ -24,11 +25,6 @@ const radioItemVariants = cva(
     "border",
     "border-(--radio-border-color)",
     "bg-white",
-
-    // pressed
-    "transition-transform",
-    "duration-150",
-    "active:scale-90",
 
     // focus
     "outline-none",
@@ -188,6 +184,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                         "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
                         "transition-transform duration-300",
                         "ease-[cubic-bezier(.4,.36,0,1)]",
+                        "data-[state=unchecked]:group-[:not(:disabled):active]/radio:scale-50",
                         "data-[state=checked]:scale-100",
                         "before:absolute before:rounded-full before:bg-white",
                         indicatorInsetMap[size ?? "sm"],
