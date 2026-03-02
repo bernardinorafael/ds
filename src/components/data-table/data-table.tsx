@@ -788,7 +788,7 @@ const DataTableRow = React.forwardRef<
           "has-[[data-table-row-link]]:cursor-pointer",
           "has-[[data-table-row-link]]:[clip-path:inset(0)]",
           "has-[[data-table-row-link]]:hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
-          "has-[[data-table-row-link]]:focus-within:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
+          "[&:has([data-table-row-link]:focus-visible)]:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
           "[&:has([data-table-row-link])>*]:overflow-visible",
           "[&:has([data-table-row-link])>:where([data-table-expand],[data-table-select])]:relative",
           "[&:has([data-table-row-link])>:where([data-table-expand],[data-table-select])]:z-[1]",
