@@ -874,3 +874,206 @@ describe("useRowExpansion", () => {
     expect(result.current.expandedId).toBeNull()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Expandable Row
+// ---------------------------------------------------------------------------
+
+describe("Expandable Row", () => {
+  function ExpandableDemo() {
+    const expansion = useRowExpansion()
+    return (
+      <DataTable expansion={expansion}>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row rowId="1" detail={<div>Detail for Alice</div>}>
+            <DataTable.Cell>Alice</DataTable.Cell>
+          </DataTable.Row>
+          <DataTable.Row rowId="2" detail={<div>Detail for Bob</div>}>
+            <DataTable.Cell>Bob</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>
+    )
+  }
+
+  it("should render aria-expanded=false on expandable rows", () => {
+    render(<ExpandableDemo />)
+    const rows = screen.getAllByRole("row")
+    expect(rows[1]).toHaveAttribute("aria-expanded", "false")
+    expect(rows[2]).toHaveAttribute("aria-expanded", "false")
+  })
+
+  it("should not render detail panel when collapsed", () => {
+    render(<ExpandableDemo />)
+    expect(screen.queryByText("Detail for Alice")).not.toBeInTheDocument()
+  })
+
+  it("should expand row and show detail when row is clicked", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    const aliceRow = screen.getAllByRole("row")[1]
+    await user.click(aliceRow)
+    expect(aliceRow).toHaveAttribute("aria-expanded", "true")
+    expect(screen.getByText("Detail for Alice")).toBeInTheDocument()
+  })
+
+  it("should collapse expanded row when clicked again", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    const aliceRow = screen.getAllByRole("row")[1]
+    await user.click(aliceRow)
+    await user.click(aliceRow)
+    expect(aliceRow).toHaveAttribute("aria-expanded", "false")
+  })
+
+  it("should close previous row when another row is clicked (accordion)", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    const rows = screen.getAllByRole("row")
+    await user.click(rows[1])
+    await user.click(rows[2])
+    expect(rows[1]).toHaveAttribute("aria-expanded", "false")
+    expect(rows[2]).toHaveAttribute("aria-expanded", "true")
+    expect(screen.getByText("Detail for Bob")).toBeInTheDocument()
+  })
+
+  it("should not expand when clicking a button inside the row", async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+
+    function Demo() {
+      const expansion = useRowExpansion()
+      return (
+        <DataTable expansion={expansion}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header srOnly>Actions</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1" detail={<div>Detail</div>}>
+              <DataTable.Cell>Alice</DataTable.Cell>
+              <DataTable.Cell>
+                <button onClick={onClick}>Edit</button>
+              </DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    await user.click(screen.getByRole("button", { name: "Edit" }))
+    const dataRow = screen.getAllByRole("row")[1]
+    expect(dataRow).toHaveAttribute("aria-expanded", "false")
+    expect(onClick).toHaveBeenCalledOnce()
+  })
+
+  it("should not expand when clicking a checkbox (selection coexistence)", async () => {
+    const user = userEvent.setup()
+
+    function Demo() {
+      const expansion = useRowExpansion()
+      const selection = useRowSelection([{ id: "1" }], { key: "id" })
+      return (
+        <DataTable expansion={expansion} selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1" detail={<div>Detail</div>}>
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    await user.click(screen.getByRole("checkbox", { name: "Select row" }))
+    const dataRow = screen.getAllByRole("row")[1]
+    expect(dataRow).toHaveAttribute("aria-expanded", "false")
+    expect(dataRow).toHaveAttribute("data-selected", "")
+  })
+
+  it("should toggle expansion with Enter key", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    const aliceRow = screen.getAllByRole("row")[1]
+    aliceRow.focus()
+    await user.keyboard("{Enter}")
+    expect(aliceRow).toHaveAttribute("aria-expanded", "true")
+  })
+
+  it("should toggle expansion with Space key", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    const aliceRow = screen.getAllByRole("row")[1]
+    aliceRow.focus()
+    await user.keyboard(" ")
+    expect(aliceRow).toHaveAttribute("aria-expanded", "true")
+  })
+
+  it("should render chevron button with correct aria-label", () => {
+    render(<ExpandableDemo />)
+    expect(screen.getAllByRole("button", { name: "Expand row" })).toHaveLength(2)
+  })
+
+  it("should update chevron aria-label when expanded", async () => {
+    const user = userEvent.setup()
+    render(<ExpandableDemo />)
+    await user.click(screen.getAllByRole("row")[1])
+    expect(screen.getByRole("button", { name: "Collapse row" })).toBeInTheDocument()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Expand header column
+// ---------------------------------------------------------------------------
+
+describe("Expand header column", () => {
+  it("should render an extra th for expand column when expansion context exists", () => {
+    function Demo() {
+      const expansion = useRowExpansion()
+      return (
+        <DataTable expansion={expansion}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1" detail={<div>Detail</div>}>
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    const headers = screen.getAllByRole("columnheader")
+    expect(headers[0].querySelector("span")).toHaveClass("sr-only")
+    expect(headers[1]).toHaveTextContent("Name")
+  })
+
+  it("should not render expand header when no expansion context", () => {
+    render(
+      <DataTable>
+        <DataTable.Head>
+          <DataTable.Header>Name</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          <DataTable.Row>
+            <DataTable.Cell>Alice</DataTable.Cell>
+          </DataTable.Row>
+        </DataTable.Body>
+      </DataTable>
+    )
+    const headers = screen.getAllByRole("columnheader")
+    expect(headers).toHaveLength(1)
+    expect(headers[0]).toHaveTextContent("Name")
+  })
+})

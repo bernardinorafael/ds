@@ -47,6 +47,11 @@ export type DataTableRootProps = Pick<
      * SelectCell, Row highlight, and BulkBar read from context automatically.
      */
     selection?: SelectionContextValue
+    /**
+     * Row expansion state from `useRowExpansion`. When provided, rows with a
+     * `detail` prop become expandable with accordion behavior.
+     */
+    expansion?: ExpansionContextValue
   }
 
 export type DataTableHeaderProps = Pick<
@@ -214,6 +219,9 @@ const rootVariants = cva(
     // selection
     "[--data-table-select-col-w:2.5rem]",
     "[--data-table-selected-bg:var(--color-blue-100)]",
+
+    // expansion
+    "[--data-table-expand-col-w:2.5rem]",
   ],
   {
     variants: {
@@ -285,6 +293,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
       children,
       pagination,
       selection,
+      expansion,
       spacing = "cozy",
       "aria-label": ariaLabel,
       "aria-labelledby": ariaLabelledby,
@@ -461,11 +470,16 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
       </section>
     )
 
-    return selection ? (
-      <SelectionContext.Provider value={selection}>{content}</SelectionContext.Provider>
-    ) : (
-      content
-    )
+    let result = content
+
+    if (expansion) {
+      result = <ExpansionContext.Provider value={expansion}>{result}</ExpansionContext.Provider>
+    }
+    if (selection) {
+      result = <SelectionContext.Provider value={selection}>{result}</SelectionContext.Provider>
+    }
+
+    return result
   }
 )
 
@@ -478,11 +492,31 @@ DataTableRoot.displayName = "DataTable"
 const DataTableHead = React.forwardRef<
   HTMLTableSectionElement,
   Pick<React.HTMLAttributes<HTMLTableSectionElement>, "children" | "className">
->(({ children, ...rest }, ref) => (
-  <thead ref={ref} {...rest}>
-    <tr>{children}</tr>
-  </thead>
-))
+>(({ children, ...rest }, ref) => {
+  const expansion = useExpansionContext()
+
+  return (
+    <thead ref={ref} {...rest}>
+      <tr>
+        {expansion && (
+          <th
+            data-table-expand=""
+            className={cn(
+              "overflow-hidden",
+              "leading-(--data-table-header-leading)",
+              "pt-(--data-table-header-pt)",
+              "pb-(--data-table-header-pb)",
+              "w-(--data-table-expand-col-w)"
+            )}
+          >
+            <span className="sr-only">Expand</span>
+          </th>
+        )}
+        {children}
+      </tr>
+    </thead>
+  )
+})
 
 DataTableHead.displayName = "DataTable.Head"
 
@@ -659,27 +693,127 @@ const DataTableRow = React.forwardRef<
      * the row auto-derives `selected` and provides the ID to child SelectCell.
      */
     rowId?: string
+    /**
+     * Content rendered in a detail panel below the row when expanded.
+     * Requires `rowId` and an `expansion` context on the parent DataTable.
+     */
+    detail?: React.ReactNode
   }
->(({ selected, rowId, children, ...props }, ref) => {
+>(({ selected, rowId, detail, children, className, ...props }, ref) => {
   const selection = useSelectionContext()
+  const expansion = useExpansionContext()
 
   const isSelected =
     selected ?? (selection && rowId ? selection.isSelected(rowId) : false)
 
-  const row = (
-    <tr
-      data-selected={isSelected ? "" : undefined}
-      className={cn(
-        "group/table-row text-base",
+  const isExpandable = !!detail && !!expansion && !!rowId
+  const isExpanded = isExpandable && expansion.isExpanded(rowId)
 
-        // 1px separator between consecutive rows (applied directly to cells)
-        "[&+&>*]:border-t"
-      )}
-      ref={ref}
-      {...props}
-    >
-      {children}
-    </tr>
+  const handleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLTableRowElement>) => {
+      if (!isExpandable) return
+      const target = event.target as HTMLElement
+      if (target.closest("button, a, input, [data-no-expand]")) return
+      expansion.toggle(rowId)
+    },
+    [isExpandable, expansion, rowId]
+  )
+
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+      if (!isExpandable) return
+      if (event.key !== "Enter" && event.key !== " ") return
+      const target = event.target as HTMLElement
+      if (target !== event.currentTarget) return
+      event.preventDefault()
+      expansion.toggle(rowId)
+    },
+    [isExpandable, expansion, rowId]
+  )
+
+  const row = (
+    <>
+      <tr
+        data-selected={isSelected ? "" : undefined}
+        data-expanded={isExpanded ? "" : undefined}
+        aria-expanded={isExpandable ? isExpanded : undefined}
+        tabIndex={isExpandable ? 0 : undefined}
+        onClick={isExpandable ? handleClick : undefined}
+        onKeyDown={isExpandable ? handleKeyDown : undefined}
+        className={cn(
+          "group/table-row text-base",
+          "[&+&>*]:border-t",
+          isExpandable && "cursor-pointer",
+          className
+        )}
+        ref={ref}
+        {...props}
+      >
+        {isExpandable && (
+          <td
+            data-table-expand=""
+            className={cn(
+              cellVariants({ flushLeft: true, flushRight: true }),
+              "w-(--data-table-expand-col-w)"
+            )}
+          >
+            <div className="flex items-center justify-center">
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  expansion!.toggle(rowId!)
+                }}
+                className={cn(
+                  "inline-flex cursor-pointer items-center justify-center",
+                  "rounded-xs outline-none",
+                  "focus-visible:ring-primary/50 focus-visible:ring-2 focus-visible:ring-offset-1"
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-flex transition-transform duration-200",
+                    isExpanded && "rotate-90"
+                  )}
+                >
+                  <Icon name="chevron-right-outline" size="sm" aria-hidden />
+                </span>
+              </button>
+            </div>
+          </td>
+        )}
+        {children}
+      </tr>
+
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.tr
+            key={`${rowId}-detail`}
+            data-table-detail=""
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <td colSpan={100}>
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: "auto" }}
+                exit={{ height: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ overflow: "hidden" }}
+              >
+                <div className="bg-(--data-table-cell-bg) px-(--data-table-cell-px) py-(--data-table-cell-py)">
+                  {detail}
+                </div>
+              </motion.div>
+            </td>
+          </motion.tr>
+        )}
+      </AnimatePresence>
+    </>
   )
 
   return rowId ? <RowContext.Provider value={rowId}>{row}</RowContext.Provider> : row
