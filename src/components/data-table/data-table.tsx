@@ -378,7 +378,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
                     transition={{ duration: 0.2 }}
                   >
                     <IconButton
-                      icon="chevron-left"
+                      icon="chevron-left-outline"
                       size="sm"
                       intent="secondary"
                       disabled={!pagination!.hasPreviousPage}
@@ -395,7 +395,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
                     </span>
 
                     <IconButton
-                      icon="chevron-right"
+                      icon="chevron-right-outline"
                       size="sm"
                       intent="secondary"
                       disabled={!pagination!.hasNextPage}
@@ -480,9 +480,9 @@ function nextDirection(d?: SortDirection): SortDirection | undefined {
   return undefined
 }
 
-const SORT_ICON: Record<string, "chevron-up" | "chevron-down"> = {
-  asc: "chevron-up",
-  desc: "chevron-down",
+const SORT_ICON: Record<string, "chevron-up-outline" | "chevron-down-outline"> = {
+  asc: "chevron-up-outline",
+  desc: "chevron-down-outline",
 }
 
 const DataTableSortHeader = React.forwardRef<
@@ -548,7 +548,7 @@ const DataTableSortHeader = React.forwardRef<
             className="inline-flex shrink-0"
           >
             <Icon
-              name={active ? SORT_ICON[direction!] : "chevron-down"}
+              name={active ? SORT_ICON[direction!] : "chevron-down-outline"}
               size="sm"
               aria-hidden
             />

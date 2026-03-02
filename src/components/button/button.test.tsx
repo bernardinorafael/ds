@@ -68,18 +68,18 @@ describe("Button", () => {
   })
 
   it("should render left icon", () => {
-    render(<Button leftIcon="arrow-right">Next</Button>)
+    render(<Button leftIcon="arrow-right-outline">Next</Button>)
     expect(document.querySelector("[data-icon]")).toBeInTheDocument()
   })
 
   it("should render right icon", () => {
-    render(<Button rightIcon="arrow-right">Next</Button>)
+    render(<Button rightIcon="arrow-right-outline">Next</Button>)
     expect(document.querySelector("[data-icon]")).toBeInTheDocument()
   })
 
   it("should render both icons", () => {
     render(
-      <Button leftIcon="arrow-left" rightIcon="arrow-right">
+      <Button leftIcon="arrow-left-outline" rightIcon="arrow-right-outline">
         Both
       </Button>
     )

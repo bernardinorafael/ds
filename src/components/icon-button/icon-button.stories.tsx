@@ -18,7 +18,7 @@ const meta = {
     ),
   ],
   args: {
-    icon: "trash",
+    icon: "trash-outline",
     "aria-label": "Delete",
   },
 } satisfies Meta<typeof IconButton>
@@ -34,19 +34,19 @@ export const Intents: Story = {
         <div key={intent} className="flex items-center gap-3">
           <span className="text-word-secondary w-20 text-sm">{intent}</span>
           <div className="flex items-center gap-1.5">
-            <IconButton icon="trash" aria-label="Delete" intent={intent} size="sm" />
-            <IconButton icon="trash" aria-label="Delete" intent={intent} size="md" />
+            <IconButton icon="trash-outline" aria-label="Delete" intent={intent} size="sm" />
+            <IconButton icon="trash-outline" aria-label="Delete" intent={intent} size="md" />
           </div>
           <div className="flex items-center gap-1.5">
             <IconButton
-              icon="trash"
+              icon="trash-outline"
               aria-label="Delete"
               intent={intent}
               size="sm"
               shape="circle"
             />
             <IconButton
-              icon="trash"
+              icon="trash-outline"
               aria-label="Delete"
               intent={intent}
               size="md"
@@ -69,14 +69,14 @@ export const Sizes: Story = {
             {(["square", "circle"] as const).map((shape) => (
               <div key={shape} className="flex items-center gap-1.5">
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   shape={shape}
                   size="sm"
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   shape={shape}
@@ -101,27 +101,27 @@ export const States: Story = {
             {(["sm", "md"] as const).map((size) => (
               <div key={size} className="flex items-center gap-1.5">
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   size={size}
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   size={size}
                   disabled
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   size={size}
                   shape="circle"
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   intent={intent}
                   size={size}
@@ -147,12 +147,12 @@ export const Shapes: Story = {
             {(["ghost", "secondary", "primary", "danger"] as const).map((intent) => (
               <div key={intent} className="flex items-center gap-1.5">
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   {...{ shape, intent, size: "sm" }}
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   {...{ shape, intent, size: "md" }}
                 />
@@ -175,13 +175,13 @@ export const WithTooltip: Story = {
             {(["ghost", "secondary", "primary", "danger"] as const).map((intent) => (
               <div key={intent} className="flex items-center gap-1.5">
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   tooltip="Delete item"
                   {...{ shape, intent, size: "sm" }}
                 />
                 <IconButton
-                  icon="trash"
+                  icon="trash-outline"
                   aria-label="Delete"
                   tooltip="Delete item"
                   {...{ shape, intent, size: "md" }}

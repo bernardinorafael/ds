@@ -105,13 +105,13 @@ export const WithIcons: Story = {
         <div key={intent} className="flex items-center gap-3">
           <span className="text-word-secondary w-20 text-sm">{intent}</span>
           <div className="flex items-center gap-2">
-            <Button intent={intent} leftIcon="plus">
+            <Button intent={intent} leftIcon="plus-outline">
               Create
             </Button>
-            <Button intent={intent} rightIcon="arrow-right">
+            <Button intent={intent} rightIcon="arrow-right-outline">
               Next
             </Button>
-            <Button intent={intent} leftIcon="arrow-left" rightIcon="arrow-right">
+            <Button intent={intent} leftIcon="arrow-left-outline" rightIcon="arrow-right-outline">
               Navigate
             </Button>
           </div>

@@ -46,7 +46,7 @@ describe("Chip", () => {
   })
 
   it("should render icon element", () => {
-    const { container } = render(<Chip icon="check-circle">React</Chip>)
+    const { container } = render(<Chip icon="check-circle-outline">React</Chip>)
     expect(container.querySelector("[data-icon]")).toBeInTheDocument()
   })
 

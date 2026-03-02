@@ -108,7 +108,7 @@ export const Basic: Story = {
             <DataTable.Cell flushRight>
               <DataTable.Actions>
                 <IconButton
-                  icon="more-horizontal"
+                  icon="more-horizontal-outline"
                   size="sm"
                   intent="ghost"
                   aria-label="More options"
@@ -293,8 +293,8 @@ export const WithSorting: Story = {
               Name
             </DataTable.SortHeader>
             <DataTable.SortHeader
-              direction={directionFor("email")}
-              onSort={handleSort("email")}
+              direction={directionFor("email-outline")}
+              onSort={handleSort("email-outline")}
             >
               Email
             </DataTable.SortHeader>

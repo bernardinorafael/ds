@@ -263,7 +263,7 @@ const DialogHeader = React.forwardRef<HTMLDivElement, DialogHeaderProps>(
         )}
       </div>
       <RadixDialog.Close asChild>
-        <IconButton icon="x" aria-label="Close" size="sm" intent="ghost" />
+        <IconButton icon="x-outline" aria-label="Close" size="sm" intent="ghost" />
       </RadixDialog.Close>
     </div>
   )

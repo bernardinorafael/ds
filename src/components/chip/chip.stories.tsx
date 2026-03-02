@@ -37,25 +37,25 @@ export const Sizes: Story = {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <Chip size="sm">Small</Chip>
-        <Chip size="sm" icon="check-circle">
+        <Chip size="sm" icon="check-circle-outline">
           Small
         </Chip>
         <Chip size="sm" onRemove={() => {}}>
           Small
         </Chip>
-        <Chip size="sm" icon="check-circle" onRemove={() => {}}>
+        <Chip size="sm" icon="check-circle-outline" onRemove={() => {}}>
           Small
         </Chip>
       </div>
       <div className="flex flex-wrap items-center gap-3">
         <Chip size="md">Medium</Chip>
-        <Chip size="md" icon="check-circle">
+        <Chip size="md" icon="check-circle-outline">
           Medium
         </Chip>
         <Chip size="md" onRemove={() => {}}>
           Medium
         </Chip>
-        <Chip size="md" icon="check-circle" onRemove={() => {}}>
+        <Chip size="md" icon="check-circle-outline" onRemove={() => {}}>
           Medium
         </Chip>
       </div>
@@ -79,8 +79,8 @@ export const Fonts: Story = {
 export const WithIcon: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      <Chip icon="check-circle">Status</Chip>
-      <Chip icon="trending-up">Active</Chip>
+      <Chip icon="check-circle-outline">Status</Chip>
+      <Chip icon="bolt-outline">Active</Chip>
     </div>
   ),
 }
@@ -89,7 +89,7 @@ export const Removable: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
       <Chip onRemove={() => {}}>React</Chip>
-      <Chip onRemove={() => {}} icon="house">
+      <Chip onRemove={() => {}} icon="circle-info-outline">
         Online
       </Chip>
     </div>

@@ -190,7 +190,7 @@ export const Chip = React.forwardRef<HTMLButtonElement, ChipProps>(
               !disabled && "hover:bg-black/10 focus-visible:bg-black/10"
             )}
           >
-            <Icon name="x" size="sm" />
+            <Icon name="x-outline" size="sm" />
           </span>
         )}
       </button>
