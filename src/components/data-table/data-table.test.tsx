@@ -1,9 +1,9 @@
-import { createRef } from "react"
+import React, { createRef } from "react"
 
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import { DataTable, type PaginationProps } from "@/components/data-table"
+import { DataTable, useRowSelection, type PaginationProps } from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -445,6 +445,40 @@ describe("DataTable.Row", () => {
       </table>
     )
     expect(ref.current).toBeInstanceOf(HTMLTableRowElement)
+  })
+
+  it("should set data-selected when selection context provides selected state", () => {
+    function Demo() {
+      const selection = useRowSelection(
+        [{ id: "1" }, { id: "2" }],
+        { key: "id" }
+      )
+      React.useEffect(() => {
+        selection.toggleRow("1")
+      }, [])
+
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+            <DataTable.Row rowId="2">
+              <DataTable.Cell>Bob</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    const rows = screen.getAllByRole("row")
+    // rows[0] is the thead row, rows[1] is Alice, rows[2] is Bob
+    expect(rows[1]).toHaveAttribute("data-selected", "")
+    expect(rows[2]).not.toHaveAttribute("data-selected")
   })
 })
 

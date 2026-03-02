@@ -645,20 +645,39 @@ const DataTableRow = React.forwardRef<
   Pick<React.ComponentProps<"tr">, "children" | "className"> & {
     /** Highlights the row as selected */
     selected?: boolean
+    /**
+     * Row identifier for selection context. When inside a `selection` context,
+     * the row auto-derives `selected` and provides the ID to child SelectCell.
+     */
+    rowId?: string
   }
->(({ selected, ...props }, ref) => (
-  <tr
-    data-selected={selected ? "" : undefined}
-    className={cn(
-      "group/table-row text-base",
+>(({ selected, rowId, children, ...props }, ref) => {
+  const selection = useSelectionContext()
 
-      // 1px separator between consecutive rows (applied directly to cells)
-      "[&+&>*]:border-t"
-    )}
-    ref={ref}
-    {...props}
-  />
-))
+  const isSelected = selected ?? (selection && rowId ? selection.isSelected(rowId) : false)
+
+  const row = (
+    <tr
+      data-selected={isSelected ? "" : undefined}
+      className={cn(
+        "group/table-row text-base",
+
+        // 1px separator between consecutive rows (applied directly to cells)
+        "[&+&>*]:border-t"
+      )}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </tr>
+  )
+
+  return rowId ? (
+    <RowContext.Provider value={rowId}>{row}</RowContext.Provider>
+  ) : (
+    row
+  )
+})
 
 DataTableRow.displayName = "DataTable.Row"
 
