@@ -76,7 +76,12 @@ const PageLayout = React.forwardRef<HTMLElement, PageLayoutProps>(
                           description && "border-l border-gray-400 pl-2"
                         )}
                       >
-                        {React.Children.toArray(badges).map((badge, index, array) => (
+                        {React.Children.toArray(
+                          React.isValidElement(badges) &&
+                            badges.type === React.Fragment
+                            ? badges.props.children
+                            : badges
+                        ).map((badge, index, array) => (
                           <React.Fragment key={index}>
                             {badge}
                             {index < array.length - 1 && (
