@@ -125,7 +125,7 @@ type SelectionContextValue = {
 
 const SelectionContext = React.createContext<SelectionContextValue | null>(null)
 
-export function useSelectionContext() {
+function useSelectionContext() {
   return React.useContext(SelectionContext)
 }
 
@@ -135,7 +135,7 @@ export function useSelectionContext() {
 
 const RowContext = React.createContext<string | null>(null)
 
-export function useRowContext() {
+function useRowContext() {
   return React.useContext(RowContext)
 }
 
@@ -928,7 +928,6 @@ function DataTableBulkBar({
         <motion.div
           role="toolbar"
           aria-label="Bulk actions"
-          aria-live="polite"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
@@ -954,7 +953,7 @@ function DataTableBulkBar({
           )}
         >
           {/* Left: count + clear */}
-          <span className="text-sm font-medium tabular-nums whitespace-nowrap">
+          <span aria-live="polite" aria-atomic="true" className="text-sm font-medium tabular-nums whitespace-nowrap">
             {label(count)}
           </span>
           <button
@@ -964,7 +963,7 @@ function DataTableBulkBar({
             className={cn(
               "cursor-pointer rounded-sm px-2 py-1 text-sm font-medium whitespace-nowrap",
               "text-white/70 hover:text-white",
-              "outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+              "outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-1200"
             )}
           >
             {clearLabel}

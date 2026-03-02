@@ -739,7 +739,7 @@ describe("DataTable.BulkBar", () => {
     }
 
     render(<Demo />)
-    expect(screen.queryByText("selected")).not.toBeInTheDocument()
+    expect(screen.queryByRole("toolbar")).not.toBeInTheDocument()
   })
 
   it("should render with count when rows are selected", async () => {
