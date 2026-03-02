@@ -41,6 +41,11 @@ export type DataTableRootProps = Pick<
      * Page size options shown in the footer select @default [10, 25, 50]
      */
     limitOptions?: number[]
+    /**
+     * Row selection state from `useRowSelection`. When provided, SelectHeader,
+     * SelectCell, Row highlight, and BulkBar read from context automatically.
+     */
+    selection?: SelectionContextValue
   }
 
 export type DataTableHeaderProps = Pick<
@@ -101,6 +106,36 @@ export type DataTableSortHeaderProps = Omit<DataTableHeaderProps, "srOnly"> & {
    * Auto-derived from `children` when it is a plain string.
    */
   label?: string
+}
+
+// ---------------------------------------------------------------------------
+// Selection Context
+// ---------------------------------------------------------------------------
+
+type SelectionContextValue = {
+  selectedIds: Set<string>
+  isSelected: (id: string) => boolean
+  isAllSelected: boolean
+  isPartialSelected: boolean
+  toggleRow: (id: string) => void
+  toggleAll: () => void
+  clearSelection: () => void
+}
+
+const SelectionContext = React.createContext<SelectionContextValue | null>(null)
+
+export function useSelectionContext() {
+  return React.useContext(SelectionContext)
+}
+
+// ---------------------------------------------------------------------------
+// Row Context
+// ---------------------------------------------------------------------------
+
+const RowContext = React.createContext<string | null>(null)
+
+export function useRowContext() {
+  return React.useContext(RowContext)
 }
 
 // ---------------------------------------------------------------------------
@@ -238,6 +273,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
       className,
       children,
       pagination,
+      selection,
       spacing = "cozy",
       "aria-label": ariaLabel,
       "aria-labelledby": ariaLabelledby,
@@ -279,7 +315,7 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
       }
     }, [pagination])
 
-    return (
+    const content = (
       <section
         id={id}
         data-table-root=""
@@ -412,6 +448,14 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
           )}
         </AnimatePresence>
       </section>
+    )
+
+    return selection ? (
+      <SelectionContext.Provider value={selection}>
+        {content}
+      </SelectionContext.Provider>
+    ) : (
+      content
     )
   }
 )
