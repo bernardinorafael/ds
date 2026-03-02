@@ -710,6 +710,8 @@ const DataTableBody = React.forwardRef<
       "[&>tr:first-child>td:last-child]:rounded-tr-(--data-table-body-rounded)",
       "[&>tr:last-child>td:first-child]:rounded-bl-(--data-table-body-rounded)",
       "[&>tr:last-child>td:last-child]:rounded-br-(--data-table-body-rounded)",
+      // border-top on data row cells that follow a detail row
+      "[&>[data-table-detail]+tr>*]:border-t [&>[data-table-detail]+tr>*]:border-border",
       className
     )}
     ref={ref}
@@ -799,29 +801,24 @@ const DataTableRow = React.forwardRef<
             )}
           >
             <div className="flex items-center justify-center">
-              <button
-                type="button"
-                tabIndex={-1}
-                aria-label={isExpanded ? "Collapse row" : "Expand row"}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  expansion!.toggle(rowId!)
-                }}
+              <span
                 className={cn(
-                  "inline-flex cursor-pointer items-center justify-center",
-                  "rounded-xs outline-none",
-                  "focus-visible:ring-primary/50 focus-visible:ring-2 focus-visible:ring-offset-1"
+                  "inline-flex transition-transform duration-200",
+                  isExpanded && "rotate-90"
                 )}
               >
-                <span
-                  className={cn(
-                    "inline-flex transition-transform duration-200",
-                    isExpanded && "rotate-90"
-                  )}
-                >
-                  <Icon name="chevron-right-outline" size="sm" aria-hidden />
-                </span>
-              </button>
+                <IconButton
+                  icon="chevron-right-outline"
+                  size="sm"
+                  intent="ghost"
+                  tabIndex={-1}
+                  aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    expansion!.toggle(rowId!)
+                  }}
+                />
+              </span>
             </div>
           </td>
         )}
@@ -838,7 +835,12 @@ const DataTableRow = React.forwardRef<
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <td colSpan={columnCount}>
+            {/* Empty cell to align with expand column */}
+            <td className="bg-(--data-table-cell-bg) border-t border-border" />
+            <td
+              colSpan={columnCount - 1}
+              className="border-t border-border"
+            >
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: "auto" }}
@@ -846,7 +848,7 @@ const DataTableRow = React.forwardRef<
                 transition={{ duration: 0.2 }}
                 style={{ overflow: "hidden" }}
               >
-                <div className="bg-(--data-table-cell-bg) px-(--data-table-cell-px) py-(--data-table-cell-py)">
+                <div className="bg-(--data-table-cell-bg) py-(--data-table-cell-py) pr-(--data-table-cell-px)">
                   {detail}
                 </div>
               </motion.div>
