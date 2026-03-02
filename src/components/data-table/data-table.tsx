@@ -836,7 +836,8 @@ const DataTableRow = React.forwardRef<
               >
                 <div
                   className={cn(
-                    "bg-(--data-table-cell-bg) py-(--data-table-cell-py) pr-(--data-table-cell-px)"
+                    "border-l border-gray-300 bg-(--data-table-cell-bg)",
+                    "py-(--data-table-cell-py) pr-(--data-table-cell-px) pl-(--data-table-cell-px)"
                   )}
                 >
                   {detail}
