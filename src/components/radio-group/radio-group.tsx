@@ -139,7 +139,9 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
     },
     forwardedRef,
   ) => {
+    const autoId = React.useId()
     const field = useFieldControl({ props: { id: props.id } })
+    const baseId = field.id ?? props.id ?? autoId
     const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
     const validity =
       validityProp ??
@@ -158,7 +160,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         {...props}
       >
         {options.map((option) => {
-          const itemId = `${field.id ?? props.id ?? ""}-${option.value}`
+          const itemId = `${baseId}-${option.value}`
 
           return (
             <label
