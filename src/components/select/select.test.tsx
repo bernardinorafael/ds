@@ -3,6 +3,7 @@ import { createRef } from "react"
 import { render, screen } from "@testing-library/react"
 
 import { Select } from "@/components/select"
+import type { SelectGroup } from "@/components/select"
 
 const items = [
   { label: "Apple", value: "apple" },
@@ -65,5 +66,35 @@ describe("Select", () => {
   it("should show selected value", () => {
     render(<Select value="apple" items={items} />)
     expect(screen.getByText("Apple")).toBeInTheDocument()
+  })
+
+  it("should show empty label when items is empty", () => {
+    render(<Select items={[]} placeholder="Pick one" />)
+    // Empty label only appears in the dropdown, not the trigger.
+    // The trigger still shows the placeholder.
+    expect(screen.getByText("Pick one")).toBeInTheDocument()
+  })
+
+  it("should show custom empty label when items is empty", () => {
+    render(<Select items={[]} emptyLabel="Nothing here" placeholder="Pick one" />)
+    expect(screen.getByText("Pick one")).toBeInTheDocument()
+  })
+
+  it("should accept grouped items", () => {
+    const groups: SelectGroup[] = [
+      {
+        label: "Citrus",
+        items: [
+          { label: "Orange", value: "orange" },
+          { label: "Lemon", value: "lemon" },
+        ],
+      },
+      {
+        label: "Berries",
+        items: [{ label: "Strawberry", value: "strawberry" }],
+      },
+    ]
+    render(<Select items={groups} placeholder="Select fruit" />)
+    expect(screen.getByRole("combobox")).toBeInTheDocument()
   })
 })

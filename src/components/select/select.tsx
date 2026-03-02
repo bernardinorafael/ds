@@ -1,10 +1,13 @@
 import React from "react"
 
 import * as RadixSelect from "@radix-ui/react-select"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { ChevronsUpDown } from "lucide-react"
+import { motion } from "motion/react"
 
 import { buttonVariants } from "@/components/button"
 import { useFieldControl } from "@/components/field"
+import { Icon } from "@/components/icon"
+import type { IconName } from "@/components/icon"
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
 
@@ -13,6 +16,25 @@ export type SelectItem = {
   description?: string
   disabled?: boolean
   value: string
+  /**
+   * Icon displayed before the label
+   */
+  icon?: IconName
+}
+
+export type SelectGroup = {
+  label: string
+  items: SelectItem[]
+}
+
+function isGrouped(items: SelectItem[] | SelectGroup[]): items is SelectGroup[] {
+  return items.length > 0 && "items" in items[0]
+}
+
+function isEmpty(items: SelectItem[] | SelectGroup[]): boolean {
+  if (items.length === 0) return true
+  if (isGrouped(items)) return items.every((g) => g.items.length === 0)
+  return false
 }
 
 export type SelectProps = Pick<
@@ -37,9 +59,9 @@ export type SelectProps = Pick<
      */
     position?: "popper" | "fixed"
     /**
-     * Available options
+     * Available options (flat list or grouped)
      */
-    items: SelectItem[]
+    items: SelectItem[] | SelectGroup[]
     /**
      * Visual validity state. Overrides Field context detection.
      */
@@ -48,7 +70,68 @@ export type SelectProps = Pick<
      * Trigger size @default "md"
      */
     size?: "sm" | "md"
+    /**
+     * Text shown when there are no options @default "No options"
+     */
+    emptyLabel?: string
   }
+
+const itemClassName = cn(
+  "flex",
+  "items-center",
+  "p-1.5",
+  "gap-2",
+  "font-medium",
+  "select-none",
+  "outline-none",
+  "cursor-pointer",
+  "rounded-sm",
+  "text-word-primary",
+  "data-highlighted:bg-surface-100",
+  "data-disabled:cursor-not-allowed",
+  "data-disabled:opacity-50"
+)
+
+function renderItem(item: SelectItem) {
+  return (
+    <RadixSelect.Item
+      key={item.value}
+      value={item.value}
+      disabled={item.disabled}
+      className={itemClassName}
+    >
+      {item.icon && (
+        <span className="text-word-secondary shrink-0">
+          <Icon name={item.icon} size="sm" />
+        </span>
+      )}
+      <div className="flex min-w-0 flex-col gap-1">
+        <RadixSelect.ItemText>{item.label}</RadixSelect.ItemText>
+        {item.description && (
+          <span className="text-word-secondary text-sm">{item.description}</span>
+        )}
+      </div>
+      <RadixSelect.ItemIndicator className="ml-auto">
+        <motion.span
+          initial={{
+            opacity: 0,
+            scale: 0.5,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.1,
+          }}
+          className="flex items-center"
+        >
+          <Icon name="check-outline" size="sm" />
+        </motion.span>
+      </RadixSelect.ItemIndicator>
+    </RadixSelect.Item>
+  )
+}
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
   (
@@ -62,6 +145,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
       position = "popper",
       disabled,
       size = "md",
+      emptyLabel = "No options",
       validity: validityProp,
       "aria-invalid": ariaInvalidProp,
       "aria-describedby": ariaDescribedByProp,
@@ -122,20 +206,22 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             className
           )}
         >
-          <div className="mr-2 flex items-center gap-1.5">
-            {prefix && <span className="text-word-secondary">{prefix}</span>}
-            <RadixSelect.Value placeholder={placeholder} />
+          <div className="mr-2 flex min-w-0 items-center gap-1.5">
+            {prefix && <span className="text-word-secondary shrink-0">{prefix}</span>}
+            <span className="truncate">
+              <RadixSelect.Value placeholder={placeholder} />
+            </span>
           </div>
           {loading ? (
             <Spinner
               size={size === "sm" ? "xs" : "sm"}
-              className="ml-auto"
+              className="ml-auto shrink-0"
               label="Loading"
             />
           ) : (
             <ChevronsUpDown
               size={size === "sm" ? 12 : 14}
-              className="ml-auto opacity-50"
+              className="ml-auto shrink-0 opacity-50"
             />
           )}
         </RadixSelect.Trigger>
@@ -180,42 +266,29 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             })}
           >
             <RadixSelect.Viewport>
-              <RadixSelect.Group>
-                {items.map((item) => (
-                  <RadixSelect.Item
-                    key={item.value}
-                    value={item.value}
-                    disabled={item.disabled}
-                    className={cn(
-                      "flex",
-                      "items-center",
-                      "p-1.5",
-                      "gap-4",
-                      "font-medium",
-                      "select-none",
-                      "outline-none",
-                      "cursor-pointer",
-                      "rounded-sm",
-                      "text-word-primary",
-                      "data-highlighted:bg-surface-100",
-                      "data-disabled:cursor-not-allowed",
-                      "data-disabled:opacity-50"
+              {isEmpty(items) ? (
+                <div className="text-word-tertiary p-4 text-center text-sm select-none">
+                  {emptyLabel}
+                </div>
+              ) : isGrouped(items) ? (
+                items.map((group, groupIndex) => (
+                  <React.Fragment key={group.label}>
+                    {groupIndex > 0 && (
+                      <RadixSelect.Separator className="bg-border mx-1 my-1 h-px" />
                     )}
-                  >
-                    <div className="flex flex-col gap-1">
-                      <RadixSelect.ItemText>{item.label}</RadixSelect.ItemText>
-                      {item.description && (
-                        <span className="text-word-secondary text-sm">
-                          {item.description}
-                        </span>
-                      )}
-                    </div>
-                    <RadixSelect.ItemIndicator className="ml-auto">
-                      <Check size={16} />
-                    </RadixSelect.ItemIndicator>
-                  </RadixSelect.Item>
-                ))}
-              </RadixSelect.Group>
+                    <RadixSelect.Group>
+                      <RadixSelect.Label className="text-word-tertiary px-1.5 py-1.5 text-sm select-none">
+                        {group.label}
+                      </RadixSelect.Label>
+                      {group.items.map(renderItem)}
+                    </RadixSelect.Group>
+                  </React.Fragment>
+                ))
+              ) : (
+                <RadixSelect.Group>
+                  {(items as SelectItem[]).map(renderItem)}
+                </RadixSelect.Group>
+              )}
             </RadixSelect.Viewport>
           </RadixSelect.Content>
         </RadixSelect.Portal>

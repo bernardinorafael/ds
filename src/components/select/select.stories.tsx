@@ -3,12 +3,21 @@ import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Field, useFieldControl } from "@/components/field"
+import { IconSprite } from "@/components/icon"
 import { Select } from "@/components/select"
 
 const meta = {
   title: "Select",
   component: Select,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <>
+        <IconSprite />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     placeholder: "Select an option",
     items: [
@@ -80,6 +89,78 @@ export const WithDescriptions: Story = {
           },
         ]}
       />
+    </div>
+  ),
+}
+
+export const WithIcons: Story = {
+  render: (args) => (
+    <div className="w-72">
+      <Select
+        {...args}
+        placeholder="Select action"
+        items={[
+          { label: "Settings", value: "settings", icon: "settings-outline" },
+          { label: "Search", value: "search", icon: "search-outline" },
+          { label: "Notifications", value: "notifications", icon: "bell-outline" },
+          { label: "Profile", value: "profile", icon: "user-outline" },
+        ]}
+      />
+    </div>
+  ),
+}
+
+export const Grouped: Story = {
+  render: (args) => (
+    <div className="w-72">
+      <Select
+        {...args}
+        placeholder="Select fruit"
+        items={[
+          {
+            label: "Citrus",
+            items: [
+              { label: "Orange", value: "orange" },
+              { label: "Lemon", value: "lemon" },
+              { label: "Grapefruit", value: "grapefruit" },
+            ],
+          },
+          {
+            label: "Berries",
+            items: [
+              { label: "Strawberry", value: "strawberry" },
+              { label: "Blueberry", value: "blueberry" },
+              { label: "Raspberry", value: "raspberry" },
+            ],
+          },
+          {
+            label: "Tropical",
+            items: [
+              { label: "Mango", value: "mango" },
+              { label: "Pineapple", value: "pineapple" },
+              { label: "Coconut", value: "coconut" },
+            ],
+          },
+        ]}
+      />
+    </div>
+  ),
+}
+
+export const EmptyState: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-4">
+      <div className="w-72">
+        <Select {...args} placeholder="Default empty" items={[]} />
+      </div>
+      <div className="w-72">
+        <Select
+          {...args}
+          placeholder="Custom empty"
+          items={[]}
+          emptyLabel="Nothing to show"
+        />
+      </div>
     </div>
   ),
 }
