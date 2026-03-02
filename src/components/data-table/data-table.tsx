@@ -269,8 +269,9 @@ const cellVariants = cva(
     "px-(--data-table-cell-px)",
     "py-(--data-table-cell-py)",
 
-    // flush left when preceded by a select column
+    // flush left when preceded by a select or expand column
     "[[data-table-select]+&]:pl-0",
+    "[[data-table-expand]+&]:pl-0",
 
     // background
     "bg-(--data-table-cell-bg)",
@@ -505,10 +506,14 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
     )
 
     if (expansion) {
-      result = <ExpansionContext.Provider value={expansion}>{result}</ExpansionContext.Provider>
+      result = (
+        <ExpansionContext.Provider value={expansion}>{result}</ExpansionContext.Provider>
+      )
     }
     if (selection) {
-      result = <SelectionContext.Provider value={selection}>{result}</SelectionContext.Provider>
+      result = (
+        <SelectionContext.Provider value={selection}>{result}</SelectionContext.Provider>
+      )
     }
 
     return result
@@ -750,43 +755,13 @@ const DataTableRow = React.forwardRef<
   const isExpandable = !!detail && !!expansion && !!rowId
   const isExpanded = isExpandable && expansion.isExpanded(rowId)
 
-  const handleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLTableRowElement>) => {
-      if (!isExpandable) return
-      const target = event.target as HTMLElement
-      if (target.closest("button, a, input, [data-no-expand]")) return
-      expansion.toggle(rowId)
-    },
-    [isExpandable, expansion, rowId]
-  )
-
-  const handleKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLTableRowElement>) => {
-      if (!isExpandable) return
-      if (event.key !== "Enter" && event.key !== " ") return
-      const target = event.target as HTMLElement
-      if (target !== event.currentTarget) return
-      event.preventDefault()
-      expansion.toggle(rowId)
-    },
-    [isExpandable, expansion, rowId]
-  )
-
   const row = (
     <>
       <tr
         data-selected={isSelected ? "" : undefined}
         data-expanded={isExpanded ? "" : undefined}
         aria-expanded={isExpandable ? isExpanded : undefined}
-        tabIndex={isExpandable ? 0 : undefined}
-        onClick={isExpandable ? handleClick : undefined}
-        onKeyDown={isExpandable ? handleKeyDown : undefined}
-        className={cn(
-          "group/table-row text-base",
-          "[&+&>*]:border-t",
-          isExpandable && "cursor-pointer",
-          className
-        )}
+        className={cn("group/table-row text-base", "[&+&>*]:border-t", className)}
         ref={ref}
         {...props}
       >
@@ -809,12 +784,9 @@ const DataTableRow = React.forwardRef<
                   icon="chevron-right-outline"
                   size="sm"
                   intent="ghost"
-                  tabIndex={-1}
+                  shape="circle"
                   aria-label={isExpanded ? "Collapse row" : "Expand row"}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    expansion!.toggle(rowId!)
-                  }}
+                  onClick={() => expansion!.toggle(rowId!)}
                 />
               </span>
             </div>
@@ -1075,10 +1047,7 @@ export type ExpansionContextValue = {
 export function useRowExpansion(): ExpansionContextValue {
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
 
-  const isExpanded = React.useCallback(
-    (id: string) => expandedId === id,
-    [expandedId],
-  )
+  const isExpanded = React.useCallback((id: string) => expandedId === id, [expandedId])
 
   const toggle = React.useCallback((id: string) => {
     setExpandedId((prev) => (prev === id ? null : id))
