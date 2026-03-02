@@ -1,7 +1,6 @@
 import React from "react"
 
 import * as RadixDropdown from "@radix-ui/react-dropdown-menu"
-import { motion } from "motion/react"
 
 import { Checkbox } from "@/components/checkbox"
 import { Icon } from "@/components/icon"
@@ -63,23 +62,6 @@ const separatorClassName = "bg-border mx-1 my-1 h-px"
 const labelClassName = "text-word-tertiary px-1.5 py-1.5 text-sm select-none"
 
 // ---------------------------------------------------------------------------
-// CheckIndicator
-// ---------------------------------------------------------------------------
-
-function CheckIndicator({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.span
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.1 }}
-      className="flex items-center"
-    >
-      {children}
-    </motion.span>
-  )
-}
-
-// ---------------------------------------------------------------------------
 // DropdownRoot
 // ---------------------------------------------------------------------------
 
@@ -121,7 +103,10 @@ DropdownTrigger.displayName = "Dropdown.Trigger"
 // ---------------------------------------------------------------------------
 
 type DropdownContentProps = Pick<React.ComponentProps<"div">, "className" | "children"> &
-  Pick<RadixDropdown.DropdownMenuContentProps, "side" | "sideOffset" | "align" | "alignOffset">
+  Pick<
+    RadixDropdown.DropdownMenuContentProps,
+    "side" | "sideOffset" | "align" | "alignOffset"
+  >
 
 const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
   (
@@ -169,7 +154,10 @@ type DropdownItemProps = Pick<
   }
 
 const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
-  ({ className, children, icon, destructive, tooltip, disabled, ...props }, forwardedRef) => {
+  (
+    { className, children, icon, destructive, tooltip, disabled, ...props },
+    forwardedRef
+  ) => {
     const item = (
       <RadixDropdown.Item
         ref={forwardedRef}
@@ -183,7 +171,10 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
       >
         {icon && (
           <span
-            className={cn("shrink-0", destructive ? "text-destructive" : "text-word-secondary")}
+            className={cn(
+              "shrink-0",
+              destructive ? "text-destructive" : "text-word-secondary"
+            )}
           >
             <Icon name={icon} size="sm" />
           </span>
@@ -196,9 +187,7 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
 
     return (
       <Tooltip label={tooltip} side="right">
-        <span className="flex">
-          {item}
-        </span>
+        <span className="flex">{item}</span>
       </Tooltip>
     )
   }
@@ -214,7 +203,10 @@ type DropdownCheckboxItemProps = Pick<
   React.ComponentProps<"div">,
   "id" | "aria-label" | "className" | "children"
 > &
-  Pick<RadixDropdown.DropdownMenuCheckboxItemProps, "checked" | "onCheckedChange" | "disabled"> & {
+  Pick<
+    RadixDropdown.DropdownMenuCheckboxItemProps,
+    "checked" | "onCheckedChange" | "disabled"
+  > & {
     /**
      * Icon displayed after the check indicator
      */
@@ -279,7 +271,6 @@ type DropdownRadioItemProps = Pick<
     icon?: IconName
   }
 
-// TODO: replace indicator with DS Radio component once implemented
 const DropdownRadioItem = React.forwardRef<HTMLDivElement, DropdownRadioItemProps>(
   ({ className, children, icon, ...props }, forwardedRef) => (
     <RadixDropdown.RadioItem
@@ -288,11 +279,23 @@ const DropdownRadioItem = React.forwardRef<HTMLDivElement, DropdownRadioItemProp
       className={cn(itemClassName, className)}
       {...props}
     >
-      <span className="flex w-3.5 shrink-0 items-center justify-center">
-        <RadixDropdown.ItemIndicator>
-          <CheckIndicator>
-            <Icon name="check-outline" size="sm" />
-          </CheckIndicator>
+      <span
+        className={cn(
+          "relative inline-flex size-4 shrink-0 items-center justify-center",
+          "overflow-hidden rounded-full bg-white shadow-[inset_0_0_0_1px_var(--color-border)]"
+        )}
+      >
+        <RadixDropdown.ItemIndicator forceMount asChild>
+          <span
+            className={cn(
+              "absolute inset-0 scale-0 rounded-full",
+              "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
+              "transition-transform duration-300",
+              "ease-[cubic-bezier(.4,.36,0,1)]",
+              "data-[state=checked]:scale-100",
+              "before:absolute before:inset-1 before:rounded-full before:bg-white"
+            )}
+          />
         </RadixDropdown.ItemIndicator>
       </span>
       {icon && (

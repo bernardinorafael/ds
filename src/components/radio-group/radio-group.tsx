@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { Badge, type BadgeProps } from "@/components/badge"
 import { useFieldControl } from "@/components/field"
+import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 const radioItemVariants = cva(
   [
     // positioning
-    "group/radio",
     "relative",
 
     // layout
@@ -22,9 +22,8 @@ const radioItemVariants = cva(
     // visual
     "overflow-hidden",
     "rounded-full",
-    "border",
-    "border-(--radio-border-color)",
     "bg-white",
+    "shadow-[inset_0_0_0_1px_var(--radio-border-color)]",
 
     // focus
     "outline-none",
@@ -70,8 +69,8 @@ const radioItemVariants = cva(
 )
 
 const indicatorInsetMap = {
-  sm: "before:inset-[3px]",
-  md: "before:inset-1",
+  sm: "before:inset-1",
+  md: "before:inset-[5px]",
 } as const
 
 const descriptionPaddingMap = {
@@ -90,6 +89,8 @@ export type RadioGroupOption = {
   disabled?: boolean
   /** Badge rendered inline after the label */
   badgeProps?: BadgeProps
+  /** Tooltip shown on hover (useful for explaining why an option is disabled) */
+  tooltip?: React.ReactNode
 }
 
 export type RadioGroupProps = Pick<
@@ -157,12 +158,12 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         {options.map((option) => {
           const itemId = `${baseId}-${option.value}`
 
-          return (
+          const content = (
             <label
               key={option.value}
               htmlFor={itemId}
               className={cn(
-                "group flex flex-col gap-0.5",
+                "group flex w-fit flex-col gap-0.5",
                 disabled || option.disabled ? "cursor-not-allowed" : "cursor-pointer"
               )}
             >
@@ -184,7 +185,6 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                         "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
                         "transition-transform duration-300",
                         "ease-[cubic-bezier(.4,.36,0,1)]",
-                        "data-[state=unchecked]:group-[:not(:disabled):active]/radio:scale-50",
                         "data-[state=checked]:scale-100",
                         "before:absolute before:rounded-full before:bg-white",
                         indicatorInsetMap[size ?? "sm"],
@@ -220,6 +220,16 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
               )}
             </label>
           )
+
+          if (option.tooltip) {
+            return (
+              <Tooltip key={option.value} label={option.tooltip}>
+                {content}
+              </Tooltip>
+            )
+          }
+
+          return content
         })}
       </RadixRadioGroup.Root>
     )

@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { RadioGroup } from "@/components/radio-group"
+import { TooltipProvider } from "@/components/tooltip"
 
 const OPTIONS = [
   { value: "a", label: "Option A" },
@@ -168,5 +169,25 @@ describe("RadioGroup", () => {
     firstRadio.focus()
     await user.keyboard("{ArrowDown}")
     expect(screen.getByRole("radio", { name: "Option B" })).toHaveFocus()
+  })
+
+  it("should render tooltip when tooltip is provided", async () => {
+    const options = [
+      {
+        value: "a",
+        label: "Option A",
+        disabled: true,
+        tooltip: "This option is unavailable",
+      },
+    ]
+    render(
+      <TooltipProvider>
+        <RadioGroup options={options} aria-label="Choices" />
+      </TooltipProvider>,
+    )
+    await user.hover(screen.getByText("Option A"))
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "This option is unavailable",
+    )
   })
 })

@@ -2,11 +2,19 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Card } from "@/components/card"
 import { RadioGroup } from "@/components/radio-group"
+import { TooltipProvider } from "@/components/tooltip"
 
 const meta = {
   title: "RadioGroup",
   component: RadioGroup,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <TooltipProvider>
+        <Story />
+      </TooltipProvider>
+    ),
+  ],
   args: {
     "aria-label": "Radio group",
     options: [
@@ -26,33 +34,32 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
+const SIZES = ["sm", "md"] as const
+
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start gap-3">
-        <span className="text-word-secondary w-28 pt-0.5 text-sm">sm</span>
-        <RadioGroup
-          aria-label="Size sm"
-          size="sm"
-          defaultValue="yearly"
-          options={[
-            { value: "monthly", label: "Monthly" },
-            { value: "yearly", label: "Yearly" },
-          ]}
-        />
-      </div>
-      <div className="flex items-start gap-3">
-        <span className="text-word-secondary w-28 pt-0.5 text-sm">md</span>
-        <RadioGroup
-          aria-label="Size md"
-          size="md"
-          defaultValue="yearly"
-          options={[
-            { value: "monthly", label: "Monthly" },
-            { value: "yearly", label: "Yearly" },
-          ]}
-        />
-      </div>
+      {SIZES.map((size, i) => (
+        <div key={size} className="flex items-start gap-3">
+          <span className="text-word-secondary w-28 pt-0.5 text-sm">{size}</span>
+          <RadioGroup
+            key={`${size}-${i}`}
+            aria-label={`Size ${size}`}
+            size={size}
+            defaultValue="yearly"
+            options={[
+              {
+                value: "monthly",
+                label: "Monthly",
+              },
+              {
+                value: "yearly",
+                label: "Yearly",
+              },
+            ]}
+          />
+        </div>
+      ))}
     </div>
   ),
 }
@@ -136,6 +143,31 @@ export const WithBadge: Story = {
           label: "Enterprise",
           disabled: true,
           badgeProps: { intent: "primary", children: "Coming soon" },
+        },
+      ]}
+    />
+  ),
+}
+
+export const WithTooltip: Story = {
+  render: () => (
+    <RadioGroup
+      aria-label="Plan selection"
+      defaultValue="free"
+      options={[
+        { value: "free", label: "Free" },
+        {
+          value: "pro",
+          label: "Pro",
+          badgeProps: { intent: "pro", children: "Pro" },
+        },
+        {
+          value: "enterprise",
+          label: "Enterprise",
+          disabled: true,
+          badgeProps: { intent: "primary", children: "Coming soon" },
+          tooltip:
+            "in qui excepteur incididunt anim duis sit qui eiusmod ut duis id eiusmod labore",
         },
       ]}
     />
