@@ -292,10 +292,13 @@ export const WithBulkBar: Story = {
             ))}
           </DataTable.Body>
           <DataTable.BulkBar>
-            <Button leftIcon="bug-fill" intent="secondary" size="sm">
-              Export
+            <Button leftIcon="email-outline" intent="secondary" size="sm">
+              Notify
             </Button>
-            <Button leftIcon="award-fill" intent="danger" size="sm">
+            <Button leftIcon="check-circle-outline" intent="secondary" size="sm">
+              Activate
+            </Button>
+            <Button leftIcon="trash-outline" intent="danger" size="sm">
               Delete
             </Button>
           </DataTable.BulkBar>
