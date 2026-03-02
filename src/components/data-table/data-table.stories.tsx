@@ -3,6 +3,7 @@ import { useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Badge } from "@/components/badge"
+import { Button } from "@/components/button"
 import { DataTable, useRowSelection, useSortState } from "@/components/data-table"
 import { IconButton } from "@/components/icon-button"
 import { Provider } from "@/components/provider"
@@ -223,17 +224,12 @@ export const WithPagination: Story = {
 export const WithSelection: Story = {
   render: () => {
     const Demo = () => {
-      const { isSelected, isAllSelected, isPartialSelected, toggleRow, toggleAll } =
-        useRowSelection(USERS, { key: "id" })
+      const selection = useRowSelection(USERS, { key: "id" })
 
       return (
-        <DataTable>
+        <DataTable selection={selection}>
           <DataTable.Head>
-            <DataTable.SelectHeader
-              checked={isAllSelected}
-              indeterminate={isPartialSelected}
-              onChange={toggleAll}
-            />
+            <DataTable.SelectHeader />
             <DataTable.Header>Name</DataTable.Header>
             <DataTable.Header>Email</DataTable.Header>
             <DataTable.Header width="6rem">Role</DataTable.Header>
@@ -241,11 +237,8 @@ export const WithSelection: Story = {
           </DataTable.Head>
           <DataTable.Body>
             {USERS.map((user) => (
-              <DataTable.Row key={user.id} selected={isSelected(user.id)}>
-                <DataTable.SelectCell
-                  checked={isSelected(user.id)}
-                  onChange={() => toggleRow(user.id)}
-                />
+              <DataTable.Row key={user.id} rowId={user.id}>
+                <DataTable.SelectCell />
                 <DataTable.Cell>
                   <span className="text-word-primary font-medium">{user.name}</span>
                 </DataTable.Cell>
@@ -259,6 +252,53 @@ export const WithSelection: Story = {
               </DataTable.Row>
             ))}
           </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    return <Demo />
+  },
+}
+
+export const WithBulkBar: Story = {
+  render: () => {
+    const Demo = () => {
+      const selection = useRowSelection(USERS, { key: "id" })
+
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header>Email</DataTable.Header>
+            <DataTable.Header width="6rem">Role</DataTable.Header>
+            <DataTable.Header width="6rem">Status</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            {USERS.map((user) => (
+              <DataTable.Row key={user.id} rowId={user.id}>
+                <DataTable.SelectCell />
+                <DataTable.Cell>
+                  <span className="text-word-primary font-medium">{user.name}</span>
+                </DataTable.Cell>
+                <DataTable.Cell>{user.email}</DataTable.Cell>
+                <DataTable.Cell>{user.role}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+                    {user.status}
+                  </Badge>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <Button intent="secondary" size="sm">
+              Export
+            </Button>
+            <Button intent="danger" size="sm">
+              Delete
+            </Button>
+          </DataTable.BulkBar>
         </DataTable>
       )
     }
