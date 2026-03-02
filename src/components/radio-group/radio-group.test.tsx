@@ -135,6 +135,33 @@ describe("RadioGroup", () => {
     expect(screen.getAllByRole("radio")[0]).toHaveClass("size-5")
   })
 
+  it("should set required attribute", () => {
+    render(<RadioGroup options={OPTIONS} required aria-label="Choices" />)
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-required", "true")
+  })
+
+  it("should set aria-invalid when provided", () => {
+    render(<RadioGroup options={OPTIONS} aria-invalid={true} aria-label="Choices" />)
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-invalid", "true")
+  })
+
+  it("should support aria-labelledby", () => {
+    render(
+      <>
+        <span id="label-id">Choices</span>
+        <RadioGroup options={OPTIONS} aria-labelledby="label-id" />
+      </>,
+    )
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-labelledby", "label-id")
+  })
+
+  it("should support aria-describedby", () => {
+    render(
+      <RadioGroup options={OPTIONS} aria-describedby="help-text" aria-label="Choices" />,
+    )
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-describedby", "help-text")
+  })
+
   it("should navigate with keyboard", async () => {
     render(<RadioGroup options={OPTIONS} aria-label="Choices" />)
     const firstRadio = screen.getByRole("radio", { name: "Option A" })

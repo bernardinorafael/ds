@@ -101,7 +101,7 @@ export type RadioGroupOption = {
 
 export type RadioGroupProps = Pick<
   React.ComponentProps<"div">,
-  "id" | "aria-label" | "className"
+  "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "className"
 > &
   VariantProps<typeof radioItemVariants> & {
     /** Form field name */
@@ -130,13 +130,16 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
       size = "sm",
       validity: validityProp,
       "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      "aria-describedby": ariaDescribedByProp,
+      "aria-invalid": ariaInvalidProp,
       options,
       ...props
     },
     forwardedRef,
   ) => {
     const field = useFieldControl({ props: { id: props.id } })
-    const ariaInvalid = field["aria-invalid"]
+    const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
     const validity =
       validityProp ??
       field.messageIntent ??
@@ -148,7 +151,8 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
         className={cn("flex flex-col gap-3", className)}
         disabled={disabled}
         aria-label={ariaLabel}
-        aria-describedby={field["aria-describedby"]}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedByProp ?? field["aria-describedby"]}
         aria-invalid={ariaInvalid}
         {...props}
       >
@@ -173,7 +177,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   disabled={option.disabled}
                   className={radioItemVariants({
                     size,
-                    disabled: disabled || option.disabled || false,
+                    disabled: disabled || option.disabled,
                     validity,
                   })}
                 >
