@@ -781,10 +781,10 @@ const DataTableRow = React.forwardRef<
                 )}
               >
                 <IconButton
-                  icon="chevron-right-outline"
                   size="sm"
-                  intent="ghost"
                   shape="circle"
+                  intent="ghost"
+                  icon="chevron-right-outline"
                   aria-label={isExpanded ? "Collapse row" : "Expand row"}
                   onClick={() => expansion!.toggle(rowId!)}
                 />
@@ -800,20 +800,38 @@ const DataTableRow = React.forwardRef<
           <motion.tr
             key={`${rowId}-detail`}
             data-table-detail=""
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+            transition={{
+              duration: 0.2,
+            }}
           >
             {/* Empty cell to align with expand column */}
             <td className="bg-(--data-table-cell-bg)" />
             <td colSpan={columnCount - 1}>
               <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ overflow: "hidden" }}
+                initial={{
+                  height: 0,
+                }}
+                animate={{
+                  height: "auto",
+                }}
+                exit={{
+                  height: 0,
+                }}
+                transition={{
+                  duration: 0.2,
+                }}
+                style={{
+                  overflow: "hidden",
+                }}
               >
                 <div className="bg-(--data-table-cell-bg) py-(--data-table-cell-py) pr-(--data-table-cell-px)">
                   {detail}
