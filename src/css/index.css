@@ -3,16 +3,16 @@
 
 @font-face {
   font-family: "Suisse Intl";
-  font-weight: 300;
+  font-weight: 400;
   font-display: swap;
-  src: url("../fonts/suisse/Suisse_Intl_Book_WebS.woff2") format("woff2");
+  src: url("../fonts/suisse/Suisse_Intl_Regular_WebS.woff2") format("woff2");
 }
 
 @font-face {
   font-family: "Suisse Intl";
-  font-weight: 400;
+  font-weight: 450;
   font-display: swap;
-  src: url("../fonts/suisse/Suisse_Intl_Regular_WebS.woff2") format("woff2");
+  src: url("../fonts/suisse/Suisse_Intl_Book_WebS.woff2") format("woff2");
 }
 
 @font-face {
@@ -53,6 +53,8 @@
 @theme {
   --font-sans: "Suisse Intl", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Söhne Mono", ui-monospace, monospace;
+
+  --font-weight-book: 450;
 
   /* 1px */
   --spacing-px: 0.0625rem;

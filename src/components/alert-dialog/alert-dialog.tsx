@@ -191,7 +191,7 @@ const AlertDialogHeader = React.forwardRef<HTMLDivElement, AlertDialogHeaderProp
           {title}
         </RadixAlertDialog.Title>
         {description && (
-          <RadixAlertDialog.Description className="text-word-secondary max-w-[40ch] text-base font-normal">
+          <RadixAlertDialog.Description className="text-word-tertiary max-w-[40ch] text-base font-normal">
             {description}
           </RadixAlertDialog.Description>
         )}

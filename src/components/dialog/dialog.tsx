@@ -257,7 +257,7 @@ const DialogHeader = React.forwardRef<HTMLDivElement, DialogHeaderProps>(
           {title}
         </RadixDialog.Title>
         {description && (
-          <RadixDialog.Description className="text-word-secondary max-w-[40ch] text-base font-normal">
+          <RadixDialog.Description className="text-word-tertiary max-w-[40ch] text-base font-normal">
             {description}
           </RadixDialog.Description>
         )}
