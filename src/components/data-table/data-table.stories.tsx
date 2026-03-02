@@ -170,49 +170,6 @@ function UserDetail({ user }: { user: (typeof USERS)[number] }) {
 // Stories
 // ---------------------------------------------------------------------------
 
-export const Basic: Story = {
-  render: () => (
-    <DataTable className="max-w-5xl">
-      <DataTable.Head>
-        <DataTable.Header>Name</DataTable.Header>
-        <DataTable.Header width="6rem">Role</DataTable.Header>
-        <DataTable.Header width="6rem">Status</DataTable.Header>
-        <DataTable.Header width="4rem" srOnly>
-          Actions
-        </DataTable.Header>
-      </DataTable.Head>
-      <DataTable.Body>
-        {USERS.map((user) => (
-          <DataTable.Row key={user.id}>
-            <DataTable.Cell>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-word-primary font-medium">{user.name}</span>
-                <span className="text-word-secondary text-sm">{user.email}</span>
-              </div>
-            </DataTable.Cell>
-            <DataTable.Cell>{user.role}</DataTable.Cell>
-            <DataTable.Cell>
-              <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
-                {user.status}
-              </Badge>
-            </DataTable.Cell>
-            <DataTable.Cell flushRight>
-              <DataTable.Actions>
-                <IconButton
-                  icon="more-horizontal-outline"
-                  size="sm"
-                  intent="ghost"
-                  aria-label="More options"
-                />
-              </DataTable.Actions>
-            </DataTable.Cell>
-          </DataTable.Row>
-        ))}
-      </DataTable.Body>
-    </DataTable>
-  ),
-}
-
 export const Compact: Story = {
   render: () => (
     <DataTable spacing="compact" className="max-w-5xl">
@@ -526,5 +483,94 @@ export const ExpandableWithSelection: Story = {
     }
 
     return <Demo />
+  },
+}
+
+export const WithRowLink: Story = {
+  render: () => (
+    <DataTable spacing="cozy">
+      <DataTable.Head>
+        <DataTable.Header width="40%">Name</DataTable.Header>
+        <DataTable.Header>Email</DataTable.Header>
+        <DataTable.Header>Role</DataTable.Header>
+        <DataTable.Header width={48} srOnly>
+          Actions
+        </DataTable.Header>
+      </DataTable.Head>
+      <DataTable.Body>
+        {USERS.slice(0, 5).map((user) => (
+          <DataTable.Row key={user.id}>
+            <DataTable.Cell>
+              <DataTable.RowLink href={`#/users/${user.id}`}>
+                {user.name}
+              </DataTable.RowLink>
+            </DataTable.Cell>
+            <DataTable.Cell>{user.email}</DataTable.Cell>
+            <DataTable.Cell>
+              <Badge intent={user.role === "Admin" ? "primary" : "secondary"}>
+                {user.role}
+              </Badge>
+            </DataTable.Cell>
+            <DataTable.Cell flushRight>
+              <DataTable.Actions>
+                <IconButton
+                  size="sm"
+                  intent="ghost"
+                  shape="circle"
+                  icon="more-horizontal-outline"
+                  aria-label="Actions"
+                />
+              </DataTable.Actions>
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable.Body>
+    </DataTable>
+  ),
+}
+
+export const RowLinkWithSelectionAndExpansion: Story = {
+  render: function Render() {
+    const selection = useRowSelection(USERS.slice(0, 5), { key: "id" })
+    const expansion = useRowExpansion()
+
+    return (
+      <DataTable spacing="cozy" selection={selection} expansion={expansion}>
+        <DataTable.Head>
+          <DataTable.SelectHeader />
+          <DataTable.Header width="35%">Name</DataTable.Header>
+          <DataTable.Header>Email</DataTable.Header>
+          <DataTable.Header>Role</DataTable.Header>
+        </DataTable.Head>
+        <DataTable.Body>
+          {USERS.slice(0, 5).map((user) => (
+            <DataTable.Row
+              key={user.id}
+              rowId={user.id}
+              detail={
+                <div className="flex flex-col gap-1 text-sm">
+                  <span>Department: {user.department}</span>
+                  <span>Location: {user.location}</span>
+                  <span>Joined: {user.joinDate}</span>
+                </div>
+              }
+            >
+              <DataTable.SelectCell />
+              <DataTable.Cell>
+                <DataTable.RowLink href={`#/users/${user.id}`}>
+                  {user.name}
+                </DataTable.RowLink>
+              </DataTable.Cell>
+              <DataTable.Cell>{user.email}</DataTable.Cell>
+              <DataTable.Cell>
+                <Badge intent={user.role === "Admin" ? "primary" : "secondary"}>
+                  {user.role}
+                </Badge>
+              </DataTable.Cell>
+            </DataTable.Row>
+          ))}
+        </DataTable.Body>
+      </DataTable>
+    )
   },
 }
