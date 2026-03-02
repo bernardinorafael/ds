@@ -2,7 +2,6 @@ import React from "react"
 
 import * as RadixRadioGroup from "@radix-ui/react-radio-group"
 import { cva, type VariantProps } from "class-variance-authority"
-import { motion } from "motion/react"
 
 import { Badge, type BadgeProps } from "@/components/badge"
 import { useFieldControl } from "@/components/field"
@@ -10,6 +9,10 @@ import { cn } from "@/utils/cn"
 
 const radioItemVariants = cva(
   [
+    // positioning
+    "group/radio",
+    "relative",
+
     // layout
     "inline-flex",
     "shrink-0",
@@ -21,8 +24,6 @@ const radioItemVariants = cva(
     "border",
     "border-(--radio-border-color)",
     "bg-white",
-    "text-word-primary",
-    "shadow-sm",
 
     // checked
     "data-[state=checked]:border-word-primary",
@@ -76,9 +77,9 @@ const radioItemVariants = cva(
   },
 )
 
-const dotSizeMap = {
-  sm: "size-1.5",
-  md: "size-2",
+const indicatorInsetMap = {
+  sm: "before:inset-[3px]",
+  md: "before:inset-1",
 } as const
 
 const descriptionPaddingMap = {
@@ -181,17 +182,17 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                     validity,
                   })}
                 >
-                  <RadixRadioGroup.Indicator asChild>
-                    <motion.span
-                      className={cn(
-                        "rounded-full bg-current",
-                        dotSizeMap[size ?? "sm"],
-                      )}
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.1 }}
-                    />
-                  </RadixRadioGroup.Indicator>
+                  <span
+                    className={cn(
+                      "absolute inset-0 scale-0 rounded-full",
+                      "bg-word-primary bg-gradient-to-b from-white/12 to-white/0",
+                      "transition-transform duration-300",
+                      "ease-[cubic-bezier(.4,.36,0,1)]",
+                      "group-data-[state=checked]/radio:scale-100",
+                      "before:absolute before:rounded-full before:bg-white",
+                      indicatorInsetMap[size ?? "sm"],
+                    )}
+                  />
                 </RadixRadioGroup.Item>
 
                 <span
