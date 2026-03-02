@@ -669,7 +669,11 @@ export const KitchenSink: Story = {
             placeholder="Status"
           />
         }
-        action={<Button intent="primary">Add user</Button>}
+        action={
+          <Button leftIcon="plus-outline" intent="primary">
+            Add user
+          </Button>
+        }
       >
         <DataTable
           spacing="cozy"
@@ -728,9 +732,7 @@ export const KitchenSink: Story = {
                 </DataTable.Cell>
                 <DataTable.Cell>{user.role}</DataTable.Cell>
                 <DataTable.Cell>
-                  <Badge
-                    intent={statusIntent[user.status as keyof typeof statusIntent]}
-                  >
+                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
                     {user.status}
                   </Badge>
                 </DataTable.Cell>
