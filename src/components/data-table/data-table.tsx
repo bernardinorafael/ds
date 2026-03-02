@@ -155,6 +155,16 @@ export function useExpansionContext() {
 }
 
 // ---------------------------------------------------------------------------
+// Column Count Context
+// ---------------------------------------------------------------------------
+
+const ColumnCountContext = React.createContext<number>(1)
+
+function useColumnCount() {
+  return React.useContext(ColumnCountContext)
+}
+
+// ---------------------------------------------------------------------------
 // SlidingNumber (internal — not exported)
 // ---------------------------------------------------------------------------
 
@@ -494,27 +504,34 @@ const DataTableHead = React.forwardRef<
   Pick<React.HTMLAttributes<HTMLTableSectionElement>, "children" | "className">
 >(({ children, ...rest }, ref) => {
   const expansion = useExpansionContext()
+  const [columnCount, setColumnCount] = React.useState(1)
+
+  const headerRowRef = React.useCallback((node: HTMLTableRowElement | null) => {
+    if (node) setColumnCount(node.childElementCount)
+  }, [])
 
   return (
-    <thead ref={ref} {...rest}>
-      <tr>
-        {expansion && (
-          <th
-            data-table-expand=""
-            className={cn(
-              "overflow-hidden",
-              "leading-(--data-table-header-leading)",
-              "pt-(--data-table-header-pt)",
-              "pb-(--data-table-header-pb)",
-              "w-(--data-table-expand-col-w)"
-            )}
-          >
-            <span className="sr-only">Expand</span>
-          </th>
-        )}
-        {children}
-      </tr>
-    </thead>
+    <ColumnCountContext.Provider value={columnCount}>
+      <thead ref={ref} {...rest}>
+        <tr ref={headerRowRef}>
+          {expansion && (
+            <th
+              data-table-expand=""
+              className={cn(
+                "overflow-hidden",
+                "leading-(--data-table-header-leading)",
+                "pt-(--data-table-header-pt)",
+                "pb-(--data-table-header-pb)",
+                "w-(--data-table-expand-col-w)"
+              )}
+            >
+              <span className="sr-only">Expand</span>
+            </th>
+          )}
+          {children}
+        </tr>
+      </thead>
+    </ColumnCountContext.Provider>
   )
 })
 
@@ -702,6 +719,7 @@ const DataTableRow = React.forwardRef<
 >(({ selected, rowId, detail, children, className, ...props }, ref) => {
   const selection = useSelectionContext()
   const expansion = useExpansionContext()
+  const columnCount = useColumnCount()
 
   const isSelected =
     selected ?? (selection && rowId ? selection.isSelected(rowId) : false)
@@ -797,7 +815,7 @@ const DataTableRow = React.forwardRef<
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <td colSpan={100}>
+            <td colSpan={columnCount}>
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: "auto" }}
