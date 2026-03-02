@@ -4,6 +4,7 @@ export type {
   DataTableHeaderProps,
   DataTableSortHeaderProps,
   DataTableCellProps,
+  DataTableRowLinkProps,
   DataTableSelectHeaderProps,
   DataTableSelectCellProps,
   DataTableBulkBarProps,

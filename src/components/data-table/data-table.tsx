@@ -9,6 +9,7 @@ import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
 import { Select } from "@/components/select"
 import { cn } from "@/utils/cn"
+import { Slot, type AsChildProp } from "@/utils/slot"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -244,6 +245,9 @@ const rootVariants = cva(
 
     // expansion
     "[--data-table-expand-col-w:2.5rem]",
+
+    // row link
+    "[--data-table-cell-bg-hover:var(--color-gray-100)]",
   ],
   {
     variants: {
@@ -274,7 +278,7 @@ const cellVariants = cva(
     "[[data-table-expand]+&]:pl-0",
 
     // background
-    "bg-(--data-table-cell-bg)",
+    "bg-[var(--data-table-row-bg,var(--data-table-cell-bg))]",
     "group-data-selected/table-row:bg-(--data-table-selected-bg)",
 
     // border color for row separators (border-width is controlled by Row's sibling selector)
@@ -764,6 +768,13 @@ const DataTableRow = React.forwardRef<
         className={cn(
           "group/table-row text-base",
           "[&+&>*]:border-t [[data-table-detail]+&>*]:border-t",
+          // RowLink support
+          "has-[[data-table-row-link]]:relative",
+          "has-[[data-table-row-link]]:isolate",
+          "has-[[data-table-row-link]]:[clip-path:inset(0)]",
+          "has-[[data-table-row-link]]:hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
+          "has-[[data-table-row-link]]:focus-within:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
+          "[&:has([data-table-row-link])_:where(a,button)]:z-[1]",
           className
         )}
         ref={ref}
@@ -1197,6 +1208,63 @@ function DataTableBulkBar({
 DataTableBulkBar.displayName = "DataTable.BulkBar"
 
 // ---------------------------------------------------------------------------
+// DataTableRowLink
+// ---------------------------------------------------------------------------
+
+export type DataTableRowLinkProps = Pick<
+  React.ComponentProps<"a">,
+  "id" | "href" | "target" | "rel" | "aria-label" | "className" | "children"
+> &
+  AsChildProp
+
+const DataTableRowLink = React.forwardRef<HTMLAnchorElement, DataTableRowLinkProps>(
+  ({ asChild, className, ...rest }, ref) => {
+    const Component = asChild ? Slot : "a"
+
+    return (
+      <Component
+        data-table-row-link=""
+        className={cn(
+          // positioning
+          "static",
+
+          // click target extension
+          "-mx-1",
+          "-my-0.5",
+          "rounded",
+          "px-1",
+          "py-0.5",
+          "appearance-none",
+
+          // focus states
+          "outline-none",
+          "focus-visible:relative",
+          "focus-visible:z-5",
+          "focus-visible:ring-[3px]",
+          "focus-visible:ring-[color-mix(in_srgb,black_13%,transparent)]",
+          "focus-visible:ring-offset-1",
+          "focus-visible:ring-offset-[color-mix(in_srgb,black_15%,transparent)]",
+
+          // stretched pseudo — covers the entire row
+          "before:pointer-events-auto",
+          "before:absolute",
+          "before:inset-0",
+          "before:z-0",
+          "before:block",
+          "before:cursor-pointer",
+
+          className,
+        )}
+        ref={ref}
+        {...rest}
+      />
+    )
+  },
+)
+
+DataTableRowLink.displayName = "DataTable.RowLink"
+
+// ---------------------------------------------------------------------------
 // Compound export
 // ---------------------------------------------------------------------------
 
@@ -1206,6 +1274,7 @@ export const DataTable = Object.assign(DataTableRoot, {
   SortHeader: DataTableSortHeader,
   Body: DataTableBody,
   Row: DataTableRow,
+  RowLink: DataTableRowLink,
   Cell: DataTableCell,
   Actions: DataTableActions,
   SelectHeader: DataTableSelectHeader,
