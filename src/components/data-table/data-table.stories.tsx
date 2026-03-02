@@ -4,7 +4,12 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Badge } from "@/components/badge"
 import { Button } from "@/components/button"
-import { DataTable, useRowSelection, useSortState } from "@/components/data-table"
+import {
+  DataTable,
+  useRowExpansion,
+  useRowSelection,
+  useSortState,
+} from "@/components/data-table"
 import { IconButton } from "@/components/icon-button"
 import { Provider } from "@/components/provider"
 
@@ -367,6 +372,122 @@ export const WithSorting: Story = {
               </DataTable.Row>
             ))}
           </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    return <Demo />
+  },
+}
+
+export const ExpandableRows: Story = {
+  render: () => {
+    const Demo = () => {
+      const expansion = useRowExpansion()
+
+      return (
+        <DataTable expansion={expansion}>
+          <DataTable.Head>
+            <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header>Email</DataTable.Header>
+            <DataTable.Header width="6rem">Role</DataTable.Header>
+            <DataTable.Header width="6rem">Status</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            {USERS.map((user) => (
+              <DataTable.Row
+                key={user.id}
+                rowId={user.id}
+                detail={
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <p className="text-word-secondary text-sm font-medium">
+                        Full details for {user.name}
+                      </p>
+                      <p className="text-word-primary mt-1 text-sm">
+                        Role: {user.role} · Status: {user.status} · Joined 2024
+                      </p>
+                    </div>
+                  </div>
+                }
+              >
+                <DataTable.Cell>
+                  <span className="text-word-primary font-medium">{user.name}</span>
+                </DataTable.Cell>
+                <DataTable.Cell className="text-word-secondary">
+                  {user.email}
+                </DataTable.Cell>
+                <DataTable.Cell>{user.role}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+                    {user.status}
+                  </Badge>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    return <Demo />
+  },
+}
+
+export const ExpandableWithSelection: Story = {
+  render: () => {
+    const Demo = () => {
+      const expansion = useRowExpansion()
+      const selection = useRowSelection(USERS, { key: "id" })
+
+      return (
+        <DataTable expansion={expansion} selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+            <DataTable.Header>Email</DataTable.Header>
+            <DataTable.Header width="6rem">Role</DataTable.Header>
+            <DataTable.Header width="6rem">Status</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            {USERS.map((user) => (
+              <DataTable.Row
+                key={user.id}
+                rowId={user.id}
+                detail={
+                  <div className="flex flex-col gap-2">
+                    <div>
+                      <p className="text-word-secondary text-sm font-medium">
+                        Full details for {user.name}
+                      </p>
+                      <p className="text-word-primary mt-1 text-sm">
+                        Role: {user.role} · Status: {user.status} · Joined 2024
+                      </p>
+                    </div>
+                  </div>
+                }
+              >
+                <DataTable.SelectCell />
+                <DataTable.Cell>
+                  <span className="text-word-primary font-medium">{user.name}</span>
+                </DataTable.Cell>
+                <DataTable.Cell className="text-word-secondary">
+                  {user.email}
+                </DataTable.Cell>
+                <DataTable.Cell>{user.role}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+                    {user.status}
+                  </Badge>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <Button leftIcon="trash-outline" intent="danger" size="sm">
+              Delete
+            </Button>
+          </DataTable.BulkBar>
         </DataTable>
       )
     }
