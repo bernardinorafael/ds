@@ -10,6 +10,7 @@ import {
   useRowSelection,
   useSortState,
 } from "@/components/data-table"
+import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
 import { Provider } from "@/components/provider"
 
@@ -44,6 +45,11 @@ const USERS = [
     email: "alice@example.com",
     role: "Admin",
     status: "active",
+    department: "Engineering",
+    location: "New York, US",
+    joinDate: "Jan 2023",
+    lastActive: "2 hours ago",
+    projects: 12,
   },
   {
     id: "u2",
@@ -51,6 +57,11 @@ const USERS = [
     email: "bob@example.com",
     role: "Editor",
     status: "active",
+    department: "Design",
+    location: "San Francisco, US",
+    joinDate: "Mar 2023",
+    lastActive: "5 min ago",
+    projects: 8,
   },
   {
     id: "u3",
@@ -58,6 +69,11 @@ const USERS = [
     email: "carol@example.com",
     role: "Viewer",
     status: "inactive",
+    department: "Marketing",
+    location: "London, UK",
+    joinDate: "Jun 2022",
+    lastActive: "3 days ago",
+    projects: 4,
   },
   {
     id: "u4",
@@ -65,6 +81,11 @@ const USERS = [
     email: "david@example.com",
     role: "Editor",
     status: "active",
+    department: "Product",
+    location: "Seoul, KR",
+    joinDate: "Nov 2023",
+    lastActive: "1 hour ago",
+    projects: 6,
   },
   {
     id: "u5",
@@ -72,6 +93,11 @@ const USERS = [
     email: "eva@example.com",
     role: "Admin",
     status: "pending",
+    department: "Engineering",
+    location: "São Paulo, BR",
+    joinDate: "Feb 2024",
+    lastActive: "Just now",
+    projects: 3,
   },
 ]
 
@@ -80,6 +106,73 @@ const statusIntent = {
   inactive: "secondary",
   pending: "warning",
 } as const
+
+type IconName = React.ComponentProps<typeof Icon>["name"]
+
+function MetaItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: IconName
+  label: string
+  value: string
+}) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className="text-word-tertiary flex size-7 shrink-0 items-center justify-center rounded-md bg-surface-100">
+        <Icon name={icon} size="sm" />
+      </div>
+      <div className="flex flex-col gap-0.5">
+        <span className="text-word-tertiary text-xs leading-none">{label}</span>
+        <span className="text-word-primary text-sm font-medium leading-none">
+          {value}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function UserDetail({ user }: { user: (typeof USERS)[number] }) {
+  return (
+    <div className="flex flex-col gap-4 pb-1">
+      <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
+        <MetaItem icon="building-outline" label="Department" value={user.department} />
+        <MetaItem icon="location-outline" label="Location" value={user.location} />
+        <MetaItem icon="calendar-outline" label="Joined" value={user.joinDate} />
+        <MetaItem icon="clock-outline" label="Last active" value={user.lastActive} />
+      </div>
+
+      <div className="border-t border-gray-200 pt-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-word-secondary text-sm">
+              {user.projects} active projects
+            </span>
+            <span className="text-word-tertiary">·</span>
+            <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
+              {user.status}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <IconButton
+              icon="email-outline"
+              size="sm"
+              intent="ghost"
+              aria-label="Send email"
+            />
+            <IconButton
+              icon="edit-outline"
+              size="sm"
+              intent="ghost"
+              aria-label="Edit user"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // ---------------------------------------------------------------------------
 // Stories
@@ -226,45 +319,6 @@ export const WithPagination: Story = {
   },
 }
 
-export const WithSelection: Story = {
-  render: () => {
-    const Demo = () => {
-      const selection = useRowSelection(USERS, { key: "id" })
-
-      return (
-        <DataTable selection={selection}>
-          <DataTable.Head>
-            <DataTable.SelectHeader />
-            <DataTable.Header>Name</DataTable.Header>
-            <DataTable.Header>Email</DataTable.Header>
-            <DataTable.Header width="6rem">Role</DataTable.Header>
-            <DataTable.Header width="6rem">Status</DataTable.Header>
-          </DataTable.Head>
-          <DataTable.Body>
-            {USERS.map((user) => (
-              <DataTable.Row key={user.id} rowId={user.id}>
-                <DataTable.SelectCell />
-                <DataTable.Cell>
-                  <span className="text-word-primary font-medium">{user.name}</span>
-                </DataTable.Cell>
-                <DataTable.Cell>{user.email}</DataTable.Cell>
-                <DataTable.Cell>{user.role}</DataTable.Cell>
-                <DataTable.Cell>
-                  <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
-                    {user.status}
-                  </Badge>
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))}
-          </DataTable.Body>
-        </DataTable>
-      )
-    }
-
-    return <Demo />
-  },
-}
-
 export const WithBulkBar: Story = {
   render: () => {
     const Demo = () => {
@@ -326,7 +380,9 @@ export const WithSorting: Story = {
       const sorted = [...USERS].sort((a, b) => {
         if (!sort) return 0
         const col = sort.column as keyof (typeof USERS)[0]
-        const cmp = a[col].localeCompare(b[col])
+        const valA = String(a[col])
+        const valB = String(b[col])
+        const cmp = valA.localeCompare(valB)
         return sort.direction === "asc" ? cmp : -cmp
       })
 
@@ -398,18 +454,7 @@ export const ExpandableRows: Story = {
               <DataTable.Row
                 key={user.id}
                 rowId={user.id}
-                detail={
-                  <div className="flex flex-col gap-2">
-                    <div>
-                      <p className="text-word-secondary text-sm font-medium">
-                        Full details for {user.name}
-                      </p>
-                      <p className="text-word-primary mt-1 text-sm">
-                        Role: {user.role} · Status: {user.status} · Joined 2024
-                      </p>
-                    </div>
-                  </div>
-                }
+                detail={<UserDetail user={user} />}
               >
                 <DataTable.Cell>
                   <span className="text-word-primary font-medium">{user.name}</span>
@@ -454,18 +499,7 @@ export const ExpandableWithSelection: Story = {
               <DataTable.Row
                 key={user.id}
                 rowId={user.id}
-                detail={
-                  <div className="flex flex-col gap-2">
-                    <div>
-                      <p className="text-word-secondary text-sm font-medium">
-                        Full details for {user.name}
-                      </p>
-                      <p className="text-word-primary mt-1 text-sm">
-                        Role: {user.role} · Status: {user.status} · Joined 2024
-                      </p>
-                    </div>
-                  </div>
-                }
+                detail={<UserDetail user={user} />}
               >
                 <DataTable.SelectCell />
                 <DataTable.Cell>

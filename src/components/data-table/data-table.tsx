@@ -813,9 +813,10 @@ const DataTableRow = React.forwardRef<
               duration: 0.2,
             }}
           >
-            {/* Empty cell to align with expand column */}
+            {/* Empty cells to align detail with the first data column */}
             <td className="bg-(--data-table-cell-bg)" />
-            <td colSpan={columnCount - 1}>
+            {selection && <td className="bg-(--data-table-cell-bg)" />}
+            <td colSpan={columnCount - 1 - (selection ? 1 : 0)}>
               <motion.div
                 initial={{
                   height: 0,
