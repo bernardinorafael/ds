@@ -73,20 +73,20 @@ export type SortDirection = "asc" | "desc"
 
 export type DataTableSelectHeaderProps = {
   /** Current checked state of the select-all checkbox */
-  checked: boolean
+  checked?: boolean
   /** Shows the checkbox in indeterminate state (some rows selected) */
   indeterminate?: boolean
   /** Called when the checkbox is toggled */
-  onChange: () => void
+  onChange?: () => void
   /** Disables the checkbox */
   disabled?: boolean
 }
 
 export type DataTableSelectCellProps = {
   /** Current checked state of the row checkbox */
-  checked: boolean
+  checked?: boolean
   /** Called when the checkbox is toggled */
-  onChange: () => void
+  onChange?: () => void
   /** Disables the checkbox */
   disabled?: boolean
 }
@@ -718,11 +718,17 @@ DataTableActions.displayName = "DataTable.Actions"
 // ---------------------------------------------------------------------------
 
 function DataTableSelectHeader({
-  checked,
-  indeterminate,
-  onChange,
+  checked: checkedProp,
+  indeterminate: indeterminateProp,
+  onChange: onChangeProp,
   disabled,
 }: DataTableSelectHeaderProps) {
+  const selection = useSelectionContext()
+
+  const checked = checkedProp ?? selection?.isAllSelected ?? false
+  const indeterminate = indeterminateProp ?? selection?.isPartialSelected
+  const onChange = onChangeProp ?? selection?.toggleAll
+
   return (
     <th
       data-table-select=""
@@ -738,7 +744,7 @@ function DataTableSelectHeader({
         <Checkbox
           size="sm"
           checked={indeterminate ? "indeterminate" : checked}
-          onCheckedChange={() => onChange()}
+          onCheckedChange={() => onChange?.()}
           disabled={disabled}
           aria-label="Select all rows"
         />
@@ -753,7 +759,20 @@ DataTableSelectHeader.displayName = "DataTable.SelectHeader"
 // DataTableSelectCell
 // ---------------------------------------------------------------------------
 
-function DataTableSelectCell({ checked, onChange, disabled }: DataTableSelectCellProps) {
+function DataTableSelectCell({
+  checked: checkedProp,
+  onChange: onChangeProp,
+  disabled,
+}: DataTableSelectCellProps) {
+  const selection = useSelectionContext()
+  const rowId = useRowContext()
+
+  const checked =
+    checkedProp ?? (selection && rowId ? selection.isSelected(rowId) : false)
+  const onChange =
+    onChangeProp ??
+    (selection && rowId ? () => selection.toggleRow(rowId) : undefined)
+
   return (
     <td
       data-table-cell=""
@@ -767,7 +786,7 @@ function DataTableSelectCell({ checked, onChange, disabled }: DataTableSelectCel
         <Checkbox
           size="sm"
           checked={checked}
-          onCheckedChange={() => onChange()}
+          onCheckedChange={() => onChange?.()}
           disabled={disabled}
           aria-label="Select row"
         />

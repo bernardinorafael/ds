@@ -3,7 +3,11 @@ import React, { createRef } from "react"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import { DataTable, useRowSelection, type PaginationProps } from "@/components/data-table"
+import {
+  DataTable,
+  useRowSelection,
+  type PaginationProps,
+} from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -636,5 +640,79 @@ describe("DataTable.Actions", () => {
       </DataTable.Actions>
     )
     expect(ref.current).toBeInstanceOf(HTMLDivElement)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.SelectHeader (context)
+// ---------------------------------------------------------------------------
+
+describe("DataTable.SelectHeader (context)", () => {
+  it("should render select-all checkbox from context without props", () => {
+    function Demo() {
+      const selection = useRowSelection([{ id: "1" }], { key: "id" })
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    expect(
+      screen.getByRole("checkbox", { name: "Select all rows" })
+    ).toBeInTheDocument()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// DataTable.SelectCell (context)
+// ---------------------------------------------------------------------------
+
+describe("DataTable.SelectCell (context)", () => {
+  it("should toggle row selection via context when clicked", async () => {
+    const user = userEvent.setup()
+
+    function Demo() {
+      const selection = useRowSelection(
+        [{ id: "1" }, { id: "2" }],
+        { key: "id" }
+      )
+      return (
+        <DataTable selection={selection}>
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.Header>Name</DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            <DataTable.Row rowId="1">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Alice</DataTable.Cell>
+            </DataTable.Row>
+            <DataTable.Row rowId="2">
+              <DataTable.SelectCell />
+              <DataTable.Cell>Bob</DataTable.Cell>
+            </DataTable.Row>
+          </DataTable.Body>
+        </DataTable>
+      )
+    }
+
+    render(<Demo />)
+    const checkboxes = screen.getAllByRole("checkbox", { name: "Select row" })
+    await user.click(checkboxes[0])
+
+    const rows = screen.getAllByRole("row")
+    expect(rows[1]).toHaveAttribute("data-selected", "")
+    expect(rows[2]).not.toHaveAttribute("data-selected")
   })
 })
