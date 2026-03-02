@@ -19,10 +19,16 @@ const radioItemVariants = cva(
     "justify-center",
 
     // visual
+    "overflow-hidden",
     "rounded-full",
     "border",
     "border-(--radio-border-color)",
     "bg-white",
+
+    // pressed
+    "transition-transform",
+    "duration-150",
+    "active:scale-90",
 
     // focus
     "outline-none",
@@ -178,7 +184,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                   <RadixRadioGroup.Indicator asChild forceMount>
                     <span
                       className={cn(
-                        "absolute -inset-px scale-0 rounded-full",
+                        "absolute inset-0 scale-0 rounded-full",
                         "bg-word-primary bg-linear-to-b from-white/12 to-white/0",
                         "transition-transform duration-300",
                         "ease-[cubic-bezier(.4,.36,0,1)]",
