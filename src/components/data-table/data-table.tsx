@@ -278,7 +278,7 @@ const cellVariants = cva(
     "[[data-table-expand]+&]:pl-0",
 
     // background
-    "bg-[var(--data-table-row-bg,var(--data-table-cell-bg))]",
+    "bg-(--data-table-row-bg,var(--data-table-cell-bg))",
     "group-data-selected/table-row:bg-(--data-table-selected-bg)",
 
     // border color for row separators (border-width is controlled by Row's sibling selector)
@@ -759,18 +759,13 @@ const DataTableRow = React.forwardRef<
   const isExpandable = !!detail && !!expansion && !!rowId
   const isExpanded = isExpandable && expansion.isExpanded(rowId)
 
-  const handleRowClick = React.useCallback(
-    (e: React.MouseEvent<HTMLTableRowElement>) => {
-      const target = e.target as HTMLElement
-      if (target.closest("a, button, input, select, [role='checkbox']")) return
+  const handleRowClick = React.useCallback((e: React.MouseEvent<HTMLTableRowElement>) => {
+    const target = e.target as HTMLElement
+    if (target.closest("a, button, input, select, [role='checkbox']")) return
 
-      const link = e.currentTarget.querySelector<HTMLAnchorElement>(
-        "[data-table-row-link]",
-      )
-      link?.click()
-    },
-    [],
-  )
+    const link = e.currentTarget.querySelector<HTMLAnchorElement>("[data-table-row-link]")
+    link?.click()
+  }, [])
 
   const row = (
     <>
@@ -783,17 +778,17 @@ const DataTableRow = React.forwardRef<
           "group/table-row text-base",
           "[&+&>*]:border-t [[data-table-detail]+&>*]:border-t",
           // RowLink support
-          "has-[[data-table-row-link]]:relative",
-          "has-[[data-table-row-link]]:isolate",
-          "has-[[data-table-row-link]]:cursor-pointer",
-          "has-[[data-table-row-link]]:[clip-path:inset(0)]",
-          "has-[[data-table-row-link]]:hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
+          "has-data-table-row-link:relative",
+          "has-data-table-row-link:isolate",
+          "has-data-table-row-link:cursor-pointer",
+          "has-data-table-row-link:[clip-path:inset(0)]",
+          "has-data-table-row-link:hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
           "[&:has([data-table-row-link]:focus-visible)]:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
           "[&:has([data-table-row-link])>*]:overflow-visible",
           "[&:has([data-table-row-link])>:where([data-table-expand],[data-table-select])]:relative",
-          "[&:has([data-table-row-link])>:where([data-table-expand],[data-table-select])]:z-[1]",
+          "[&:has([data-table-row-link])>:where([data-table-expand],[data-table-select])]:z-1",
           "[&:has([data-table-row-link])_:where(a,button)]:relative",
-          "[&:has([data-table-row-link])_:where(a,button)]:z-[1]",
+          "[&:has([data-table-row-link])_:where(a,button)]:z-1",
           className
         )}
         ref={ref}
@@ -1272,13 +1267,13 @@ const DataTableRowLink = React.forwardRef<HTMLAnchorElement, DataTableRowLinkPro
           "before:block",
           "before:cursor-pointer",
 
-          className,
+          className
         )}
         ref={ref}
         {...rest}
       />
     )
-  },
+  }
 )
 
 DataTableRowLink.displayName = "DataTable.RowLink"
