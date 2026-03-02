@@ -140,6 +140,16 @@ function useRowContext() {
 }
 
 // ---------------------------------------------------------------------------
+// Expansion Context
+// ---------------------------------------------------------------------------
+
+export const ExpansionContext = React.createContext<ExpansionContextValue | null>(null)
+
+export function useExpansionContext() {
+  return React.useContext(ExpansionContext)
+}
+
+// ---------------------------------------------------------------------------
 // SlidingNumber (internal — not exported)
 // ---------------------------------------------------------------------------
 
@@ -877,6 +887,34 @@ export function useRowSelection<T>(rows: T[], { key }: { key: keyof T }) {
     toggleAll,
     clearSelection,
   }
+}
+
+// ---------------------------------------------------------------------------
+// useRowExpansion
+// ---------------------------------------------------------------------------
+
+export type ExpansionContextValue = {
+  expandedId: string | null
+  isExpanded: (id: string) => boolean
+  toggle: (id: string) => void
+  collapse: () => void
+}
+
+export function useRowExpansion(): ExpansionContextValue {
+  const [expandedId, setExpandedId] = React.useState<string | null>(null)
+
+  const isExpanded = React.useCallback(
+    (id: string) => expandedId === id,
+    [expandedId],
+  )
+
+  const toggle = React.useCallback((id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id))
+  }, [])
+
+  const collapse = React.useCallback(() => setExpandedId(null), [])
+
+  return { expandedId, isExpanded, toggle, collapse }
 }
 
 // ---------------------------------------------------------------------------

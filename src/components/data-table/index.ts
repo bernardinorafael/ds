@@ -1,4 +1,4 @@
-export { DataTable, useSortState, useRowSelection } from "./data-table"
+export { DataTable, useSortState, useRowSelection, useRowExpansion } from "./data-table"
 export type {
   DataTableRootProps,
   DataTableHeaderProps,
@@ -7,6 +7,7 @@ export type {
   DataTableSelectHeaderProps,
   DataTableSelectCellProps,
   DataTableBulkBarProps,
+  ExpansionContextValue,
   PaginationProps,
   SortDirection,
 } from "./data-table"

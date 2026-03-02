@@ -1,9 +1,14 @@
 import React, { createRef } from "react"
 
-import { render, screen } from "@testing-library/react"
+import { act, render, renderHook, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
-import { DataTable, useRowSelection, type PaginationProps } from "@/components/data-table"
+import {
+  DataTable,
+  useRowExpansion,
+  useRowSelection,
+  type PaginationProps,
+} from "@/components/data-table"
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -827,5 +832,45 @@ describe("DataTable.BulkBar", () => {
     render(<Demo />)
     await user.click(screen.getByRole("checkbox", { name: "Select row" }))
     expect(screen.getByText("1 item(s)")).toBeInTheDocument()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// useRowExpansion
+// ---------------------------------------------------------------------------
+
+describe("useRowExpansion", () => {
+  it("should start with no expanded row", () => {
+    const { result } = renderHook(() => useRowExpansion())
+    expect(result.current.expandedId).toBeNull()
+  })
+
+  it("should expand a row when toggle is called", () => {
+    const { result } = renderHook(() => useRowExpansion())
+    act(() => result.current.toggle("1"))
+    expect(result.current.expandedId).toBe("1")
+    expect(result.current.isExpanded("1")).toBe(true)
+  })
+
+  it("should collapse when toggling the same row", () => {
+    const { result } = renderHook(() => useRowExpansion())
+    act(() => result.current.toggle("1"))
+    act(() => result.current.toggle("1"))
+    expect(result.current.expandedId).toBeNull()
+  })
+
+  it("should switch to new row when toggling a different row (accordion)", () => {
+    const { result } = renderHook(() => useRowExpansion())
+    act(() => result.current.toggle("1"))
+    act(() => result.current.toggle("2"))
+    expect(result.current.expandedId).toBe("2")
+    expect(result.current.isExpanded("1")).toBe(false)
+  })
+
+  it("should collapse all when collapse is called", () => {
+    const { result } = renderHook(() => useRowExpansion())
+    act(() => result.current.toggle("1"))
+    act(() => result.current.collapse())
+    expect(result.current.expandedId).toBeNull()
   })
 })
