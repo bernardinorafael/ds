@@ -10,9 +10,12 @@ import {
   useRowSelection,
   useSortState,
 } from "@/components/data-table"
+import { DataTableToolbar } from "@/components/data-table-toolbar"
 import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
+import { Input } from "@/components/input"
 import { Provider } from "@/components/provider"
+import { Select } from "@/components/select"
 
 const meta = {
   title: "DataTable",
@@ -529,6 +532,20 @@ export const WithRowLink: Story = {
   ),
 }
 
+const ROLE_OPTIONS = [
+  { label: "All roles", value: "all" },
+  { label: "Admin", value: "admin" },
+  { label: "Editor", value: "editor" },
+  { label: "Viewer", value: "viewer" },
+]
+
+const STATUS_OPTIONS = [
+  { label: "All statuses", value: "all" },
+  { label: "Active", value: "active" },
+  { label: "Inactive", value: "inactive" },
+  { label: "Pending", value: "pending" },
+]
+
 export const KitchenSink: Story = {
   render: function Render() {
     const [page, setPage] = useState(1)
@@ -556,95 +573,110 @@ export const KitchenSink: Story = {
     const visible = sorted.slice(start, start + limit)
 
     return (
-      <DataTable
-        spacing="cozy"
-        selection={selection}
-        expansion={expansion}
-        pagination={{
-          count: total,
-          page,
-          limit,
-          hasNextPage: page < pageEnd,
-          hasPreviousPage: page > 1,
-          onPageChange: setPage,
-          onLimitChange: (v) => {
-            setLimit(v)
-            setPage(1)
-          },
-        }}
-        limitOptions={[5, 10, 25]}
+      <DataTableToolbar
+        search={<Input type="search" placeholder="Search users" />}
+        filter={
+          <Select aria-label="Role filter" items={ROLE_OPTIONS} placeholder="Role" />
+        }
+        sort={
+          <Select
+            aria-label="Status filter"
+            items={STATUS_OPTIONS}
+            placeholder="Status"
+          />
+        }
+        action={<Button intent="primary">Add user</Button>}
       >
-        <DataTable.Head>
-          <DataTable.SelectHeader />
-          <DataTable.SortHeader
-            width="30%"
-            direction={directionFor("name")}
-            onSort={handleSort("name")}
-          >
-            Name
-          </DataTable.SortHeader>
-          <DataTable.SortHeader
-            direction={directionFor("email")}
-            onSort={handleSort("email")}
-          >
-            Email
-          </DataTable.SortHeader>
-          <DataTable.Header width="6rem">Role</DataTable.Header>
-          <DataTable.Header width="6rem">Status</DataTable.Header>
-          <DataTable.Header width={48} srOnly>
-            Actions
-          </DataTable.Header>
-        </DataTable.Head>
-        <DataTable.Body>
-          {visible.map((user) => (
-            <DataTable.Row
-              key={user.id}
-              rowId={user.id}
-              detail={<UserDetail user={user} />}
+        <DataTable
+          spacing="cozy"
+          selection={selection}
+          expansion={expansion}
+          pagination={{
+            count: total,
+            page,
+            limit,
+            hasNextPage: page < pageEnd,
+            hasPreviousPage: page > 1,
+            onPageChange: setPage,
+            onLimitChange: (v) => {
+              setLimit(v)
+              setPage(1)
+            },
+          }}
+          limitOptions={[5, 10, 25]}
+        >
+          <DataTable.Head>
+            <DataTable.SelectHeader />
+            <DataTable.SortHeader
+              width="30%"
+              direction={directionFor("name")}
+              onSort={handleSort("name")}
             >
-              <DataTable.SelectCell />
-              <DataTable.Cell>
-                <DataTable.RowLink href={`#/users/${user.id}`}>
-                  {user.name}
-                </DataTable.RowLink>
-              </DataTable.Cell>
-              <DataTable.Cell className="text-word-secondary">
-                {user.email}
-              </DataTable.Cell>
-              <DataTable.Cell>{user.role}</DataTable.Cell>
-              <DataTable.Cell>
-                <Badge
-                  intent={statusIntent[user.status as keyof typeof statusIntent]}
-                >
-                  {user.status}
-                </Badge>
-              </DataTable.Cell>
-              <DataTable.Cell flushRight>
-                <DataTable.Actions>
-                  <IconButton
-                    size="sm"
-                    intent="ghost"
-                    shape="circle"
-                    icon="more-horizontal-outline"
-                    aria-label="Actions"
-                  />
-                </DataTable.Actions>
-              </DataTable.Cell>
-            </DataTable.Row>
-          ))}
-        </DataTable.Body>
-        <DataTable.BulkBar>
-          <Button leftIcon="email-outline" intent="secondary" size="sm">
-            Notify
-          </Button>
-          <Button leftIcon="check-circle-outline" intent="secondary" size="sm">
-            Activate
-          </Button>
-          <Button leftIcon="trash-outline" intent="danger" size="sm">
-            Delete
-          </Button>
-        </DataTable.BulkBar>
-      </DataTable>
+              Name
+            </DataTable.SortHeader>
+            <DataTable.SortHeader
+              direction={directionFor("email")}
+              onSort={handleSort("email")}
+            >
+              Email
+            </DataTable.SortHeader>
+            <DataTable.Header width="6rem">Role</DataTable.Header>
+            <DataTable.Header width="6rem">Status</DataTable.Header>
+            <DataTable.Header width={48} srOnly>
+              Actions
+            </DataTable.Header>
+          </DataTable.Head>
+          <DataTable.Body>
+            {visible.map((user) => (
+              <DataTable.Row
+                key={user.id}
+                rowId={user.id}
+                detail={<UserDetail user={user} />}
+              >
+                <DataTable.SelectCell />
+                <DataTable.Cell>
+                  <DataTable.RowLink href={`#/users/${user.id}`}>
+                    {user.name}
+                  </DataTable.RowLink>
+                </DataTable.Cell>
+                <DataTable.Cell className="text-word-secondary">
+                  {user.email}
+                </DataTable.Cell>
+                <DataTable.Cell>{user.role}</DataTable.Cell>
+                <DataTable.Cell>
+                  <Badge
+                    intent={statusIntent[user.status as keyof typeof statusIntent]}
+                  >
+                    {user.status}
+                  </Badge>
+                </DataTable.Cell>
+                <DataTable.Cell flushRight>
+                  <DataTable.Actions>
+                    <IconButton
+                      size="sm"
+                      intent="ghost"
+                      shape="circle"
+                      icon="more-horizontal-outline"
+                      aria-label="Actions"
+                    />
+                  </DataTable.Actions>
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+          </DataTable.Body>
+          <DataTable.BulkBar>
+            <Button leftIcon="email-outline" intent="secondary" size="sm">
+              Notify
+            </Button>
+            <Button leftIcon="check-circle-outline" intent="secondary" size="sm">
+              Activate
+            </Button>
+            <Button leftIcon="trash-outline" intent="danger" size="sm">
+              Delete
+            </Button>
+          </DataTable.BulkBar>
+        </DataTable>
+      </DataTableToolbar>
     )
   },
 }
