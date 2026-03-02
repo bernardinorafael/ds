@@ -761,7 +761,11 @@ const DataTableRow = React.forwardRef<
         data-selected={isSelected ? "" : undefined}
         data-expanded={isExpanded ? "" : undefined}
         aria-expanded={isExpandable ? isExpanded : undefined}
-        className={cn("group/table-row text-base", "[&+&>*]:border-t", className)}
+        className={cn(
+          "group/table-row text-base",
+          "[&+&>*]:border-t [[data-table-detail]+&>*]:border-t",
+          className
+        )}
         ref={ref}
         {...props}
       >

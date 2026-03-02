@@ -120,12 +120,12 @@ function MetaItem({
 }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="text-word-tertiary flex size-7 shrink-0 items-center justify-center rounded-md bg-surface-100">
+      <div className="text-word-tertiary bg-surface-100 flex size-7 shrink-0 items-center justify-center rounded-md">
         <Icon name={icon} size="sm" />
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="text-word-tertiary text-xs leading-none">{label}</span>
-        <span className="text-word-primary text-sm font-medium leading-none">
+        <span className="text-word-primary text-sm leading-none font-medium">
           {value}
         </span>
       </div>
@@ -136,7 +136,7 @@ function MetaItem({
 function UserDetail({ user }: { user: (typeof USERS)[number] }) {
   return (
     <div className="flex flex-col gap-4 pb-1">
-      <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
+      <div className="flex items-center justify-between">
         <MetaItem icon="building-outline" label="Department" value={user.department} />
         <MetaItem icon="location-outline" label="Location" value={user.location} />
         <MetaItem icon="calendar-outline" label="Joined" value={user.joinDate} />
@@ -155,18 +155,10 @@ function UserDetail({ user }: { user: (typeof USERS)[number] }) {
             </Badge>
           </div>
           <div className="flex items-center gap-1.5">
-            <IconButton
-              icon="email-outline"
-              size="sm"
-              intent="ghost"
-              aria-label="Send email"
-            />
-            <IconButton
-              icon="edit-outline"
-              size="sm"
-              intent="ghost"
-              aria-label="Edit user"
-            />
+            <IconButton icon="users-outline" tooltip="Request friend" intent="ghost" />
+            <IconButton icon="file-outline" tooltip="Attach file" intent="ghost" />
+            <IconButton icon="email-outline" tooltip="Send e-mail" intent="ghost" />
+            <IconButton icon="edit-outline" tooltip="Edit user" intent="ghost" />
           </div>
         </div>
       </div>
@@ -180,7 +172,7 @@ function UserDetail({ user }: { user: (typeof USERS)[number] }) {
 
 export const Basic: Story = {
   render: () => (
-    <DataTable>
+    <DataTable className="max-w-5xl">
       <DataTable.Head>
         <DataTable.Header>Name</DataTable.Header>
         <DataTable.Header width="6rem">Role</DataTable.Header>
@@ -223,7 +215,7 @@ export const Basic: Story = {
 
 export const Compact: Story = {
   render: () => (
-    <DataTable spacing="compact">
+    <DataTable spacing="compact" className="max-w-5xl">
       <DataTable.Head>
         <DataTable.Header>Name</DataTable.Header>
         <DataTable.Header>Email</DataTable.Header>
@@ -287,7 +279,8 @@ export const WithPagination: Story = {
               setPage(1)
             },
           }}
-          limitOptions={[10, 25, 50]}
+          limitOptions={[5, 10, 25, 50]}
+          className="max-w-5xl"
         >
           <DataTable.Head>
             <DataTable.Header>Name</DataTable.Header>
@@ -325,7 +318,7 @@ export const WithBulkBar: Story = {
       const selection = useRowSelection(USERS, { key: "id" })
 
       return (
-        <DataTable selection={selection}>
+        <DataTable selection={selection} className="max-w-5xl">
           <DataTable.Head>
             <DataTable.SelectHeader />
             <DataTable.Header>Name</DataTable.Header>
@@ -387,7 +380,7 @@ export const WithSorting: Story = {
       })
 
       return (
-        <DataTable>
+        <DataTable className="max-w-5xl">
           <DataTable.Head>
             <DataTable.SortHeader
               direction={directionFor("name")}
@@ -442,7 +435,7 @@ export const ExpandableRows: Story = {
       const expansion = useRowExpansion()
 
       return (
-        <DataTable expansion={expansion}>
+        <DataTable expansion={expansion} className="max-w-5xl">
           <DataTable.Head>
             <DataTable.Header>Name</DataTable.Header>
             <DataTable.Header>Email</DataTable.Header>
@@ -486,7 +479,7 @@ export const ExpandableWithSelection: Story = {
       const selection = useRowSelection(USERS, { key: "id" })
 
       return (
-        <DataTable expansion={expansion} selection={selection}>
+        <DataTable expansion={expansion} selection={selection} className="max-w-5xl">
           <DataTable.Head>
             <DataTable.SelectHeader />
             <DataTable.Header>Name</DataTable.Header>
