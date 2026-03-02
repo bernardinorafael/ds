@@ -710,8 +710,6 @@ const DataTableBody = React.forwardRef<
       "[&>tr:first-child>td:last-child]:rounded-tr-(--data-table-body-rounded)",
       "[&>tr:last-child>td:first-child]:rounded-bl-(--data-table-body-rounded)",
       "[&>tr:last-child>td:last-child]:rounded-br-(--data-table-body-rounded)",
-      // border-top on data row cells that follow a detail row
-      "[&>[data-table-detail]+tr>*]:border-t [&>[data-table-detail]+tr>*]:border-border",
       className
     )}
     ref={ref}
@@ -836,11 +834,8 @@ const DataTableRow = React.forwardRef<
             transition={{ duration: 0.2 }}
           >
             {/* Empty cell to align with expand column */}
-            <td className="bg-(--data-table-cell-bg) border-t border-border" />
-            <td
-              colSpan={columnCount - 1}
-              className="border-t border-border"
-            >
+            <td className="bg-(--data-table-cell-bg)" />
+            <td colSpan={columnCount - 1}>
               <motion.div
                 initial={{ height: 0 }}
                 animate={{ height: "auto" }}
