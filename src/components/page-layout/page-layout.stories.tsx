@@ -33,7 +33,7 @@ export const TitleOnly: Story = {
 
 export const WithDescription: Story = {
   render: () => (
-    <PageLayout title="Users" description="Manage your team members and their roles.">
+    <PageLayout title="Users" description="Manage your team members and their roles">
       <p className="text-word-secondary">Page content goes here.</p>
     </PageLayout>
   ),
@@ -43,7 +43,7 @@ export const WithActions: Story = {
   render: () => (
     <PageLayout
       title="Users"
-      description="Manage your team members and their roles."
+      description="Manage your team members and their roles"
       actions={
         <>
           <Button intent="secondary">Export</Button>
@@ -67,28 +67,7 @@ export const WithTitleBadge: Story = {
           Pro
         </Badge>
       }
-      description="Manage your team members and their roles."
-    >
-      <p className="text-word-secondary">Page content goes here.</p>
-    </PageLayout>
-  ),
-}
-
-export const WithBadges: Story = {
-  render: () => (
-    <PageLayout
-      title="Users"
-      description="Manage your team members and their roles."
-      badges={
-        <>
-          <Badge intent="success" size="sm">
-            Active: 12
-          </Badge>
-          <Badge intent="secondary" size="sm">
-            Inactive: 3
-          </Badge>
-        </>
-      }
+      description="Manage your team members and their roles"
     >
       <p className="text-word-secondary">Page content goes here.</p>
     </PageLayout>
@@ -98,8 +77,8 @@ export const WithBadges: Story = {
 export const WithBackAction: Story = {
   render: () => (
     <PageLayout
-      title="User Details"
-      description="View and edit user information."
+      title="User details"
+      description="View and edit user information"
       backAction={
         <Button intent="ghost" size="sm" leftIcon="arrow-left-outline">
           Back
@@ -114,28 +93,15 @@ export const WithBackAction: Story = {
 export const KitchenSink: Story = {
   render: () => (
     <PageLayout
-      title="Team Members"
+      title="Team members"
       titleBadge={
         <Badge intent="pro" size="sm">
           Pro
         </Badge>
       }
-      description="Manage your organization's team members."
-      badges={
-        <>
-          <Badge intent="success" size="sm">
-            Active: 12
-          </Badge>
-          <Badge intent="secondary" size="sm">
-            Invited: 5
-          </Badge>
-          <Badge intent="danger" size="sm">
-            Suspended: 1
-          </Badge>
-        </>
-      }
+      description="Manage your organization's team members"
       afterDescription={
-        <p className="text-sm text-word-tertiary">Last updated 2 hours ago</p>
+        <p className="text-word-tertiary text-sm">Last updated 2 hours ago</p>
       }
       actions={
         <>
@@ -154,16 +120,6 @@ export const KitchenSink: Story = {
       <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-gray-400">
         <p className="text-word-tertiary">Page content area</p>
       </div>
-    </PageLayout>
-  ),
-}
-
-export const BodyOnly: Story = {
-  render: () => (
-    <PageLayout>
-      <p className="text-word-secondary">
-        No header rendered — just the body content.
-      </p>
     </PageLayout>
   ),
 }

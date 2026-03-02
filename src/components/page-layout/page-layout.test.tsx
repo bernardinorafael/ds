@@ -63,24 +63,6 @@ describe("PageLayout", () => {
     expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument()
   })
 
-  it("should render badges with vertical dividers", () => {
-    const { container } = render(
-      <PageLayout
-        title="Users"
-        badges={
-          <>
-            <span>Active: 5</span>
-            <span>Inactive: 2</span>
-          </>
-        }
-      >
-        Content
-      </PageLayout>
-    )
-    const dividers = container.querySelectorAll("[role='separator']")
-    expect(dividers).toHaveLength(1)
-  })
-
   it("should render afterDescription", () => {
     render(
       <PageLayout title="Users" afterDescription={<span>Extra info</span>}>
@@ -101,17 +83,5 @@ describe("PageLayout", () => {
     expect(container.querySelector("[data-page-layout-body]")).toHaveTextContent("Content")
   })
 
-  it("should add border-l divider between description and badges", () => {
-    const { container } = render(
-      <PageLayout
-        title="Users"
-        description="Manage your team"
-        badges={<span>Active</span>}
-      >
-        Content
-      </PageLayout>
-    )
-    const badgeContainer = container.querySelector(".border-l")
-    expect(badgeContainer).toBeInTheDocument()
-  })
+
 })
