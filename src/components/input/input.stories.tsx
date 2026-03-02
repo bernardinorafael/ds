@@ -1,12 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Field } from "@/components/field"
+import { IconSprite } from "@/components/icon"
 import { Input } from "@/components/input"
 
 const meta = {
   title: "Input",
   component: Input,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <>
+        <IconSprite />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     placeholder: "Placeholder",
   },
@@ -48,6 +57,46 @@ export const States: Story = {
       <Input aria-invalid={true} placeholder="Error" />
       <Input disabled placeholder="Disabled" />
       <Input readOnly value="Read only" />
+    </div>
+  ),
+}
+
+export const WithPrefix: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-3">
+      <Input size="sm" prefix="http://" placeholder="example.com" />
+      <Input size="md" prefix="http://" placeholder="example.com" />
+      <Input size="lg" prefix="http://" placeholder="example.com" />
+    </div>
+  ),
+}
+
+export const WithSuffix: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-3">
+      <Input size="sm" suffix="@domain.com" placeholder="john" />
+      <Input size="md" suffix="@domain.com" placeholder="john" />
+      <Input size="lg" suffix="@domain.com" placeholder="john" />
+    </div>
+  ),
+}
+
+export const WithPrefixAndSuffix: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-3">
+      <Input size="sm" prefix="https://" suffix=".com" placeholder="example" />
+      <Input size="md" prefix="https://" suffix=".com" placeholder="example" />
+      <Input size="lg" prefix="https://" suffix=".com" placeholder="example" />
+    </div>
+  ),
+}
+
+export const Password: Story = {
+  render: () => (
+    <div className="flex w-80 flex-col gap-3">
+      <Input type="password" size="sm" defaultValue="secret123" />
+      <Input type="password" size="md" defaultValue="secret123" />
+      <Input type="password" size="lg" defaultValue="secret123" />
     </div>
   ),
 }

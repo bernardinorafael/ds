@@ -1,14 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 
 import { cva } from "class-variance-authority"
-import { Search } from "lucide-react"
 
 import { useFieldControl } from "@/components/field"
+import { Icon } from "@/components/icon"
 import { Spinner } from "@/components/spinner"
 import { cn } from "@/utils/cn"
-
-// TODO: add prefix/suffix slots for icons, currency symbols, and action buttons
-// TODO: add password visibility toggle for type="password"
 
 const rootVariants = cva(
   [
@@ -84,6 +81,11 @@ const rootVariants = cva(
         false: null,
       },
     },
+    compoundVariants: [
+      { type: "password", size: "sm", className: "[--input-pr:1.5rem]" },
+      { type: "password", size: "md", className: "[--input-pr:2rem]" },
+      { type: "password", size: "lg", className: "[--input-pr:2rem]" },
+    ],
     defaultVariants: {
       validity: "initial",
       size: "md",
@@ -107,7 +109,7 @@ const inputVariants = cva(
     "rounded-[inherit]",
 
     // padding — right uses --input-px; left falls back to --input-px unless overridden (e.g. search sets --input-pl)
-    "pr-(--input-px)",
+    "pr-(--input-pr,var(--input-px))",
     "pl-(--input-pl,var(--input-px))",
 
     // placeholder color — size set per variant
@@ -172,6 +174,10 @@ export type InputProps = Pick<
   size?: "sm" | "md" | "lg"
   /** Shows a spinner replacing the search icon — only applies to type="search" */
   loading?: boolean
+  /** Static text displayed before the input (e.g. "http://") */
+  prefix?: string
+  /** Static text displayed after the input (e.g. "@domain.com") */
+  suffix?: string
   /**
    * Visual validity state. Overrides the `aria-invalid`-based detection.
    * Use for warning and success states beyond error.
@@ -188,6 +194,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       size = "md",
       disabled = false,
       loading = false,
+      prefix,
+      suffix,
       validity: validityProp,
       "aria-invalid": ariaInvalidProp,
       "aria-describedby": ariaDescribedByProp,
@@ -195,18 +203,33 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     forwardedRef
   ) => {
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const field = useFieldControl({ props: { id } })
 
     const ariaInvalid = ariaInvalidProp ?? field["aria-invalid"]
     const validity =
       validityProp ?? field.messageIntent ?? (ariaInvalid === true ? "error" : "initial")
+    const effectiveType = type === "password" && isPasswordVisible ? "text" : type
 
     return (
       <div className={cn(rootVariants({ type, size, disabled, validity }), className)}>
+        {prefix && (
+          <span
+            className={cn(
+              "flex items-center whitespace-nowrap select-none",
+              "rounded-l-[inherit] border-r border-(--input-border-color)",
+              "text-word-secondary/70 bg-surface-100/80 px-2",
+              size === "sm" ? "text-sm" : "text-base"
+            )}
+          >
+            {prefix}
+          </span>
+        )}
+
         <input
           ref={forwardedRef}
           id={field.id}
-          type={type}
+          type={effectiveType}
           disabled={disabled}
           aria-invalid={ariaInvalid}
           aria-describedby={ariaDescribedByProp ?? field["aria-describedby"]}
@@ -214,9 +237,53 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
 
+        {suffix && (
+          <span
+            className={cn(
+              "flex items-center whitespace-nowrap select-none",
+              "rounded-r-[inherit] border-l border-(--input-border-color)",
+              "text-word-secondary/70 bg-surface-100/80 px-2",
+              size === "sm" ? "text-sm" : "text-base"
+            )}
+          >
+            {suffix}
+          </span>
+        )}
+
+        {type === "password" && (
+          <button
+            type="button"
+            tabIndex={-1}
+            disabled={disabled}
+            onClick={() => setIsPasswordVisible((v) => !v)}
+            aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+            className={cn(
+              "absolute top-1/2 right-2 flex -translate-y-1/2",
+              "cursor-pointer items-center justify-center transition-colors",
+              "text-word-placeholder hover:text-word-secondary"
+            )}
+          >
+            <Icon
+              name={isPasswordVisible ? "eye-open-fill" : "eye-closed-fill"}
+              size={size === "sm" ? "sm" : "md"}
+            />
+          </button>
+        )}
+
         {type === "search" && (
-          <div className="text-word-placeholder pointer-events-none absolute top-1/2 left-2 flex -translate-y-1/2 items-center justify-center">
-            {loading ? <Spinner size="sm" label="Loading" /> : <Search size={16} />}
+          <div
+            className={cn(
+              "top-1/2 left-2 flex -translate-y-1/2 items-center justify-center",
+              "text-word-placeholder pointer-events-none absolute"
+            )}
+          >
+            {loading ? (
+              <Spinner size="sm" label="Loading" />
+            ) : (
+              <span className="text-word-secondary">
+                <Icon name="search-outline" size="md" />
+              </span>
+            )}
           </div>
         )}
       </div>
