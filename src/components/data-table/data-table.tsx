@@ -158,10 +158,22 @@ export function useExpansionContext() {
 // Column Count Context
 // ---------------------------------------------------------------------------
 
-const ColumnCountContext = React.createContext<number>(1)
+type ColumnCountContextValue = {
+  count: number
+  report: (count: number) => void
+}
+
+const ColumnCountContext = React.createContext<ColumnCountContextValue>({
+  count: 1,
+  report: () => {},
+})
 
 function useColumnCount() {
-  return React.useContext(ColumnCountContext)
+  return React.useContext(ColumnCountContext).count
+}
+
+function useReportColumnCount() {
+  return React.useContext(ColumnCountContext).report
 }
 
 // ---------------------------------------------------------------------------
@@ -312,6 +324,12 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
     forwardedRef
   ) => {
     const limitSelectId = React.useId()
+
+    const [columnCount, setColumnCount] = React.useState(1)
+    const columnCountValue = React.useMemo<ColumnCountContextValue>(
+      () => ({ count: columnCount, report: setColumnCount }),
+      [columnCount]
+    )
 
     const pageEnd = React.useMemo(
       () => (pagination ? Math.ceil(pagination.count / pagination.limit) : 0),
@@ -480,7 +498,11 @@ const DataTableRoot = React.forwardRef<HTMLTableElement, DataTableRootProps>(
       </section>
     )
 
-    let result = content
+    let result = (
+      <ColumnCountContext.Provider value={columnCountValue}>
+        {content}
+      </ColumnCountContext.Provider>
+    )
 
     if (expansion) {
       result = <ExpansionContext.Provider value={expansion}>{result}</ExpansionContext.Provider>
@@ -504,34 +526,35 @@ const DataTableHead = React.forwardRef<
   Pick<React.HTMLAttributes<HTMLTableSectionElement>, "children" | "className">
 >(({ children, ...rest }, ref) => {
   const expansion = useExpansionContext()
-  const [columnCount, setColumnCount] = React.useState(1)
+  const reportColumnCount = useReportColumnCount()
 
-  const headerRowRef = React.useCallback((node: HTMLTableRowElement | null) => {
-    if (node) setColumnCount(node.childElementCount)
-  }, [])
+  const headerRowRef = React.useCallback(
+    (node: HTMLTableRowElement | null) => {
+      if (node) reportColumnCount(node.childElementCount)
+    },
+    [reportColumnCount]
+  )
 
   return (
-    <ColumnCountContext.Provider value={columnCount}>
-      <thead ref={ref} {...rest}>
-        <tr ref={headerRowRef}>
-          {expansion && (
-            <th
-              data-table-expand=""
-              className={cn(
-                "overflow-hidden",
-                "leading-(--data-table-header-leading)",
-                "pt-(--data-table-header-pt)",
-                "pb-(--data-table-header-pb)",
-                "w-(--data-table-expand-col-w)"
-              )}
-            >
-              <span className="sr-only">Expand</span>
-            </th>
-          )}
-          {children}
-        </tr>
-      </thead>
-    </ColumnCountContext.Provider>
+    <thead ref={ref} {...rest}>
+      <tr ref={headerRowRef}>
+        {expansion && (
+          <th
+            data-table-expand=""
+            className={cn(
+              "overflow-hidden",
+              "leading-(--data-table-header-leading)",
+              "pt-(--data-table-header-pt)",
+              "pb-(--data-table-header-pb)",
+              "w-(--data-table-expand-col-w)"
+            )}
+          >
+            <span className="sr-only">Expand</span>
+          </th>
+        )}
+        {children}
+      </tr>
+    </thead>
   )
 })
 
