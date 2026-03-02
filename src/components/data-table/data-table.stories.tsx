@@ -529,31 +529,78 @@ export const WithRowLink: Story = {
   ),
 }
 
-export const RowLinkWithSelectionAndExpansion: Story = {
+export const KitchenSink: Story = {
   render: function Render() {
-    const selection = useRowSelection(USERS.slice(0, 5), { key: "id" })
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(5)
+
+    const selection = useRowSelection(USERS, { key: "id" })
     const expansion = useRowExpansion()
+    const { sort, directionFor, handleSort } = useSortState({
+      column: "name",
+      direction: "asc",
+    })
+
+    const sorted = [...USERS].sort((a, b) => {
+      if (!sort) return 0
+      const col = sort.column as keyof (typeof USERS)[0]
+      const valA = String(a[col])
+      const valB = String(b[col])
+      const cmp = valA.localeCompare(valB)
+      return sort.direction === "asc" ? cmp : -cmp
+    })
+
+    const total = sorted.length
+    const pageEnd = Math.ceil(total / limit)
+    const start = (page - 1) * limit
+    const visible = sorted.slice(start, start + limit)
 
     return (
-      <DataTable spacing="cozy" selection={selection} expansion={expansion}>
+      <DataTable
+        spacing="cozy"
+        selection={selection}
+        expansion={expansion}
+        pagination={{
+          count: total,
+          page,
+          limit,
+          hasNextPage: page < pageEnd,
+          hasPreviousPage: page > 1,
+          onPageChange: setPage,
+          onLimitChange: (v) => {
+            setLimit(v)
+            setPage(1)
+          },
+        }}
+        limitOptions={[5, 10, 25]}
+      >
         <DataTable.Head>
           <DataTable.SelectHeader />
-          <DataTable.Header width="35%">Name</DataTable.Header>
-          <DataTable.Header>Email</DataTable.Header>
-          <DataTable.Header>Role</DataTable.Header>
+          <DataTable.SortHeader
+            width="30%"
+            direction={directionFor("name")}
+            onSort={handleSort("name")}
+          >
+            Name
+          </DataTable.SortHeader>
+          <DataTable.SortHeader
+            direction={directionFor("email")}
+            onSort={handleSort("email")}
+          >
+            Email
+          </DataTable.SortHeader>
+          <DataTable.Header width="6rem">Role</DataTable.Header>
+          <DataTable.Header width="6rem">Status</DataTable.Header>
+          <DataTable.Header width={48} srOnly>
+            Actions
+          </DataTable.Header>
         </DataTable.Head>
         <DataTable.Body>
-          {USERS.slice(0, 5).map((user) => (
+          {visible.map((user) => (
             <DataTable.Row
               key={user.id}
               rowId={user.id}
-              detail={
-                <div className="flex flex-col gap-1 text-sm">
-                  <span>Department: {user.department}</span>
-                  <span>Location: {user.location}</span>
-                  <span>Joined: {user.joinDate}</span>
-                </div>
-              }
+              detail={<UserDetail user={user} />}
             >
               <DataTable.SelectCell />
               <DataTable.Cell>
@@ -561,15 +608,42 @@ export const RowLinkWithSelectionAndExpansion: Story = {
                   {user.name}
                 </DataTable.RowLink>
               </DataTable.Cell>
-              <DataTable.Cell>{user.email}</DataTable.Cell>
+              <DataTable.Cell className="text-word-secondary">
+                {user.email}
+              </DataTable.Cell>
+              <DataTable.Cell>{user.role}</DataTable.Cell>
               <DataTable.Cell>
-                <Badge intent={user.role === "Admin" ? "primary" : "secondary"}>
-                  {user.role}
+                <Badge
+                  intent={statusIntent[user.status as keyof typeof statusIntent]}
+                >
+                  {user.status}
                 </Badge>
+              </DataTable.Cell>
+              <DataTable.Cell flushRight>
+                <DataTable.Actions>
+                  <IconButton
+                    size="sm"
+                    intent="ghost"
+                    shape="circle"
+                    icon="more-horizontal-outline"
+                    aria-label="Actions"
+                  />
+                </DataTable.Actions>
               </DataTable.Cell>
             </DataTable.Row>
           ))}
         </DataTable.Body>
+        <DataTable.BulkBar>
+          <Button leftIcon="email-outline" intent="secondary" size="sm">
+            Notify
+          </Button>
+          <Button leftIcon="check-circle-outline" intent="secondary" size="sm">
+            Activate
+          </Button>
+          <Button leftIcon="trash-outline" intent="danger" size="sm">
+            Delete
+          </Button>
+        </DataTable.BulkBar>
       </DataTable>
     )
   },
