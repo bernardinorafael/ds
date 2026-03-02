@@ -833,7 +833,11 @@ const DataTableRow = React.forwardRef<
                   overflow: "hidden",
                 }}
               >
-                <div className="bg-(--data-table-cell-bg) py-(--data-table-cell-py) pr-(--data-table-cell-px)">
+                <div
+                  className={cn(
+                    "bg-(--data-table-cell-bg) py-(--data-table-cell-py) pr-(--data-table-cell-px)"
+                  )}
+                >
                   {detail}
                 </div>
               </motion.div>
