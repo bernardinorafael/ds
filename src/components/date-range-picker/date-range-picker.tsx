@@ -18,6 +18,8 @@ import type { DateRange } from "react-aria-components"
 import { Button } from "@/components/button"
 import { Calendar } from "@/components/calendar"
 import { Icon } from "@/components/icon"
+import { IconButton } from "@/components/icon-button"
+import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
@@ -29,7 +31,7 @@ const segmentClassName = (
   isInvalid?: boolean
 ) =>
   cn(
-    "inline justify-between rounded-sm px-1 caret-transparent outline-none",
+    "inline justify-between rounded-xs px-1 caret-transparent outline-none",
     isInvalid
       ? "focus:bg-destructive focus:text-white"
       : "focus:bg-primary focus:text-primary-foreground",
@@ -140,6 +142,9 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
     },
     forwardedRef
   ) => {
+    const [presetsOpen, setPresetsOpen] = React.useState(true)
+    const hasPresets = Boolean(presets?.length)
+
     return (
       <I18nProvider locale={locale}>
         <RADateRangePicker
@@ -215,16 +220,18 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                   )}
                 </DateInput>
 
-                <RAButton
-                  className={cn(
-                    "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
-                    "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
-                    "disabled:cursor-not-allowed",
-                    "pr-2.5"
-                  )}
-                >
-                  <Icon name="calendar-fill" />
-                </RAButton>
+                <Tooltip label="Open calendar" portal={false}>
+                  <RAButton
+                    className={cn(
+                      "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
+                      "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
+                      "disabled:cursor-not-allowed",
+                      "pr-2.5"
+                    )}
+                  >
+                    <Icon name="calendar-fill" />
+                  </RAButton>
+                </Tooltip>
               </Group>
 
               <Popover offset={10} containerPadding={10}>
@@ -241,51 +248,59 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                     <Dialog
                       className={cn(
                         "flex overflow-hidden outline-none",
-                        presets?.length
-                          ? "bg-surface-100 rounded-2xl p-1 shadow-xs"
-                          : "rounded-lg bg-white p-4 shadow-md ring-1 ring-black/10"
+                        hasPresets
+                          ? "bg-surface-100 rounded-3xl p-1 shadow-xs"
+                          : "rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10"
                       )}
                     >
-                      {presets?.length && (
-                        <nav className="flex shrink-0 flex-col gap-0.5 p-2">
-                          {presets.map((preset) => {
-                            const currentRange = state.dateRange
-                            const isActive =
-                              currentRange?.start &&
-                              currentRange?.end &&
-                              currentRange.start.compare(preset.value.start) === 0 &&
-                              currentRange.end.compare(preset.value.end) === 0
+                      <AnimatePresence initial={false}>
+                        {hasPresets && presetsOpen && (
+                          <motion.nav
+                            initial={{ width: 0, opacity: 0 }}
+                            animate={{ width: "auto", opacity: 1 }}
+                            exit={{ width: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="flex shrink-0 flex-col gap-0.5 p-2">
+                              {presets!.map((preset) => {
+                                const currentRange = state.dateRange
+                                const isActive =
+                                  currentRange?.start &&
+                                  currentRange?.end &&
+                                  currentRange.start.compare(preset.value.start) === 0 &&
+                                  currentRange.end.compare(preset.value.end) === 0
 
-                            return (
-                              <button
-                                key={preset.label}
-                                type="button"
-                                className={cn(
-                                  "flex cursor-pointer items-center justify-between gap-2",
-                                  "rounded-md px-3 py-1.5 text-left text-sm whitespace-nowrap",
-                                  "transition-colors outline-none",
-                                  "focus-visible:ring-primary/50 focus-visible:ring-2",
-                                  isActive
-                                    ? "text-primary"
-                                    : "text-word-secondary hover:text-word-primary hover:bg-black/4"
-                                )}
-                                onClick={() => {
-                                  state.setDateRange(preset.value)
-                                  onChange?.(preset.value)
-                                }}
-                              >
-                                {preset.label}
-                                {isActive && <Icon name="check-outline" size="sm" />}
-                              </button>
-                            )
-                          })}
-                        </nav>
-                      )}
+                                return (
+                                  <button
+                                    key={preset.label}
+                                    type="button"
+                                    className={cn(
+                                      "flex cursor-pointer items-center justify-between gap-2",
+                                      "rounded-md px-3 py-1.5 text-left text-sm whitespace-nowrap",
+                                      "transition-colors outline-none",
+                                      "focus-visible:ring-primary/50 focus-visible:ring-2",
+                                      isActive
+                                        ? "text-primary"
+                                        : "text-word-secondary hover:text-word-primary hover:bg-black/4"
+                                    )}
+                                    onClick={() => {
+                                      state.setDateRange(preset.value)
+                                      onChange?.(preset.value)
+                                    }}
+                                  >
+                                    {preset.label}
+                                    {isActive && <Icon name="check-outline" size="sm" />}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          </motion.nav>
+                        )}
+                      </AnimatePresence>
 
                       <div
-                        className={cn(
-                          presets?.length && "rounded-xl bg-white p-4 shadow-xs"
-                        )}
+                        className={cn(hasPresets && "rounded-xl bg-white p-4 shadow-xs")}
                       >
                         <Calendar
                           mode="range"
@@ -301,29 +316,41 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
 
                         <div className="mt-1 h-px w-full rounded-full bg-black/4" />
 
-                        <div className="flex w-full items-center justify-end gap-3 pt-3">
-                          <Button
-                            size="sm"
-                            intent="ghost"
-                            onClick={() => {
-                              state.setValue({
-                                start: null!,
-                                end: null!,
-                              })
-                              onChange?.(null)
-                            }}
-                          >
-                            {clearLabel}
-                          </Button>
-                          <Button
-                            size="sm"
-                            intent="primary"
-                            onClick={() => {
-                              state.setOpen(false)
-                            }}
-                          >
-                            {applyLabel}
-                          </Button>
+                        <div className="flex w-full items-center gap-3 pt-3">
+                          {hasPresets && (
+                            <IconButton
+                              icon="filter-outline"
+                              size="sm"
+                              intent="ghost"
+                              tooltip="Toggle presets"
+                              tooltipPortal={false}
+                              onClick={() => setPresetsOpen((v) => !v)}
+                            />
+                          )}
+                          <div className="ml-auto flex items-center gap-3">
+                            <Button
+                              size="sm"
+                              intent="ghost"
+                              onClick={() => {
+                                state.setValue({
+                                  start: null!,
+                                  end: null!,
+                                })
+                                onChange?.(null)
+                              }}
+                            >
+                              {clearLabel}
+                            </Button>
+                            <Button
+                              size="sm"
+                              intent="primary"
+                              onClick={() => {
+                                state.setOpen(false)
+                              }}
+                            >
+                              {applyLabel}
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Dialog>

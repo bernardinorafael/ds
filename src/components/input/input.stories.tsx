@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Field } from "@/components/field"
 import { IconSprite } from "@/components/icon"
 import { Input } from "@/components/input"
+import { Provider } from "@/components/provider"
 
 const meta = {
   title: "Input",
@@ -10,10 +11,10 @@ const meta = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <>
+      <Provider>
         <IconSprite />
         <Story />
-      </>
+      </Provider>
     ),
   ],
   args: {

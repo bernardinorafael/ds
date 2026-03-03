@@ -30,6 +30,11 @@ type TooltipProps = {
    */
   delayDuration?: number
   /**
+   * Render tooltip via Portal (document.body). Disable when inside
+   * a top-layer element (e.g. react-aria Popover) @default true
+   */
+  portal?: boolean
+  /**
    * Initial open state for uncontrolled usage
    */
   defaultOpen?: boolean
@@ -67,6 +72,17 @@ export function TooltipProvider({
   )
 }
 
+function PortalWrapper({
+  portal,
+  children,
+}: {
+  portal: boolean
+  children: React.ReactNode
+}) {
+  if (portal) return <RadixTooltip.Portal>{children}</RadixTooltip.Portal>
+  return <>{children}</>
+}
+
 export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
   (
     {
@@ -79,6 +95,7 @@ export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
       align,
       sideOffset = 8,
       delayDuration = 400,
+      portal = true,
     },
     forwardedRef
   ) => {
@@ -92,7 +109,7 @@ export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
         <RadixTooltip.Trigger ref={forwardedRef} asChild>
           {children}
         </RadixTooltip.Trigger>
-        <RadixTooltip.Portal>
+        <PortalWrapper portal={portal}>
           <RadixTooltip.Content
             sideOffset={sideOffset}
             collisionPadding={5}
@@ -107,7 +124,7 @@ export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
           >
             {label}
           </RadixTooltip.Content>
-        </RadixTooltip.Portal>
+        </PortalWrapper>
       </RadixTooltip.Root>
     )
   }

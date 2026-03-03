@@ -288,7 +288,6 @@ const CalendarGrid = React.forwardRef<HTMLTableElement, CalendarGridProps>(
                   // selection edges (start/end) — premium gradient pill on top of range band
                   isEdge && [
                     "relative",
-                    "text-base",
                     "text-white",
                     "[text-shadow:0_1px_2px_0_rgb(0_0_0/20%)]",
                     "after:absolute",
@@ -305,7 +304,6 @@ const CalendarGrid = React.forwardRef<HTMLTableElement, CalendarGridProps>(
                   isSelected &&
                     mode === "single" && [
                       "relative",
-                      "text-base",
                       "text-white",
                       "[text-shadow:0_1px_2px_0_rgb(0_0_0/20%)]",
                       "after:absolute",

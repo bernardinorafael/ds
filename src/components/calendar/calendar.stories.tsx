@@ -14,7 +14,7 @@ const meta: Meta = {
     (Story) => (
       <>
         <IconSprite />
-        <div className="w-[17.25rem] rounded-lg bg-white p-4 shadow-md ring-1 ring-black/10">
+        <div className="w-[17.25rem] rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10">
           <Story />
         </div>
       </>

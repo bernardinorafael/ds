@@ -4,6 +4,9 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
 import { Input } from "@/components/input"
+import { Provider } from "@/components/provider"
+
+const renderInput = (ui: React.ReactElement) => render(<Provider>{ui}</Provider>)
 
 describe("Input", () => {
   let user: ReturnType<typeof userEvent.setup>
@@ -72,7 +75,7 @@ describe("Input", () => {
   })
 
   it("should toggle password visibility when clicking the eye icon", async () => {
-    render(<Input type="password" defaultValue="secret" />)
+    renderInput(<Input type="password" defaultValue="secret" />)
     const input = document.querySelector("input")!
     expect(input).toHaveAttribute("type", "password")
 
@@ -84,12 +87,12 @@ describe("Input", () => {
   })
 
   it("should have aria-label 'Show password' by default", () => {
-    render(<Input type="password" />)
+    renderInput(<Input type="password" />)
     expect(screen.getByRole("button", { name: "Show password" })).toBeInTheDocument()
   })
 
   it("should change aria-label to 'Hide password' when toggled", async () => {
-    render(<Input type="password" />)
+    renderInput(<Input type="password" />)
     await user.click(screen.getByRole("button", { name: "Show password" }))
     expect(screen.getByRole("button", { name: "Hide password" })).toBeInTheDocument()
   })

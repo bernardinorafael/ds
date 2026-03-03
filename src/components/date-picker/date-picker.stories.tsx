@@ -5,18 +5,19 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { DatePicker } from "@/components/date-picker"
 import { IconSprite } from "@/components/icon"
+import { Provider } from "@/components/provider"
 
 const meta: Meta = {
   title: "DatePicker",
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <>
+      <Provider>
         <IconSprite />
         <div className="w-64">
           <Story />
         </div>
-      </>
+      </Provider>
     ),
   ],
 }

@@ -142,6 +142,11 @@ export type IconButtonProps = Pick<
      * Tooltip placement relative to the button @default "top"
      */
     tooltipSide?: "top" | "right" | "bottom" | "left"
+    /**
+     * Render tooltip via Portal. Disable when inside a top-layer
+     * element (e.g. react-aria Popover) @default true
+     */
+    tooltipPortal?: boolean
   }
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -154,6 +159,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       className,
       tooltip,
       tooltipSide,
+      tooltipPortal,
       "aria-label": ariaLabel,
       ...props
     },
@@ -183,7 +189,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     if (!tooltip) return button
 
     return (
-      <Tooltip label={tooltip} side={tooltipSide}>
+      <Tooltip label={tooltip} side={tooltipSide} portal={tooltipPortal}>
         {button}
       </Tooltip>
     )

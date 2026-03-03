@@ -5,6 +5,7 @@ import { cva } from "class-variance-authority"
 import { useFieldControl } from "@/components/field"
 import { Icon } from "@/components/icon"
 import { Spinner } from "@/components/spinner"
+import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 const rootVariants = cva(
@@ -251,23 +252,25 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {type === "password" && (
-          <button
-            type="button"
-            tabIndex={-1}
-            disabled={disabled}
-            onClick={() => setIsPasswordVisible((v) => !v)}
-            aria-label={isPasswordVisible ? "Hide password" : "Show password"}
-            className={cn(
-              "absolute top-1/2 right-2 flex -translate-y-1/2",
-              "cursor-pointer items-center justify-center transition-colors",
-              "text-word-placeholder hover:text-word-secondary"
-            )}
-          >
-            <Icon
-              name={isPasswordVisible ? "eye-open-fill" : "eye-closed-fill"}
-              size={size === "sm" ? "sm" : "md"}
-            />
-          </button>
+          <Tooltip label={isPasswordVisible ? "Hide password" : "Show password"}>
+            <button
+              type="button"
+              tabIndex={-1}
+              disabled={disabled}
+              onClick={() => setIsPasswordVisible((v) => !v)}
+              aria-label={isPasswordVisible ? "Hide password" : "Show password"}
+              className={cn(
+                "absolute top-1/2 right-2 flex -translate-y-1/2",
+                "cursor-pointer items-center justify-center transition-colors",
+                "text-word-placeholder hover:text-word-secondary"
+              )}
+            >
+              <Icon
+                name={isPasswordVisible ? "eye-open-fill" : "eye-closed-fill"}
+                size={size === "sm" ? "sm" : "md"}
+              />
+            </button>
+          </Tooltip>
         )}
 
         {type === "search" && (

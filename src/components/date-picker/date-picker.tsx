@@ -16,6 +16,7 @@ import {
 
 import { Calendar } from "@/components/calendar"
 import { Icon } from "@/components/icon"
+import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
@@ -133,7 +134,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             "h-8"
           )}
         >
-          <DateInput className={cn("flex flex-1 items-center", "px-3 text-base")}>
+          <DateInput className={cn("flex flex-1 items-center", "pl-3 text-base")}>
             {(segment) => (
               <RADateSegment
                 segment={segment}
@@ -149,16 +150,18 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             )}
           </DateInput>
 
-          <RAButton
-            className={cn(
-              "flex shrink-0 cursor-pointer items-center justify-center select-none",
-              "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
-              "disabled:cursor-not-allowed",
-              "pr-2.5"
-            )}
-          >
-            <Icon name="calendar-fill" />
-          </RAButton>
+          <Tooltip label="Open calendar" portal={false}>
+            <RAButton
+              className={cn(
+                "flex shrink-0 cursor-pointer items-center justify-center select-none",
+                "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
+                "disabled:cursor-not-allowed",
+                "pr-2.5"
+              )}
+            >
+              <Icon name="calendar-fill" />
+            </RAButton>
+          </Tooltip>
         </Group>
 
         <Popover offset={10} containerPadding={10}>
@@ -172,7 +175,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
                 bounce: 0.1,
               }}
             >
-              <Dialog className="rounded-lg bg-white p-4 shadow-md ring-1 ring-black/10 outline-none">
+              <Dialog className="rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10 outline-none">
                 <Calendar locale={locale}>
                   <Calendar.Header />
                   <Calendar.Grid />

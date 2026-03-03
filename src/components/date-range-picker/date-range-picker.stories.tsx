@@ -6,18 +6,19 @@ import type { DateRange } from "react-aria-components"
 
 import { DateRangePicker } from "@/components/date-range-picker"
 import { IconSprite } from "@/components/icon"
+import { Provider } from "@/components/provider"
 
 const meta: Meta = {
   title: "DateRangePicker",
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <>
+      <Provider>
         <IconSprite />
         <div className="w-80">
           <Story />
         </div>
-      </>
+      </Provider>
     ),
   ],
 }
