@@ -19,7 +19,6 @@ import { Button } from "@/components/button"
 import { Calendar } from "@/components/calendar"
 import { Icon } from "@/components/icon"
 import { IconButton } from "@/components/icon-button"
-import { Tooltip } from "@/components/tooltip"
 import { cn } from "@/utils/cn"
 
 // ---------------------------------------------------------------------------
@@ -34,7 +33,7 @@ const segmentClassName = (
     "inline justify-between rounded-xs px-1 caret-transparent outline-none",
     isInvalid
       ? "focus:bg-destructive focus:text-white"
-      : "focus:bg-primary focus:text-primary-foreground",
+      : "focus:bg-black/6 focus:text-secondary-foreground",
     "data-[type=literal]:px-0 data-[type=literal]:text-gray-800",
     segment.isPlaceholder && "text-word-placeholder"
   )
@@ -220,18 +219,15 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                   )}
                 </DateInput>
 
-                <Tooltip label="Open calendar" portal={false}>
-                  <RAButton
-                    className={cn(
-                      "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
-                      "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
-                      "disabled:cursor-not-allowed",
-                      "pr-2.5"
-                    )}
-                  >
-                    <Icon name="calendar-fill" />
-                  </RAButton>
-                </Tooltip>
+                <RAButton
+                  className={cn(
+                    "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
+                    "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
+                    "pr-2.5 disabled:cursor-not-allowed"
+                  )}
+                >
+                  <Icon name="calendar-fill" />
+                </RAButton>
               </Group>
 
               <Popover offset={10} containerPadding={10}>

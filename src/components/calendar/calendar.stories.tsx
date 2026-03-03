@@ -1,7 +1,7 @@
 import { useState } from "react"
 
-import type { Meta, StoryObj } from "@storybook/react-vite"
 import { getLocalTimeZone, today, type DateValue } from "@internationalized/date"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { DateRange } from "react-aria-components"
 
 import { Calendar } from "@/components/calendar"
@@ -14,7 +14,7 @@ const meta: Meta = {
     (Story) => (
       <>
         <IconSprite />
-        <div className="w-[17.25rem] rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10">
+        <div className="w-69 rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10">
           <Story />
         </div>
       </>
