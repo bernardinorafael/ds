@@ -61,6 +61,13 @@ export const DisabledState: Story = {
   ),
 }
 
+export const InputOnly: Story = {
+  render: () => {
+    const [value, setValue] = useState<DateValue | null>(null)
+    return <DatePicker value={value} onChange={setValue} inputOnly label="Birth date" />
+  },
+}
+
 export const LocalePtBR: Story = {
   render: () => {
     const [value, setValue] = useState<DateValue | null>(null)

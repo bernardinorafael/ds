@@ -171,6 +171,13 @@ export const DisabledState: Story = {
   ),
 }
 
+export const InputOnly: Story = {
+  render: () => {
+    const [value, setValue] = useState<DateRange | null>(null)
+    return <DateRangePicker value={value} onChange={setValue} inputOnly label="Period" />
+  },
+}
+
 export const LocalePortugues: Story = {
   render: () => {
     const [value, setValue] = useState<DateRange | null>(null)

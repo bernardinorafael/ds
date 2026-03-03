@@ -116,6 +116,10 @@ export type DateRangePickerProps = {
   locale?: string
   className?: string
   id?: string
+  /**
+   * Renders only the date input without the calendar button and popover
+   */
+  inputOnly?: boolean
   "aria-label"?: string
   "aria-describedby"?: string
 }
@@ -135,6 +139,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
       applyLabel = "Apply",
       presets,
       doubleMonth = false,
+      inputOnly,
       locale = "en-US",
       className,
       ...props
@@ -197,7 +202,25 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                   "h-8"
                 )}
               >
-                <DateInput slot="start" className="flex items-center pl-3 text-base">
+                {!inputOnly && (
+                  <RAButton
+                    className={cn(
+                      "flex shrink-0 cursor-pointer items-center justify-center select-none",
+                      "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
+                      "pl-2.5 disabled:cursor-not-allowed"
+                    )}
+                  >
+                    <Icon name="calendar-2-fill" />
+                  </RAButton>
+                )}
+
+                <DateInput
+                  slot="start"
+                  className={cn(
+                    "flex items-center text-base",
+                    inputOnly ? "pl-3" : "pl-2"
+                  )}
+                >
                   {(segment) => (
                     <RADateSegment
                       segment={segment}
@@ -218,141 +241,138 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                     />
                   )}
                 </DateInput>
-
-                <RAButton
-                  className={cn(
-                    "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
-                    "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
-                    "pr-2.5 disabled:cursor-not-allowed"
-                  )}
-                >
-                  <Icon name="calendar-2-fill" />
-                </RAButton>
               </Group>
 
-              <Popover offset={10} containerPadding={10}>
-                <AnimatePresence>
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.96, y: -6 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{
-                      duration: 0.24,
-                      type: "spring",
-                      bounce: 0.1,
-                    }}
-                  >
-                    <Dialog
-                      className={cn(
-                        "flex overflow-hidden outline-none",
-                        hasPresets
-                          ? "bg-surface-100 rounded-3xl p-1 shadow-xs"
-                          : "rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10"
-                      )}
+              {!inputOnly && (
+                <Popover offset={10} containerPadding={10}>
+                  <AnimatePresence>
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{
+                        duration: 0.24,
+                        type: "spring",
+                        bounce: 0.1,
+                      }}
                     >
-                      <AnimatePresence initial={false}>
-                        {hasPresets && presetsOpen && (
-                          <motion.nav
-                            initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: "auto", opacity: 1 }}
-                            exit={{ width: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="flex shrink-0 flex-col gap-0.5 p-2">
-                              {presets!.map((preset) => {
-                                const currentRange = state.dateRange
-                                const isActive =
-                                  currentRange?.start &&
-                                  currentRange?.end &&
-                                  currentRange.start.compare(preset.value.start) === 0 &&
-                                  currentRange.end.compare(preset.value.end) === 0
-
-                                return (
-                                  <button
-                                    key={preset.label}
-                                    type="button"
-                                    className={cn(
-                                      "flex cursor-pointer items-center justify-between gap-2",
-                                      "rounded-md px-3 py-1.5 text-left text-sm whitespace-nowrap",
-                                      "transition-colors outline-none",
-                                      "focus-visible:ring-primary/50 focus-visible:ring-2",
-                                      isActive
-                                        ? "text-primary"
-                                        : "text-word-secondary hover:text-word-primary hover:bg-black/4"
-                                    )}
-                                    onClick={() => {
-                                      state.setDateRange(preset.value)
-                                      onChange?.(preset.value)
-                                    }}
-                                  >
-                                    {preset.label}
-                                    {isActive && <Icon name="check-outline" size="sm" />}
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </motion.nav>
+                      <Dialog
+                        className={cn(
+                          "flex overflow-hidden outline-none",
+                          hasPresets
+                            ? "bg-surface-100 rounded-3xl p-1 shadow-xs"
+                            : "rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10"
                         )}
-                      </AnimatePresence>
-
-                      <div
-                        className={cn(hasPresets && "rounded-xl bg-white p-4 shadow-xs")}
                       >
-                        <Calendar
-                          mode="range"
-                          locale={locale}
-                          visibleDuration={doubleMonth ? { months: 2 } : undefined}
-                        >
-                          <Calendar.Header />
-                          <div className={cn(doubleMonth && "flex gap-4")}>
-                            <Calendar.Grid />
-                            {doubleMonth && <Calendar.Grid offset={{ months: 1 }} />}
-                          </div>
-                        </Calendar>
+                        <AnimatePresence initial={false}>
+                          {hasPresets && presetsOpen && (
+                            <motion.nav
+                              initial={{ width: 0, opacity: 0 }}
+                              animate={{ width: "auto", opacity: 1 }}
+                              exit={{ width: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex shrink-0 flex-col gap-0.5 p-2">
+                                {presets!.map((preset) => {
+                                  const currentRange = state.dateRange
+                                  const isActive =
+                                    currentRange?.start &&
+                                    currentRange?.end &&
+                                    currentRange.start.compare(preset.value.start) ===
+                                      0 &&
+                                    currentRange.end.compare(preset.value.end) === 0
 
-                        <div className="mt-1 h-px w-full rounded-full bg-black/4" />
-
-                        <div className="flex w-full items-center gap-3 pt-3">
-                          {hasPresets && (
-                            <IconButton
-                              size="sm"
-                              icon="sidebar-fill"
-                              intent="ghost"
-                              tooltip="Toggle presets"
-                              tooltipPortal={false}
-                              onClick={() => setPresetsOpen((v) => !v)}
-                            />
+                                  return (
+                                    <button
+                                      key={preset.label}
+                                      type="button"
+                                      className={cn(
+                                        "flex cursor-pointer items-center justify-between gap-2",
+                                        "rounded-md px-3 py-1.5 text-left text-sm whitespace-nowrap",
+                                        "transition-colors outline-none",
+                                        "focus-visible:ring-primary/50 focus-visible:ring-2",
+                                        isActive
+                                          ? "text-primary"
+                                          : "text-word-secondary hover:text-word-primary hover:bg-black/4"
+                                      )}
+                                      onClick={() => {
+                                        state.setDateRange(preset.value)
+                                        onChange?.(preset.value)
+                                      }}
+                                    >
+                                      {preset.label}
+                                      {isActive && (
+                                        <Icon name="check-outline" size="sm" />
+                                      )}
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            </motion.nav>
                           )}
-                          <div className="ml-auto flex items-center gap-3">
-                            <Button
-                              size="sm"
-                              intent="ghost"
-                              onClick={() => {
-                                state.setValue({
-                                  start: null!,
-                                  end: null!,
-                                })
-                                onChange?.(null)
-                              }}
-                            >
-                              {clearLabel}
-                            </Button>
-                            <Button
-                              size="sm"
-                              intent="primary"
-                              onClick={() => {
-                                state.setOpen(false)
-                              }}
-                            >
-                              {applyLabel}
-                            </Button>
+                        </AnimatePresence>
+
+                        <div
+                          className={cn(
+                            hasPresets && "rounded-xl bg-white p-4 shadow-xs"
+                          )}
+                        >
+                          <Calendar
+                            mode="range"
+                            locale={locale}
+                            visibleDuration={doubleMonth ? { months: 2 } : undefined}
+                          >
+                            <Calendar.Header />
+                            <div className={cn(doubleMonth && "flex gap-4")}>
+                              <Calendar.Grid />
+                              {doubleMonth && <Calendar.Grid offset={{ months: 1 }} />}
+                            </div>
+                          </Calendar>
+
+                          <div className="mt-1 h-px w-full rounded-full bg-black/4" />
+
+                          <div className="flex w-full items-center gap-3 pt-3">
+                            {hasPresets && (
+                              <IconButton
+                                size="sm"
+                                icon="sidebar-fill"
+                                intent="ghost"
+                                tooltip="Toggle presets"
+                                tooltipPortal={false}
+                                onClick={() => setPresetsOpen((v) => !v)}
+                              />
+                            )}
+                            <div className="ml-auto flex items-center gap-3">
+                              <Button
+                                size="sm"
+                                intent="ghost"
+                                onClick={() => {
+                                  state.setValue({
+                                    start: null!,
+                                    end: null!,
+                                  })
+                                  onChange?.(null)
+                                }}
+                              >
+                                {clearLabel}
+                              </Button>
+                              <Button
+                                size="sm"
+                                intent="primary"
+                                onClick={() => {
+                                  state.setOpen(false)
+                                }}
+                              >
+                                {applyLabel}
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Dialog>
-                  </motion.div>
-                </AnimatePresence>
-              </Popover>
+                      </Dialog>
+                    </motion.div>
+                  </AnimatePresence>
+                </Popover>
+              )}
             </>
           )}
         </RADateRangePicker>

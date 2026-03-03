@@ -61,6 +61,10 @@ export type DatePickerProps = {
   locale?: string
   className?: string
   id?: string
+  /**
+   * Renders only the date input without the calendar button and popover
+   */
+  inputOnly?: boolean
   "aria-label"?: string
   "aria-describedby"?: string
 }
@@ -76,6 +80,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       isDisabled,
       isInvalid,
       label = "Date",
+      inputOnly,
       locale = "en-US",
       className,
       ...props
@@ -133,7 +138,24 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
               "h-8"
             )}
           >
-            <DateInput className={cn("flex flex-1 items-center", "pl-3 text-base")}>
+            {!inputOnly && (
+              <RAButton
+                className={cn(
+                  "flex shrink-0 cursor-pointer items-center justify-center select-none",
+                  "text-word-placeholder enabled:hover:text-word-secondary transition-colors outline-none",
+                  "pl-2.5 disabled:cursor-not-allowed"
+                )}
+              >
+                <Icon name="calendar-2-fill" />
+              </RAButton>
+            )}
+
+            <DateInput
+              className={cn(
+                "flex items-center text-base",
+                inputOnly ? "pl-3" : "pl-2"
+              )}
+            >
               {(segment) => (
                 <RADateSegment
                   segment={segment}
@@ -148,38 +170,30 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
                 />
               )}
             </DateInput>
-
-            <RAButton
-              className={cn(
-                "flex shrink-0 cursor-pointer items-center justify-center select-none",
-                "text-word-placeholder enabled:hover:text-word-secondary transition-colors outline-none",
-                "pr-2.5 disabled:cursor-not-allowed"
-              )}
-            >
-              <Icon name="calendar-2-fill" />
-            </RAButton>
           </Group>
 
-          <Popover offset={10} containerPadding={10}>
-            <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: -6 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  duration: 0.24,
-                  type: "spring",
-                  bounce: 0.1,
-                }}
-              >
-                <Dialog className="rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10 outline-none">
-                  <Calendar locale={locale}>
-                    <Calendar.Header />
-                    <Calendar.Grid />
-                  </Calendar>
-                </Dialog>
-              </motion.div>
-            </AnimatePresence>
-          </Popover>
+          {!inputOnly && (
+            <Popover offset={10} containerPadding={10}>
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{
+                    duration: 0.24,
+                    type: "spring",
+                    bounce: 0.1,
+                  }}
+                >
+                  <Dialog className="rounded-3xl bg-white p-4 shadow-md ring-1 ring-black/10 outline-none">
+                    <Calendar locale={locale}>
+                      <Calendar.Header />
+                      <Calendar.Grid />
+                    </Calendar>
+                  </Dialog>
+                </motion.div>
+              </AnimatePresence>
+            </Popover>
+          )}
         </RADatePicker>
       </I18nProvider>
     )
