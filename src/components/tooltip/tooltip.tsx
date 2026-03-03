@@ -101,7 +101,7 @@ export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
             style={{ maxWidth: 240 }}
             className={cn(
               "tooltip-content",
-              "z-50 text-center font-medium text-white shadow-lg",
+              "font-book z-50 text-center text-white shadow-lg",
               "bg-gray-1200 rounded-sm px-2 py-1 text-sm leading-relaxed"
             )}
           >
