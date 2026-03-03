@@ -26,7 +26,7 @@ type TooltipProps = {
    */
   sideOffset?: number
   /**
-   * Delay in ms before the tooltip appears @default 400
+   * Delay in ms before the tooltip appears @default 250
    */
   delayDuration?: number
   /**
@@ -94,7 +94,7 @@ export const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
       side = "top",
       align,
       sideOffset = 8,
-      delayDuration = 400,
+      delayDuration = 250,
       portal = true,
     },
     forwardedRef

@@ -45,7 +45,7 @@ const PageLayout = React.forwardRef<HTMLElement, PageLayoutProps>(
     return (
       <article
         ref={forwardedRef}
-        className={cn("group h-full space-y-8 overflow-x-hidden", className)}
+        className={cn("group h-full space-y-6 overflow-x-hidden", className)}
         {...props}
       >
         {breadcrumb && <div data-page-layout-breadcrumb="">{breadcrumb}</div>}
