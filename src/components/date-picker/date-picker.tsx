@@ -156,7 +156,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
                 "pr-2.5 disabled:cursor-not-allowed"
               )}
             >
-              <Icon name="calendar-fill" />
+              <Icon name="calendar-2-fill" />
             </RAButton>
           </Group>
 

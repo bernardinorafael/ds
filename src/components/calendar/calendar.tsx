@@ -93,7 +93,14 @@ export type CalendarRootProps = (CalendarSingleProps | CalendarRangeProps) & {
 
 const CalendarRoot = React.forwardRef<HTMLDivElement, CalendarRootProps>(
   (
-    { children, className, mode = "single", locale = "en-US", scrollNavigation, ...props },
+    {
+      children,
+      className,
+      mode = "single",
+      locale = "en-US",
+      scrollNavigation,
+      ...props
+    },
     forwardedRef
   ) => {
     const [internalFocusedDate, setInternalFocusedDate] = React.useState<CalendarDate>(
@@ -270,7 +277,6 @@ const CalendarGrid = React.forwardRef<HTMLTableElement, CalendarGridProps>(
                     date.day === date.calendar.getDaysInMonth(date))
 
                 const isToday = date.compare(today(getLocalTimeZone())) === 0
-
                 const isRangeMiddle = isSelected && mode === "range" && !isEdge
 
                 return cn(

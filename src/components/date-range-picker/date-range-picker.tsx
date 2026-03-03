@@ -226,7 +226,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                     "pr-2.5 disabled:cursor-not-allowed"
                   )}
                 >
-                  <Icon name="calendar-fill" />
+                  <Icon name="calendar-2-fill" />
                 </RAButton>
               </Group>
 
@@ -315,8 +315,8 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                         <div className="flex w-full items-center gap-3 pt-3">
                           {hasPresets && (
                             <IconButton
-                              icon="filter-outline"
                               size="sm"
+                              icon="sidebar-fill"
                               intent="ghost"
                               tooltip="Toggle presets"
                               tooltipPortal={false}
