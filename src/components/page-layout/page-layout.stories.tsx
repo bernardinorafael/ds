@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Badge } from "@/components/badge"
+import { Breadcrumb } from "@/components/breadcrumb"
 import { Button } from "@/components/button"
 import { IconSprite } from "@/components/icon"
 import { PageLayout } from "@/components/page-layout"
@@ -90,9 +91,38 @@ export const WithBackAction: Story = {
   ),
 }
 
+export const WithBreadcrumb: Story = {
+  render: () => (
+    <PageLayout
+      breadcrumb={
+        <Breadcrumb>
+          <Breadcrumb.Link href="#">Users</Breadcrumb.Link>
+          <Breadcrumb.Page>John Doe</Breadcrumb.Page>
+        </Breadcrumb>
+      }
+      title="John Doe"
+      description="View and edit user information"
+      actions={
+        <Button intent="primary" leftIcon="edit-outline">
+          Edit
+        </Button>
+      }
+    >
+      <p className="text-word-secondary">Page content goes here.</p>
+    </PageLayout>
+  ),
+}
+
 export const KitchenSink: Story = {
   render: () => (
     <PageLayout
+      breadcrumb={
+        <Breadcrumb>
+          <Breadcrumb.Link href="#">Organization</Breadcrumb.Link>
+          <Breadcrumb.Link href="#">Team</Breadcrumb.Link>
+          <Breadcrumb.Page>Team members</Breadcrumb.Page>
+        </Breadcrumb>
+      }
       title="Team members"
       titleBadge={
         <Badge intent="pro" size="sm">

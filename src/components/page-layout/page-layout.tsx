@@ -6,6 +6,8 @@ type PageLayoutProps = Pick<
   React.ComponentProps<"article">,
   "id" | "aria-label" | "className"
 > & {
+  /** Breadcrumb navigation rendered above the header */
+  breadcrumb?: React.ReactNode
   /** Page title rendered as an h2 */
   title?: React.ReactNode
   /** Badge displayed inline with the title */
@@ -26,6 +28,7 @@ const PageLayout = React.forwardRef<HTMLElement, PageLayoutProps>(
   (
     {
       className,
+      breadcrumb,
       title,
       titleBadge,
       description,
@@ -45,6 +48,8 @@ const PageLayout = React.forwardRef<HTMLElement, PageLayoutProps>(
         className={cn("group h-full space-y-8 overflow-x-hidden", className)}
         {...props}
       >
+        {breadcrumb && <div data-page-layout-breadcrumb="">{breadcrumb}</div>}
+
         {hasHeader && (
           <header className="relative flex w-full flex-col gap-4 pb-6">
             {backAction && <div>{backAction}</div>}
