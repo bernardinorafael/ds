@@ -142,197 +142,197 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
   ) => {
     return (
       <I18nProvider locale={locale}>
-      <RADateRangePicker
-        value={value}
-        defaultValue={defaultValue}
-        onChange={onChange}
-        minValue={minValue}
-        maxValue={maxValue}
-        isDisabled={isDisabled}
-        isInvalid={isInvalid}
-        className={cn("group", className)}
-        {...props}
-      >
-        {({ state }) => (
-          <>
-            <Label className="sr-only">{label}</Label>
-            <Group
-              ref={forwardedRef}
-              className={cn(
-                // layout
-                "flex w-full items-center",
-
-                // visual — matches DS Input rootVariants
-                "rounded-sm bg-white shadow-sm transition",
-
-                // ring border
-                "ring-1",
-                isInvalid
-                  ? "ring-destructive"
-                  : "ring-[color-mix(in_srgb,black_10%,transparent)]",
-
-                // focus-within ring
-                isInvalid
-                  ? [
-                      "focus-within:ring-[3px]",
-                      "focus-within:ring-[color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
-                      "focus-within:ring-offset-1",
-                      "focus-within:ring-offset-destructive",
-                    ]
-                  : [
-                      "focus-within:ring-[3px]",
-                      "focus-within:ring-[color-mix(in_srgb,black_13%,transparent)]",
-                      "focus-within:ring-offset-1",
-                      "focus-within:ring-offset-[color-mix(in_srgb,black_15%,transparent)]",
-                    ],
-
-                // disabled
-                isDisabled && "cursor-not-allowed opacity-50",
-
-                // size
-                "h-8"
-              )}
-            >
-              <DateInput slot="start" className="flex items-center pl-3 text-base">
-                {(segment) => (
-                  <RADateSegment
-                    segment={segment}
-                    className={segmentClassName(segment, isInvalid)}
-                  />
-                )}
-              </DateInput>
-
-              <span className="px-1.5 text-gray-800">
-                <Icon name="arrow-right-outline" size="sm" />
-              </span>
-
-              <DateInput slot="end" className="flex items-center text-base">
-                {(segment) => (
-                  <RADateSegment
-                    segment={segment}
-                    className={segmentClassName(segment, isInvalid)}
-                  />
-                )}
-              </DateInput>
-
-              <RAButton
+        <RADateRangePicker
+          value={value}
+          defaultValue={defaultValue}
+          onChange={onChange}
+          minValue={minValue}
+          maxValue={maxValue}
+          isDisabled={isDisabled}
+          isInvalid={isInvalid}
+          className={cn("group", className)}
+          {...props}
+        >
+          {({ state }) => (
+            <>
+              <Label className="sr-only">{label}</Label>
+              <Group
+                ref={forwardedRef}
                 className={cn(
-                  "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
-                  "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
-                  "disabled:cursor-not-allowed",
-                  "pr-2.5"
+                  // layout
+                  "flex w-full items-center",
+
+                  // visual — matches DS Input rootVariants
+                  "rounded-sm bg-white shadow-sm transition",
+
+                  // ring border
+                  "ring-1",
+                  isInvalid
+                    ? "ring-destructive"
+                    : "ring-[color-mix(in_srgb,black_10%,transparent)]",
+
+                  // focus-within ring
+                  isInvalid
+                    ? [
+                        "focus-within:ring-[3px]",
+                        "focus-within:ring-[color-mix(in_srgb,var(--color-destructive)_20%,transparent)]",
+                        "focus-within:ring-offset-1",
+                        "focus-within:ring-offset-destructive",
+                      ]
+                    : [
+                        "focus-within:ring-[3px]",
+                        "focus-within:ring-[color-mix(in_srgb,black_13%,transparent)]",
+                        "focus-within:ring-offset-1",
+                        "focus-within:ring-offset-[color-mix(in_srgb,black_15%,transparent)]",
+                      ],
+
+                  // disabled
+                  isDisabled && "cursor-not-allowed opacity-50",
+
+                  // size
+                  "h-8"
                 )}
               >
-                <Icon name="calendar-fill" />
-              </RAButton>
-            </Group>
+                <DateInput slot="start" className="flex items-center pl-3 text-base">
+                  {(segment) => (
+                    <RADateSegment
+                      segment={segment}
+                      className={segmentClassName(segment, isInvalid)}
+                    />
+                  )}
+                </DateInput>
 
-            <Popover offset={10} containerPadding={10}>
-              <AnimatePresence>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.96, y: -6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{
-                    duration: 0.24,
-                    type: "spring",
-                    bounce: 0.1,
-                  }}
+                <span className="px-1.5 text-gray-800">
+                  <Icon name="arrow-right-outline" size="sm" />
+                </span>
+
+                <DateInput slot="end" className="flex items-center text-base">
+                  {(segment) => (
+                    <RADateSegment
+                      segment={segment}
+                      className={segmentClassName(segment, isInvalid)}
+                    />
+                  )}
+                </DateInput>
+
+                <RAButton
+                  className={cn(
+                    "ml-auto flex shrink-0 cursor-pointer items-center justify-center select-none",
+                    "text-word-placeholder hover:text-word-secondary transition-colors outline-none",
+                    "disabled:cursor-not-allowed",
+                    "pr-2.5"
+                  )}
                 >
-                  <Dialog
-                    className={cn(
-                      "flex overflow-hidden outline-none",
-                      presets?.length
-                        ? "bg-surface-100 rounded-2xl p-1 shadow-xs"
-                        : "rounded-lg bg-white p-4 shadow-md ring-1 ring-black/10"
-                    )}
+                  <Icon name="calendar-fill" />
+                </RAButton>
+              </Group>
+
+              <Popover offset={10} containerPadding={10}>
+                <AnimatePresence>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{
+                      duration: 0.24,
+                      type: "spring",
+                      bounce: 0.1,
+                    }}
                   >
-                    {presets?.length && (
-                      <nav className="flex shrink-0 flex-col gap-0.5 p-2">
-                        {presets.map((preset) => {
-                          const currentRange = state.dateRange
-                          const isActive =
-                            currentRange?.start &&
-                            currentRange?.end &&
-                            currentRange.start.compare(preset.value.start) === 0 &&
-                            currentRange.end.compare(preset.value.end) === 0
-
-                          return (
-                            <button
-                              key={preset.label}
-                              type="button"
-                              className={cn(
-                                "flex cursor-pointer items-center justify-between gap-2",
-                                "whitespace-nowrap rounded-md px-3 py-1.5 text-left text-sm",
-                                "transition-colors outline-none",
-                                "focus-visible:ring-primary/50 focus-visible:ring-2",
-                                isActive
-                                  ? "text-primary"
-                                  : "text-word-secondary hover:text-word-primary hover:bg-black/4"
-                              )}
-                              onClick={() => {
-                                state.setDateRange(preset.value)
-                                onChange?.(preset.value)
-                              }}
-                            >
-                              {preset.label}
-                              {isActive && <Icon name="check-outline" size="sm" />}
-                            </button>
-                          )
-                        })}
-                      </nav>
-                    )}
-
-                    <div
+                    <Dialog
                       className={cn(
-                        presets?.length && "rounded-xl bg-white p-4 shadow-xs"
+                        "flex overflow-hidden outline-none",
+                        presets?.length
+                          ? "bg-surface-100 rounded-2xl p-1 shadow-xs"
+                          : "rounded-lg bg-white p-4 shadow-md ring-1 ring-black/10"
                       )}
                     >
-                      <Calendar
-                        mode="range"
-                        locale={locale}
-                        visibleDuration={doubleMonth ? { months: 2 } : undefined}
+                      {presets?.length && (
+                        <nav className="flex shrink-0 flex-col gap-0.5 p-2">
+                          {presets.map((preset) => {
+                            const currentRange = state.dateRange
+                            const isActive =
+                              currentRange?.start &&
+                              currentRange?.end &&
+                              currentRange.start.compare(preset.value.start) === 0 &&
+                              currentRange.end.compare(preset.value.end) === 0
+
+                            return (
+                              <button
+                                key={preset.label}
+                                type="button"
+                                className={cn(
+                                  "flex cursor-pointer items-center justify-between gap-2",
+                                  "rounded-md px-3 py-1.5 text-left text-sm whitespace-nowrap",
+                                  "transition-colors outline-none",
+                                  "focus-visible:ring-primary/50 focus-visible:ring-2",
+                                  isActive
+                                    ? "text-primary"
+                                    : "text-word-secondary hover:text-word-primary hover:bg-black/4"
+                                )}
+                                onClick={() => {
+                                  state.setDateRange(preset.value)
+                                  onChange?.(preset.value)
+                                }}
+                              >
+                                {preset.label}
+                                {isActive && <Icon name="check-outline" size="sm" />}
+                              </button>
+                            )
+                          })}
+                        </nav>
+                      )}
+
+                      <div
+                        className={cn(
+                          presets?.length && "rounded-xl bg-white p-4 shadow-xs"
+                        )}
                       >
-                        <Calendar.Header />
-                        <div className={cn(doubleMonth && "flex gap-4")}>
-                          <Calendar.Grid />
-                          {doubleMonth && <Calendar.Grid offset={{ months: 1 }} />}
+                        <Calendar
+                          mode="range"
+                          locale={locale}
+                          visibleDuration={doubleMonth ? { months: 2 } : undefined}
+                        >
+                          <Calendar.Header />
+                          <div className={cn(doubleMonth && "flex gap-4")}>
+                            <Calendar.Grid />
+                            {doubleMonth && <Calendar.Grid offset={{ months: 1 }} />}
+                          </div>
+                        </Calendar>
+
+                        <div className="mt-1 h-px w-full rounded-full bg-black/4" />
+
+                        <div className="flex w-full items-center justify-end gap-3 pt-3">
+                          <Button
+                            size="sm"
+                            intent="ghost"
+                            onClick={() => {
+                              state.setValue({
+                                start: null!,
+                                end: null!,
+                              })
+                              onChange?.(null)
+                            }}
+                          >
+                            {clearLabel}
+                          </Button>
+                          <Button
+                            size="sm"
+                            intent="primary"
+                            onClick={() => {
+                              state.setOpen(false)
+                            }}
+                          >
+                            {applyLabel}
+                          </Button>
                         </div>
-                      </Calendar>
-
-                      <div className="mt-1 h-px w-full rounded-full bg-black/[0.04]" />
-
-                      <div className="flex w-full items-center justify-end gap-3 pt-3">
-                        <Button
-                          size="sm"
-                          intent="ghost"
-                          onClick={() => {
-                            state.setValue({
-                              start: null!,
-                              end: null!,
-                            })
-                            onChange?.(null)
-                          }}
-                        >
-                          {clearLabel}
-                        </Button>
-                        <Button
-                          size="sm"
-                          intent="primary"
-                          onClick={() => {
-                            state.setOpen(false)
-                          }}
-                        >
-                          {applyLabel}
-                        </Button>
                       </div>
-                    </div>
-                  </Dialog>
-                </motion.div>
-              </AnimatePresence>
-            </Popover>
-          </>
-        )}
-      </RADateRangePicker>
+                    </Dialog>
+                  </motion.div>
+                </AnimatePresence>
+              </Popover>
+            </>
+          )}
+        </RADateRangePicker>
       </I18nProvider>
     )
   }
