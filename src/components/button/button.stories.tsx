@@ -23,7 +23,15 @@ const meta = {
 
 type Story = StoryObj<typeof meta>
 
-const INTENTS = ["primary", "secondary", "danger", "ghost", "link", "link-underline"] as const
+const INTENTS = [
+  "primary",
+  "primary-soft",
+  "secondary",
+  "danger",
+  "ghost",
+  "link",
+  "link-underline",
+] as const
 
 export const Intents: Story = {
   render: () => (

@@ -2,10 +2,10 @@ import React from "react"
 
 import * as RadixCheckbox from "@radix-ui/react-checkbox"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Check } from "lucide-react"
 import { motion } from "motion/react"
 
 import { useFieldControl } from "@/components/field"
+import { Icon } from "@/components/icon"
 import { cn } from "@/utils/cn"
 
 const checkboxVariants = cva(
@@ -166,15 +166,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
                 />
               </svg>
             ) : (
-              <Check
-                className={
-                  size === "lg"
-                    ? "size-4 stroke-[2.5px]"
-                    : size === "md"
-                      ? "size-3.5 stroke-[3px]"
-                      : "size-3 stroke-[3.5px]"
-                }
-              />
+              <Icon name="check-outline" size={size === "lg" ? "md" : "sm"} />
             )}
           </motion.span>
         </RadixCheckbox.Indicator>

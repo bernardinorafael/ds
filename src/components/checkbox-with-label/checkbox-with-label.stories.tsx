@@ -3,11 +3,20 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Card } from "@/components/card"
 import { CheckboxWithLabel } from "@/components/checkbox-with-label"
 import { Fieldset } from "@/components/fieldset"
+import { IconSprite } from "@/components/icon"
 
 const meta = {
   title: "CheckboxWithLabel",
   component: CheckboxWithLabel,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <>
+        <IconSprite />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     id: "default",
     children: "Label",

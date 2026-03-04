@@ -1,7 +1,6 @@
 import React from "react"
 
 import * as RadixSelect from "@radix-ui/react-select"
-import { ChevronsUpDown } from "lucide-react"
 import { motion } from "motion/react"
 
 import { buttonVariants } from "@/components/button"
@@ -219,10 +218,9 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
               label="Loading"
             />
           ) : (
-            <ChevronsUpDown
-              size={size === "sm" ? 12 : 14}
-              className="ml-auto shrink-0 opacity-50"
-            />
+            <span className="ml-auto shrink-0 opacity-50">
+              <Icon name="chevron-up-down-outline" size="sm" />
+            </span>
           )}
         </RadixSelect.Trigger>
 

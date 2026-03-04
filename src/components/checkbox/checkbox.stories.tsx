@@ -1,11 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Checkbox } from "@/components/checkbox"
+import { IconSprite } from "@/components/icon"
 
 const meta = {
   title: "Checkbox",
   component: Checkbox,
   tags: ["autodocs"],
+  decorators: [
+    (Story) => (
+      <>
+        <IconSprite />
+        <Story />
+      </>
+    ),
+  ],
   args: {
     "aria-label": "Checkbox",
   },

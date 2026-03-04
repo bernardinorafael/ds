@@ -73,6 +73,16 @@ export const buttonVariants = cva(
           "[--focus-ring-color:color-mix(in_srgb,black_13%,transparent)]",
           "[--focus-offset-color:color-mix(in_srgb,black_15%,transparent)]",
         ],
+        "primary-soft": [
+          "border",
+          "border-purple-200",
+          "bg-purple-200",
+          "text-purple-1000",
+          "not-disabled:hover:border-purple-300",
+          "not-disabled:hover:bg-purple-300",
+          "[--focus-ring-color:color-mix(in_srgb,var(--color-purple-500)_20%,transparent)]",
+          "[--focus-offset-color:var(--color-purple-500)]",
+        ],
         danger: [
           "bg-destructive",
           "text-destructive-foreground",
