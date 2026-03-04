@@ -56,8 +56,16 @@ export const WithImage: Story = {
 export const StatusIndicators: Story = {
   render: () => (
     <div className="flex items-center gap-6">
-      <Avatar name="Online User" src="https://i.pravatar.cc/96?u=online" status="online" />
-      <Avatar name="Offline User" src="https://i.pravatar.cc/96?u=offline" status="offline" />
+      <Avatar
+        name="Online User"
+        src="https://i.pravatar.cc/96?u=online"
+        status="online"
+      />
+      <Avatar
+        name="Offline User"
+        src="https://i.pravatar.cc/96?u=offline"
+        status="offline"
+      />
       <Avatar name="Busy User" src="https://i.pravatar.cc/96?u=busy" status="busy" />
     </div>
   ),

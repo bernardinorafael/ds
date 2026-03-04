@@ -151,10 +151,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             )}
 
             <DateInput
-              className={cn(
-                "flex items-center text-base",
-                inputOnly ? "pl-3" : "pl-2"
-              )}
+              className={cn("flex items-center text-base", inputOnly ? "pl-3" : "pl-2")}
             >
               {(segment) => (
                 <RADateSegment

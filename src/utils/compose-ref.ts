@@ -2,7 +2,7 @@
 import type * as React from "react"
 
 export function composeRef<T = any>(
-  refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>,
+  refs: Array<React.MutableRefObject<T> | React.LegacyRef<T> | undefined | null>
 ): React.RefCallback<T> {
   return (v) => {
     refs.forEach((ref) => {

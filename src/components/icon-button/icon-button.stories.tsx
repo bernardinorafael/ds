@@ -34,8 +34,18 @@ export const Intents: Story = {
         <div key={intent} className="flex items-center gap-3">
           <span className="text-word-secondary w-20 text-sm">{intent}</span>
           <div className="flex items-center gap-1.5">
-            <IconButton icon="trash-outline" aria-label="Delete" intent={intent} size="sm" />
-            <IconButton icon="trash-outline" aria-label="Delete" intent={intent} size="md" />
+            <IconButton
+              icon="trash-outline"
+              aria-label="Delete"
+              intent={intent}
+              size="sm"
+            />
+            <IconButton
+              icon="trash-outline"
+              aria-label="Delete"
+              intent={intent}
+              size="md"
+            />
           </div>
           <div className="flex items-center gap-1.5">
             <IconButton

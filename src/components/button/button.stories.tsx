@@ -119,7 +119,11 @@ export const WithIcons: Story = {
             <Button intent={intent} rightIcon="arrow-right-outline">
               Next
             </Button>
-            <Button intent={intent} leftIcon="arrow-left-outline" rightIcon="arrow-right-outline">
+            <Button
+              intent={intent}
+              leftIcon="arrow-left-outline"
+              rightIcon="arrow-right-outline"
+            >
               Navigate
             </Button>
           </div>

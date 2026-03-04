@@ -1,11 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-
-import {
-  DatePicker,
-  DateRangePicker,
-  Group,
-  Label,
-} from "react-aria-components"
+import { DatePicker, DateRangePicker, Group, Label } from "react-aria-components"
 
 import { IconSprite } from "@/components/icon"
 import { Segment } from "@/components/segment"
@@ -30,9 +24,7 @@ type Story = StoryObj<typeof meta>
 export const SingleDate: Story = {
   render: () => (
     <DatePicker>
-      <Label className="mb-2 block text-sm font-book text-gray-1100">
-        Date
-      </Label>
+      <Label className="font-book text-gray-1100 mb-2 block text-sm">Date</Label>
       <Group>
         <Segment />
       </Group>
@@ -43,9 +35,7 @@ export const SingleDate: Story = {
 export const Invalid: Story = {
   render: () => (
     <DatePicker isInvalid>
-      <Label className="mb-2 block text-sm font-book text-gray-1100">
-        Invalid date
-      </Label>
+      <Label className="font-book text-gray-1100 mb-2 block text-sm">Invalid date</Label>
       <Group>
         <Segment isInvalid />
       </Group>
@@ -56,9 +46,7 @@ export const Invalid: Story = {
 export const RangeSegments: Story = {
   render: () => (
     <DateRangePicker>
-      <Label className="mb-2 block text-sm font-book text-gray-1100">
-        Date range
-      </Label>
+      <Label className="font-book text-gray-1100 mb-2 block text-sm">Date range</Label>
       <Group className="flex items-center gap-2">
         <Segment slot="start" />
         <span className="text-gray-700">&rarr;</span>

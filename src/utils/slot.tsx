@@ -25,7 +25,7 @@ const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
           ? React.cloneElement(
               slottable.props.child,
               undefined,
-              slottable.props.children(slottable.props.child.props.children),
+              slottable.props.children(slottable.props.child.props.children)
             )
           : null}
       </SlotClone>
@@ -80,7 +80,7 @@ const Slottable = ({ child, children }: SlottableProps) => {
 type AnyProps = Record<string, any>
 
 function isSlottable(
-  child: React.ReactNode,
+  child: React.ReactNode
 ): child is React.ReactElement<SlottableProps> {
   return React.isValidElement(child) && child.type === Slottable
 }

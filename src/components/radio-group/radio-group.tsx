@@ -187,7 +187,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
                         "ease-[cubic-bezier(.4,.36,0,1)]",
                         "data-[state=checked]:scale-100",
                         "before:absolute before:rounded-full before:bg-white",
-                        indicatorInsetMap[size ?? "sm"],
+                        indicatorInsetMap[size ?? "sm"]
                       )}
                     />
                   </RadixRadioGroup.Indicator>

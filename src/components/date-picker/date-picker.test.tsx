@@ -95,7 +95,10 @@ describe("DatePicker", () => {
   it("should render with minValue and maxValue", () => {
     const now = today(getLocalTimeZone())
     renderPicker(
-      <DatePicker minValue={now.subtract({ days: 30 })} maxValue={now.add({ days: 30 })} />
+      <DatePicker
+        minValue={now.subtract({ days: 30 })}
+        maxValue={now.add({ days: 30 })}
+      />
     )
     expect(screen.getByRole("group")).toBeInTheDocument()
   })

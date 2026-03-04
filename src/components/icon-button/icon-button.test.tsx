@@ -36,7 +36,9 @@ describe("IconButton", () => {
   })
 
   it("should apply custom className", () => {
-    setup(<IconButton icon="trash-outline" aria-label="Delete" className="custom-class" />)
+    setup(
+      <IconButton icon="trash-outline" aria-label="Delete" className="custom-class" />
+    )
     expect(screen.getByRole("button")).toHaveClass("custom-class")
   })
 
@@ -54,7 +56,9 @@ describe("IconButton", () => {
 
   it("should not call onClick when disabled", async () => {
     const onClick = vi.fn()
-    setup(<IconButton icon="trash-outline" aria-label="Delete" disabled onClick={onClick} />)
+    setup(
+      <IconButton icon="trash-outline" aria-label="Delete" disabled onClick={onClick} />
+    )
     await user.click(screen.getByRole("button"))
     expect(onClick).not.toHaveBeenCalled()
   })

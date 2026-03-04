@@ -86,7 +86,9 @@ describe("Tabs", () => {
 
   it("should merge custom className on root", () => {
     renderTabs({ className: "custom-root" })
-    expect(screen.getByRole("tablist").closest("[class*='custom-root']")).toBeInTheDocument()
+    expect(
+      screen.getByRole("tablist").closest("[class*='custom-root']")
+    ).toBeInTheDocument()
   })
 
   it("should disable a trigger when disabled prop is set", () => {

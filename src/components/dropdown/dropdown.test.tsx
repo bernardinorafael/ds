@@ -130,6 +130,8 @@ describe("Dropdown", () => {
         </Dropdown.Content>
       </Dropdown>
     )
-    expect(screen.getByRole("menuitem", { name: "Delete" })).toHaveClass("text-destructive")
+    expect(screen.getByRole("menuitem", { name: "Delete" })).toHaveClass(
+      "text-destructive"
+    )
   })
 })

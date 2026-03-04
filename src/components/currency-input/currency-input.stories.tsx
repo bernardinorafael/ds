@@ -2,11 +2,10 @@ import { useState } from "react"
 
 import type { Meta, StoryObj } from "@storybook/react-vite"
 
+import { CurrencyInput } from "@/components/currency-input"
 import { Field } from "@/components/field"
 import { IconSprite } from "@/components/icon"
 import { Provider } from "@/components/provider"
-
-import { CurrencyInput } from "@/components/currency-input"
 
 const meta = {
   title: "CurrencyInput",
@@ -68,12 +67,7 @@ function CurrencyInputWithValue({
   const [value, setValue] = useState(initialValue)
 
   return (
-    <CurrencyInput
-      currency={currency}
-      value={value}
-      onChange={setValue}
-      {...props}
-    />
+    <CurrencyInput currency={currency} value={value} onChange={setValue} {...props} />
   )
 }
 

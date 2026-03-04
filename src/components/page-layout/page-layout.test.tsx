@@ -80,8 +80,8 @@ describe("PageLayout", () => {
   it("should render body with data-page-layout-body attribute", () => {
     const { container } = render(<PageLayout>Content</PageLayout>)
     expect(container.querySelector("[data-page-layout-body]")).toBeInTheDocument()
-    expect(container.querySelector("[data-page-layout-body]")).toHaveTextContent("Content")
+    expect(container.querySelector("[data-page-layout-body]")).toHaveTextContent(
+      "Content"
+    )
   })
-
-
 })

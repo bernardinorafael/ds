@@ -1096,7 +1096,7 @@ describe("RowLink", () => {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable.Body>
-      </DataTable>,
+      </DataTable>
     )
 
     const link = screen.getByRole("link", { name: "Alice" })
@@ -1121,7 +1121,7 @@ describe("RowLink", () => {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable.Body>
-      </DataTable>,
+      </DataTable>
     )
 
     expect(ref.current).toBeInstanceOf(HTMLAnchorElement)
@@ -1142,7 +1142,7 @@ describe("RowLink", () => {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable.Body>
-      </DataTable>,
+      </DataTable>
     )
 
     expect(screen.getByRole("link")).toHaveClass("custom")
@@ -1163,7 +1163,7 @@ describe("RowLink", () => {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable.Body>
-      </DataTable>,
+      </DataTable>
     )
 
     const link = screen.getByRole("link", { name: "Alice" })
@@ -1190,7 +1190,7 @@ describe("RowLink", () => {
             </DataTable.Cell>
           </DataTable.Row>
         </DataTable.Body>
-      </DataTable>,
+      </DataTable>
     )
 
     const link = screen.getByRole("link")

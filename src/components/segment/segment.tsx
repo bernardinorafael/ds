@@ -25,7 +25,7 @@ function DateFormatHint({
     <div
       className={cn(
         "absolute top-[34px] left-0 isolate z-30",
-        "flex gap-1 rounded-sm bg-[#2A2A2A] px-1.5 py-1 text-sm font-book",
+        "font-book flex gap-1 rounded-sm bg-[#2A2A2A] px-1.5 py-1 text-sm",
         "shadow-[0px_0px_1px_0px_rgba(255,255,255,0.72),0px_0px_0px_1px_rgba(0,0,0,0.24)_inset,0px_16px_36px_-6px_rgba(0,0,0,0.36),0px_6px_16px_-2px_rgba(0,0,0,0.20)]",
         "transition-opacity",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0"
@@ -69,7 +69,8 @@ const segmentClassName = (segment: { type: string; isPlaceholder: boolean }) =>
     "data-[type=month]:w-5 data-[type=month]:place-content-center",
     "data-[type=day]:w-5 data-[type=day]:place-content-center",
     "data-[type=year]:w-10 data-[type=year]:place-content-center",
-    segment.isPlaceholder && "tracking-tight text-gray-900 group-focus-within:text-gray-1200"
+    segment.isPlaceholder &&
+      "tracking-tight text-gray-900 group-focus-within:text-gray-1200"
   )
 
 export const Segment = React.forwardRef<HTMLDivElement, SegmentProps>(

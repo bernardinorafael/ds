@@ -61,7 +61,7 @@ describe("RadioGroup", () => {
   it("should call onValueChange when selection changes", async () => {
     const onValueChange = vi.fn()
     render(
-      <RadioGroup options={OPTIONS} onValueChange={onValueChange} aria-label="Choices" />,
+      <RadioGroup options={OPTIONS} onValueChange={onValueChange} aria-label="Choices" />
     )
     await user.click(screen.getByRole("radio", { name: "Option B" }))
     expect(onValueChange).toHaveBeenCalledWith("b")
@@ -74,7 +74,7 @@ describe("RadioGroup", () => {
         value="a"
         onValueChange={() => {}}
         aria-label="Choices"
-      />,
+      />
     )
     expect(screen.getByRole("radio", { name: "Option A" })).toBeChecked()
 
@@ -84,7 +84,7 @@ describe("RadioGroup", () => {
         value="c"
         onValueChange={() => {}}
         aria-label="Choices"
-      />,
+      />
     )
     expect(screen.getByRole("radio", { name: "Option C" })).toBeChecked()
   })
@@ -151,16 +151,19 @@ describe("RadioGroup", () => {
       <>
         <span id="label-id">Choices</span>
         <RadioGroup options={OPTIONS} aria-labelledby="label-id" />
-      </>,
+      </>
     )
     expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-labelledby", "label-id")
   })
 
   it("should support aria-describedby", () => {
     render(
-      <RadioGroup options={OPTIONS} aria-describedby="help-text" aria-label="Choices" />,
+      <RadioGroup options={OPTIONS} aria-describedby="help-text" aria-label="Choices" />
     )
-    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-describedby", "help-text")
+    expect(screen.getByRole("radiogroup")).toHaveAttribute(
+      "aria-describedby",
+      "help-text"
+    )
   })
 
   it("should navigate with keyboard", async () => {
@@ -183,11 +186,11 @@ describe("RadioGroup", () => {
     render(
       <TooltipProvider>
         <RadioGroup options={options} aria-label="Choices" />
-      </TooltipProvider>,
+      </TooltipProvider>
     )
     await user.hover(screen.getByText("Option A"))
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "This option is unavailable",
+      "This option is unavailable"
     )
   })
 })

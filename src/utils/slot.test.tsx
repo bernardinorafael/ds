@@ -10,7 +10,7 @@ describe("Slot", () => {
     render(
       <Slot data-testid="slot" className="from-slot">
         <button className="from-child">Click</button>
-      </Slot>,
+      </Slot>
     )
 
     const button = screen.getByTestId("slot")
@@ -26,7 +26,7 @@ describe("Slot", () => {
     render(
       <Slot ref={ref}>
         <button>Click</button>
-      </Slot>,
+      </Slot>
     )
 
     expect(ref.current).toBeInstanceOf(HTMLButtonElement)
@@ -40,7 +40,7 @@ describe("Slot", () => {
     render(
       <Slot onClick={slotClick}>
         <button onClick={childClick}>Click</button>
-      </Slot>,
+      </Slot>
     )
 
     await user.click(screen.getByRole("button"))
