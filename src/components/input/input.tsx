@@ -167,6 +167,7 @@ export type InputProps = Pick<
   | "max"
   | "readOnly"
   | "maxLength"
+  | "inputMode"
   | "className"
 > & {
   /** Input type @default "text" */
@@ -217,10 +218,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {prefix && (
           <span
             className={cn(
-              "flex items-center whitespace-nowrap select-none",
+              "flex aspect-square items-center justify-center text-sm whitespace-nowrap select-none",
               "rounded-l-[inherit] border-r border-(--input-border-color)",
-              "text-word-secondary/70 bg-surface-100/80 px-2",
-              size === "sm" ? "text-sm" : "text-base"
+              "text-word-secondary/70 bg-surface-100/80 px-2"
             )}
           >
             {prefix}
@@ -241,10 +241,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {suffix && (
           <span
             className={cn(
-              "flex items-center whitespace-nowrap select-none",
+              "flex items-center justify-center text-sm whitespace-nowrap select-none",
               "rounded-r-[inherit] border-l border-(--input-border-color)",
-              "text-word-secondary/70 bg-surface-100/80 px-2",
-              size === "sm" ? "text-sm" : "text-base"
+              "text-word-secondary/70 bg-surface-100/80 aspect-square px-2"
             )}
           >
             {suffix}

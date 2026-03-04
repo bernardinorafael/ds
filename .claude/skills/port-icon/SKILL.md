@@ -27,7 +27,6 @@ Read both files before making any changes.
 **Stroke icon** (`<name>-outline`) — paths rely on `stroke="currentColor" fill="none"` inherited from the SVG root:
 
 - Do NOT add `fill` or `stroke` attributes to path elements
-- Most Lucide icons are stroke-based
 - Name: always suffix with `-outline` (e.g. `arrow-right-outline`, `check-circle-outline`)
 
 **Fill icon** (`<name>-fill`) — uses solid filled areas (often with `fillRule="evenodd"` cutouts):
@@ -47,11 +46,11 @@ Read both files before making any changes.
 
 Each icon requires **two** sizes, with an optional third:
 
-| Key  | viewBox      | Required |
-| ---- | ------------ | -------- |
-| `sm` | `0 0 16 16`  | yes      |
-| `md` | `0 0 20 20`  | yes      |
-| `lg` | `0 0 24 24`  | optional |
+| Key  | viewBox     | Required |
+| ---- | ----------- | -------- |
+| `sm` | `0 0 16 16` | yes      |
+| `md` | `0 0 20 20` | yes      |
+| `lg` | `0 0 24 24` | optional |
 
 Use the scaling script to transform path data — never scale manually or via CSS/SVG `transform: scale()`.
 

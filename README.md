@@ -6,7 +6,6 @@
 | Styling         | Tailwind CSS v4 + CVA + tailwind-merge  |
 | Primitives      | Radix UI (Dialog, Checkbox, Tooltip)    |
 | Animations      | Motion (Framer Motion) + CSS @keyframes |
-| Icons           | Lucide React                            |
 | Documentation   | Storybook 10 (autodocs + a11y addon)    |
 | Testing         | Vitest 4 + Testing Library + Playwright |
 | Build           | Vite 8                                  |
