@@ -463,6 +463,20 @@ function DataGridInner<TData>(
             ]
           )}
         >
+          {/* Top corner masks – paint section bg over cells that overflow the body bg's top rounded corners */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute right-0 left-0 z-1"
+            style={{
+              top: "var(--data-table-head-height)",
+              height: "var(--data-table-body-rounded)",
+              background: [
+                "radial-gradient(circle at 100% 100%, transparent calc(var(--data-table-body-rounded) - 0.5px), var(--data-table-bg) var(--data-table-body-rounded)) left top / var(--data-table-body-rounded) var(--data-table-body-rounded) no-repeat",
+                "radial-gradient(circle at 0% 100%, transparent calc(var(--data-table-body-rounded) - 0.5px), var(--data-table-bg) var(--data-table-body-rounded)) right top / var(--data-table-body-rounded) var(--data-table-body-rounded) no-repeat",
+              ].join(", "),
+            }}
+          />
+
           {/* Body background */}
           <div
             className={cn(
@@ -473,7 +487,7 @@ function DataGridInner<TData>(
             {/* Clip overflow + shadow */}
             <div
               className={cn(
-                "overflow-hidden",
+                "overflow-hidden rounded-(--data-table-body-rounded)",
                 "after:pointer-events-none after:absolute after:inset-0 after:z-2",
                 "after:top-(--data-table-head-height)",
                 "after:rounded-(--data-table-body-rounded) after:shadow-xs"
@@ -577,12 +591,12 @@ function DataGridInner<TData>(
                                 ...(isLastLeftPinned && {
                                   boxShadow:
                                     "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
-                                  clipPath: "inset(0 -20px 0 0)",
+                                  clipPath: "inset(-1px -20px -1px 0)",
                                 }),
                                 ...(isFirstRightPinned && {
                                   boxShadow:
                                     "-4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-right, 0))",
-                                  clipPath: "inset(0 0 0 -20px)",
+                                  clipPath: "inset(-1px 0 -1px -20px)",
                                 }),
                               }}
                             >
@@ -736,7 +750,7 @@ function DataGridInner<TData>(
                                       ...(cellIsLastLeft && {
                                         boxShadow:
                                           "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
-                                        clipPath: "inset(0 -20px 0 0)",
+                                        clipPath: "inset(-1px -20px -1px 0)",
                                       }),
                                     }}
                                     className={cellVariants({
@@ -765,12 +779,12 @@ function DataGridInner<TData>(
                                     ...(cellIsLastLeft && {
                                       boxShadow:
                                         "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
-                                      clipPath: "inset(0 -20px 0 0)",
+                                      clipPath: "inset(-1px -20px -1px 0)",
                                     }),
                                     ...(cellIsFirstRight && {
                                       boxShadow:
                                         "-4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-right, 0))",
-                                      clipPath: "inset(0 0 0 -20px)",
+                                      clipPath: "inset(-1px 0 -1px -20px)",
                                     }),
                                   }}
                                   className={cn(
