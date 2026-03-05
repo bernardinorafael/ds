@@ -1,12 +1,12 @@
 import { cn } from "@/utils/cn"
 
-export type DataTableToolbarProps = {
+export type DataGridToolbarProps = {
   /**
    * Action button slot (right-aligned on desktop, top-right on mobile)
    */
   action?: React.ReactNode
   /**
-   * The DataTable to render below the toolbar
+   * The DataGrid to render below the toolbar
    */
   children: React.ReactNode
   /**
@@ -27,7 +27,7 @@ export type DataTableToolbarProps = {
   className?: string
 }
 
-export function DataTableToolbar(props: DataTableToolbarProps) {
+export function DataGridToolbar(props: DataGridToolbarProps) {
   const hasControls = props.search || props.sort || props.filter
 
   return (

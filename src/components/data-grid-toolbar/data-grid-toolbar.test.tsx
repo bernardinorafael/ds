@@ -1,85 +1,85 @@
 import { render, screen } from "@testing-library/react"
 
-import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataGridToolbar } from "@/components/data-grid-toolbar"
 
-describe("DataTableToolbar", () => {
+describe("DataGridToolbar", () => {
   it("should render children", () => {
     render(
-      <DataTableToolbar>
+      <DataGridToolbar>
         <table data-testid="table" />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByTestId("table")).toBeInTheDocument()
   })
 
   it("should render search slot", () => {
     render(
-      <DataTableToolbar search={<input placeholder="Search" />}>
+      <DataGridToolbar search={<input placeholder="Search" />}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByPlaceholderText("Search")).toBeInTheDocument()
   })
 
   it("should render filter slot", () => {
     render(
-      <DataTableToolbar filter={<div data-testid="filter">Filter</div>}>
+      <DataGridToolbar filter={<div data-testid="filter">Filter</div>}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByTestId("filter")).toBeInTheDocument()
   })
 
   it("should render sort slot", () => {
     render(
-      <DataTableToolbar sort={<div data-testid="sort">Sort</div>}>
+      <DataGridToolbar sort={<div data-testid="sort">Sort</div>}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByTestId("sort")).toBeInTheDocument()
   })
 
   it("should render action slot", () => {
     render(
-      <DataTableToolbar action={<button>Add</button>}>
+      <DataGridToolbar action={<button>Add</button>}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument()
   })
 
   it("should hide toolbar header when no slots are provided", () => {
     render(
-      <DataTableToolbar>
+      <DataGridToolbar>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.queryByRole("banner")).not.toBeInTheDocument()
   })
 
   it("should show toolbar header when any control slot is provided", () => {
     render(
-      <DataTableToolbar filter={<div>Filter</div>}>
+      <DataGridToolbar filter={<div>Filter</div>}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByRole("banner")).toBeInTheDocument()
   })
 
   it("should show toolbar header when only action is provided", () => {
     render(
-      <DataTableToolbar action={<button>Add</button>}>
+      <DataGridToolbar action={<button>Add</button>}>
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(screen.getByRole("banner")).toBeInTheDocument()
   })
 
   it("should merge custom className", () => {
     const { container } = render(
-      <DataTableToolbar className="max-w-lg">
+      <DataGridToolbar className="max-w-lg">
         <table />
-      </DataTableToolbar>
+      </DataGridToolbar>
     )
     expect(container.firstChild).toHaveClass("max-w-lg")
   })

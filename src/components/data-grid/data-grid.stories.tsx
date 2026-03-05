@@ -12,7 +12,7 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@/components/data-grid"
-import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataGridToolbar } from "@/components/data-grid-toolbar"
 import { Dropdown } from "@/components/dropdown"
 import { IconButton } from "@/components/icon-button"
 import { Input } from "@/components/input"
@@ -557,7 +557,7 @@ export const WithColumnPinning: Story = {
 
     return (
       <div className="mx-auto w-full max-w-7xl">
-        <DataTableToolbar
+        <DataGridToolbar
           search={<Input type="search" placeholder="Search users" />}
           filter={
             <Select aria-label="Role filter" items={ROLE_OPTIONS} placeholder="Role" />
@@ -613,7 +613,7 @@ export const WithColumnPinning: Story = {
             onColumnPinningChange={setColumnPinning}
             getRowId={(row) => row.id}
           />
-        </DataTableToolbar>
+        </DataGridToolbar>
       </div>
     )
   },
@@ -982,7 +982,7 @@ export const KitchenSink: Story = {
 
     return (
       <div className="mx-auto w-full max-w-7xl">
-        <DataTableToolbar
+        <DataGridToolbar
           search={<Input type="search" placeholder="Search users" />}
           filter={
             <div className="flex items-center gap-2">
@@ -1040,7 +1040,7 @@ export const KitchenSink: Story = {
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
           />
-        </DataTableToolbar>
+        </DataGridToolbar>
       </div>
     )
   },

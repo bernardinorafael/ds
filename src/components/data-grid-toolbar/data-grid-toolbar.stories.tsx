@@ -3,14 +3,14 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Badge } from "@/components/badge"
 import { Button } from "@/components/button"
 import { createColumnHelper, DataGrid } from "@/components/data-grid"
-import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataGridToolbar } from "@/components/data-grid-toolbar"
 import { Input } from "@/components/input"
 import { Provider } from "@/components/provider"
 import { Select } from "@/components/select"
 
 const meta = {
-  title: "DataTableToolbar",
-  component: DataTableToolbar,
+  title: "DataGridToolbar",
+  component: DataGridToolbar,
   tags: ["autodocs"],
   decorators: [
     (Story) => (
@@ -21,7 +21,7 @@ const meta = {
       </Provider>
     ),
   ],
-} satisfies Meta<typeof DataTableToolbar>
+} satisfies Meta<typeof DataGridToolbar>
 
 export default meta
 
@@ -133,14 +133,14 @@ export const SearchOnly: Story = {
     children: null,
   },
   render: () => (
-    <DataTableToolbar search={<Input type="search" placeholder="Search users" />}>
+    <DataGridToolbar search={<Input type="search" placeholder="Search users" />}>
       <DataGrid
         columns={columns}
         data={USERS}
         getRowId={(row) => row.id}
         aria-label="Users"
       />
-    </DataTableToolbar>
+    </DataGridToolbar>
   ),
 }
 
@@ -149,7 +149,7 @@ export const AllSlots: Story = {
     children: null,
   },
   render: () => (
-    <DataTableToolbar
+    <DataGridToolbar
       search={<Input type="search" placeholder="Search users" />}
       filter={<Select aria-label="Role filter" items={ROLE_OPTIONS} placeholder="Role" />}
       sort={<Select aria-label="Sort by" items={SORT_OPTIONS} placeholder="Sort" />}
@@ -161,6 +161,6 @@ export const AllSlots: Story = {
         getRowId={(row) => row.id}
         aria-label="Users"
       />
-    </DataTableToolbar>
+    </DataGridToolbar>
   ),
 }
