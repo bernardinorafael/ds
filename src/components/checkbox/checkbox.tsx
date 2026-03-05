@@ -5,7 +5,6 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { motion } from "motion/react"
 
 import { useFieldControl } from "@/components/field"
-import { Icon } from "@/components/icon"
 import { cn } from "@/utils/cn"
 
 const checkboxVariants = cva(
@@ -166,7 +165,19 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
                 />
               </svg>
             ) : (
-              <Icon name="check-outline" size={size === "lg" ? "md" : "sm"} />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={
+                  size === "lg" ? "size-4" : size === "md" ? "size-3.5" : "size-3"
+                }
+              >
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
             )}
           </motion.span>
         </RadixCheckbox.Indicator>

@@ -72,7 +72,7 @@ const rootVariants = cva(
   {
     variants: {
       spacing: {
-        compact: "[--data-table-cell-px:1rem] [--data-table-cell-py:0.75rem]",
+        compact: "[--data-table-cell-px:1rem] [--data-table-cell-py:0.625rem]",
         cozy: "[--data-table-cell-px:1rem] [--data-table-cell-py:1rem]",
       },
     },

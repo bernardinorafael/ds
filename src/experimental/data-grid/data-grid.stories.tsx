@@ -704,27 +704,53 @@ export const WithColumnVisibility: Story = {
 const kitchenSinkColumns = [
   columnHelper.accessor("name", {
     header: "Name",
-    meta: { width: "30%" },
+    size: 180,
     cell: (info) => (
       <span className="text-word-primary font-medium">{info.getValue()}</span>
     ),
   }),
   columnHelper.accessor("email", {
     header: "Email",
+    size: 220,
     cell: (info) => <span className="text-word-secondary">{info.getValue()}</span>,
   }),
   columnHelper.accessor("role", {
     header: "Role",
-    meta: { width: "6rem" },
+    size: 120,
     enableSorting: false,
   }),
   columnHelper.accessor("status", {
     header: "Status",
-    meta: { width: "6rem" },
+    size: 120,
     enableSorting: false,
     cell: (info) => (
       <Badge intent={statusIntent[info.getValue()]}>{info.getValue()}</Badge>
     ),
+  }),
+  columnHelper.accessor("department", {
+    header: "Department",
+    size: 160,
+    enableSorting: false,
+  }),
+  columnHelper.accessor("location", {
+    header: "Location",
+    size: 180,
+    enableSorting: false,
+  }),
+  columnHelper.accessor("joinDate", {
+    header: "Joined",
+    size: 120,
+    enableSorting: false,
+  }),
+  columnHelper.accessor("lastActive", {
+    header: "Last active",
+    size: 150,
+    enableSorting: false,
+  }),
+  columnHelper.accessor("projects", {
+    header: "Projects",
+    size: 100,
+    enableSorting: false,
   }),
   columnHelper.display({
     id: "actions",
@@ -743,6 +769,24 @@ const kitchenSinkColumns = [
     ),
   }),
 ]
+
+const KITCHEN_SINK_TOGGLEABLE = [
+  { id: "email", label: "Email" },
+  { id: "role", label: "Role" },
+  { id: "status", label: "Status" },
+  { id: "department", label: "Department" },
+  { id: "location", label: "Location" },
+  { id: "joinDate", label: "Joined" },
+  { id: "lastActive", label: "Last active" },
+  { id: "projects", label: "Projects" },
+] as const
+
+const KITCHEN_SINK_PINNABLE = [
+  { id: "name", label: "Name" },
+  { id: "email", label: "Email" },
+  { id: "role", label: "Role" },
+  { id: "status", label: "Status" },
+] as const
 
 const ROLE_OPTIONS = [
   { label: "All roles", value: "all" },
@@ -763,6 +807,28 @@ export const KitchenSink: Story = {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(5)
     const [sorting, setSorting] = useState<SortingState>([])
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+      left: ["name"],
+      right: [],
+    })
+
+    const togglePin = (columnId: string, side: "left" | "right") => {
+      setColumnPinning((prev) => {
+        const isAlreadyPinned = prev[side]?.includes(columnId)
+        if (isAlreadyPinned) {
+          return {
+            ...prev,
+            [side]: (prev[side] ?? []).filter((id) => id !== columnId),
+          }
+        }
+        const otherSide = side === "left" ? "right" : "left"
+        return {
+          [otherSide]: (prev[otherSide] ?? []).filter((id) => id !== columnId),
+          [side]: [...(prev[side] ?? []), columnId],
+        }
+      })
+    }
 
     const sorted = [...USERS].sort((a, b) => {
       if (sorting.length === 0) return 0
@@ -794,9 +860,61 @@ export const KitchenSink: Story = {
             />
           }
           action={
-            <Button leftIcon="plus-outline" intent="primary">
-              Add user
-            </Button>
+            <div className="flex items-center gap-2">
+              <Dropdown>
+                <Dropdown.Trigger asChild>
+                  <Button intent="secondary" leftIcon="settings-outline">
+                    Columns
+                  </Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content align="end">
+                  {KITCHEN_SINK_TOGGLEABLE.map((col) => (
+                    <Dropdown.CheckboxItem
+                      key={col.id}
+                      checked={columnVisibility[col.id] !== false}
+                      onCheckedChange={(checked) =>
+                        setColumnVisibility((prev) => ({ ...prev, [col.id]: !!checked }))
+                      }
+                    >
+                      {col.label}
+                    </Dropdown.CheckboxItem>
+                  ))}
+                </Dropdown.Content>
+              </Dropdown>
+              <Dropdown>
+                <Dropdown.Trigger asChild>
+                  <Button intent="secondary" leftIcon="pin-outline">
+                    Pin
+                  </Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content align="end">
+                  <Dropdown.Label>Pin left</Dropdown.Label>
+                  {KITCHEN_SINK_PINNABLE.map((col) => (
+                    <Dropdown.CheckboxItem
+                      key={`left-${col.id}`}
+                      checked={columnPinning.left?.includes(col.id)}
+                      onCheckedChange={() => togglePin(col.id, "left")}
+                    >
+                      {col.label}
+                    </Dropdown.CheckboxItem>
+                  ))}
+                  <Dropdown.Separator />
+                  <Dropdown.Label>Pin right</Dropdown.Label>
+                  {KITCHEN_SINK_PINNABLE.map((col) => (
+                    <Dropdown.CheckboxItem
+                      key={`right-${col.id}`}
+                      checked={columnPinning.right?.includes(col.id)}
+                      onCheckedChange={() => togglePin(col.id, "right")}
+                    >
+                      {col.label}
+                    </Dropdown.CheckboxItem>
+                  ))}
+                </Dropdown.Content>
+              </Dropdown>
+              <Button leftIcon="plus-outline" intent="primary">
+                Add user
+              </Button>
+            </div>
           }
         >
           <DataGrid
@@ -823,6 +941,10 @@ export const KitchenSink: Story = {
             renderRowDetail={(row) => <UserDetail user={row.original} />}
             getRowHref={(row) => `#/users/${row.original.id}`}
             getRowId={(row) => row.id}
+            columnVisibility={columnVisibility}
+            onColumnVisibilityChange={setColumnVisibility}
+            columnPinning={columnPinning}
+            onColumnPinningChange={setColumnPinning}
           />
         </DataTableToolbar>
       </div>
