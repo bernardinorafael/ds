@@ -62,7 +62,11 @@ function isBreadcrumbChild(child: React.ReactNode): child is BreadcrumbChild {
 
 const BreadcrumbSeparator = ({ className, children }: BreadcrumbSeparatorProps) => (
   <li role="presentation" aria-hidden="true" className={cn("text-gray-500", className)}>
-    {children ?? <Icon name="chevron-right-outline" size="sm" />}
+    {children ?? (
+      <span className="text-word-tertiary">
+        <Icon name="chevron-right-outline" size="sm" />
+      </span>
+    )}
   </li>
 )
 
@@ -78,7 +82,7 @@ const BreadcrumbRoot = React.forwardRef<HTMLElement, BreadcrumbRootProps>(
       <nav ref={forwardedRef} aria-label="breadcrumb" {...props}>
         <ol
           className={cn(
-            "text-word-secondary flex flex-wrap items-center gap-1.5 text-sm font-medium",
+            "text-primary flex flex-wrap items-center gap-1 text-sm font-medium",
             className
           )}
         >
@@ -127,7 +131,7 @@ const BreadcrumbPage = markAsBreadcrumbChild(
         <span
           ref={forwardedRef}
           aria-current="page"
-          className={cn("text-word-primary", className)}
+          className={cn("text-word-tertiary", className)}
           {...rest}
         />
       </li>

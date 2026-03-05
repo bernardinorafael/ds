@@ -17,7 +17,7 @@ const chipVariants = cva(
 
     // visual
     "rounded-sm",
-    "font-normal",
+    "font-book",
     "text-sm",
     "select-none",
     "cursor-pointer",
