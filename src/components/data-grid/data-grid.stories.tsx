@@ -918,9 +918,9 @@ export const KitchenSink: Story = {
           }
         >
           <DataGrid
+            enableRowExpansion
             columns={kitchenSinkColumns}
             data={visible}
-            spacing="cozy"
             sorting={sorting}
             onSortingChange={setSorting}
             manualSorting={false}
@@ -937,7 +937,6 @@ export const KitchenSink: Story = {
               setPage(1)
             }}
             limitOptions={[5, 10]}
-            enableRowExpansion
             renderRowDetail={(row) => <UserDetail user={row.original} />}
             getRowHref={(row) => `#/users/${row.original.id}`}
             getRowId={(row) => row.id}

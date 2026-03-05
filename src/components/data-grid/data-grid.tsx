@@ -226,6 +226,7 @@ function getPinnedCellStyle<TData>(
     left: pinned === "left" ? `${column.getStart("left")}px` : undefined,
     right: pinned === "right" ? `${column.getAfter("right")}px` : undefined,
     zIndex: 1,
+    overflow: "hidden",
     transition: "box-shadow 150ms",
   }
 }
