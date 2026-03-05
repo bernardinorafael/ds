@@ -5,19 +5,19 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { Badge } from "@/components/badge"
 import { Button } from "@/components/button"
 import { Checkbox } from "@/components/checkbox"
-import { DataTableToolbar } from "@/components/data-table-toolbar"
-import { Dropdown } from "@/components/dropdown"
-import { IconButton } from "@/components/icon-button"
-import { Input } from "@/components/input"
-import { Provider } from "@/components/provider"
-import { Select } from "@/components/select"
 import {
   createColumnHelper,
   DataGrid,
   type ColumnPinningState,
   type SortingState,
   type VisibilityState,
-} from "@/experimental/data-grid"
+} from "@/components/data-grid"
+import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { Dropdown } from "@/components/dropdown"
+import { IconButton } from "@/components/icon-button"
+import { Input } from "@/components/input"
+import { Provider } from "@/components/provider"
+import { Select } from "@/components/select"
 
 // ---------------------------------------------------------------------------
 // Sample data
@@ -269,7 +269,7 @@ const columnsWithActions = [
 // ---------------------------------------------------------------------------
 
 const meta = {
-  title: "Experimental/DataGrid",
+  title: "DataGrid",
   component: DataGrid,
   tags: ["autodocs"],
   decorators: [

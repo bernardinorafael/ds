@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { Badge } from "@/components/badge"
 import { Button } from "@/components/button"
-import { DataTable } from "@/components/data-table"
+import { createColumnHelper, DataGrid } from "@/components/data-grid"
 import { DataTableToolbar } from "@/components/data-table-toolbar"
 import { Input } from "@/components/input"
 import { Provider } from "@/components/provider"
@@ -31,7 +31,15 @@ type Story = StoryObj<typeof meta>
 // Sample data
 // ---------------------------------------------------------------------------
 
-const USERS = [
+type User = {
+  id: string
+  name: string
+  email: string
+  role: string
+  status: "active" | "inactive" | "pending"
+}
+
+const USERS: User[] = [
   {
     id: "u1",
     name: "Alice Martin",
@@ -75,6 +83,34 @@ const statusIntent = {
   pending: "warning",
 } as const
 
+const columnHelper = createColumnHelper<User>()
+
+const columns = [
+  columnHelper.accessor("name", {
+    header: "Name",
+    enableSorting: false,
+    cell: (info) => (
+      <div className="flex flex-col gap-0.5">
+        <span className="text-word-primary font-medium">{info.getValue()}</span>
+        <span className="text-word-secondary text-sm">{info.row.original.email}</span>
+      </div>
+    ),
+  }),
+  columnHelper.accessor("role", {
+    header: "Role",
+    enableSorting: false,
+    meta: { width: "6rem" },
+  }),
+  columnHelper.accessor("status", {
+    header: "Status",
+    enableSorting: false,
+    meta: { width: "6rem" },
+    cell: (info) => (
+      <Badge intent={statusIntent[info.getValue()]}>{info.getValue()}</Badge>
+    ),
+  }),
+]
+
 const ROLE_OPTIONS = [
   { label: "All roles", value: "all" },
   { label: "Admin", value: "admin" },
@@ -88,36 +124,6 @@ const SORT_OPTIONS = [
   { label: "Status", value: "status" },
 ]
 
-function UsersTable() {
-  return (
-    <DataTable>
-      <DataTable.Head>
-        <DataTable.Header>Name</DataTable.Header>
-        <DataTable.Header width="6rem">Role</DataTable.Header>
-        <DataTable.Header width="6rem">Status</DataTable.Header>
-      </DataTable.Head>
-      <DataTable.Body>
-        {USERS.map((user) => (
-          <DataTable.Row key={user.id}>
-            <DataTable.Cell>
-              <div className="flex flex-col gap-0.5">
-                <span className="text-word-primary font-medium">{user.name}</span>
-                <span className="text-word-secondary text-sm">{user.email}</span>
-              </div>
-            </DataTable.Cell>
-            <DataTable.Cell>{user.role}</DataTable.Cell>
-            <DataTable.Cell>
-              <Badge intent={statusIntent[user.status as keyof typeof statusIntent]}>
-                {user.status}
-              </Badge>
-            </DataTable.Cell>
-          </DataTable.Row>
-        ))}
-      </DataTable.Body>
-    </DataTable>
-  )
-}
-
 // ---------------------------------------------------------------------------
 // Stories
 // ---------------------------------------------------------------------------
@@ -128,7 +134,12 @@ export const SearchOnly: Story = {
   },
   render: () => (
     <DataTableToolbar search={<Input type="search" placeholder="Search users" />}>
-      <UsersTable />
+      <DataGrid
+        columns={columns}
+        data={USERS}
+        getRowId={(row) => row.id}
+        aria-label="Users"
+      />
     </DataTableToolbar>
   ),
 }
@@ -144,7 +155,12 @@ export const AllSlots: Story = {
       sort={<Select aria-label="Sort by" items={SORT_OPTIONS} placeholder="Sort" />}
       action={<Button intent="primary">Add user</Button>}
     >
-      <UsersTable />
+      <DataGrid
+        columns={columns}
+        data={USERS}
+        getRowId={(row) => row.id}
+        aria-label="Users"
+      />
     </DataTableToolbar>
   ),
 }
