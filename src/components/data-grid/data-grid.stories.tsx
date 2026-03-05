@@ -449,16 +449,16 @@ export const ExpandableRows: Story = {
 }
 
 // ---------------------------------------------------------------------------
-// Row Link
+// Row Click
 // ---------------------------------------------------------------------------
 
-export const WithRowLink: Story = {
+export const WithRowClick: Story = {
   render: () => (
     <div className="mx-auto w-full max-w-7xl">
       <DataGrid
         columns={columnsWithActions}
         data={USERS.slice(0, 5)}
-        getRowHref={(row) => `#/users/${row.original.id}`}
+        onRowClick={(row) => alert(`Clicked: ${row.original.name}`)}
         getRowId={(row) => row.id}
       />
     </div>
@@ -781,13 +781,6 @@ const KITCHEN_SINK_TOGGLEABLE = [
   { id: "projects", label: "Projects" },
 ] as const
 
-const KITCHEN_SINK_PINNABLE = [
-  { id: "name", label: "Name" },
-  { id: "email", label: "Email" },
-  { id: "role", label: "Role" },
-  { id: "status", label: "Status" },
-] as const
-
 const ROLE_OPTIONS = [
   { label: "All roles", value: "all" },
   { label: "Admin", value: "admin" },
@@ -802,34 +795,176 @@ const STATUS_OPTIONS = [
   { label: "Pending", value: "pending" },
 ]
 
+// ---------------------------------------------------------------------------
+// Sub-Rows (tree / hierarchical)
+// ---------------------------------------------------------------------------
+
+type Department = {
+  id: string
+  name: string
+  email: string
+  role: string
+  status: "active" | "inactive" | "pending"
+  children?: Department[]
+}
+
+const DEPARTMENTS: Department[] = [
+  {
+    id: "eng",
+    name: "Engineering",
+    email: "eng@example.com",
+    role: "Team",
+    status: "active",
+    children: [
+      {
+        id: "u1",
+        name: "Alice Martin",
+        email: "alice@example.com",
+        role: "Lead",
+        status: "active",
+        children: [
+          {
+            id: "u4",
+            name: "David Kim",
+            email: "david@example.com",
+            role: "Engineer",
+            status: "active",
+          },
+          {
+            id: "u7",
+            name: "Grace Okafor",
+            email: "grace@example.com",
+            role: "Engineer",
+            status: "active",
+          },
+        ],
+      },
+      {
+        id: "u8",
+        name: "Hiro Tanaka",
+        email: "hiro@example.com",
+        role: "Senior",
+        status: "active",
+      },
+    ],
+  },
+  {
+    id: "mkt",
+    name: "Marketing",
+    email: "mkt@example.com",
+    role: "Team",
+    status: "active",
+    children: [
+      {
+        id: "u2",
+        name: "Bob Chen",
+        email: "bob@example.com",
+        role: "Lead",
+        status: "active",
+      },
+      {
+        id: "u10",
+        name: "Jake Rivera",
+        email: "jake@example.com",
+        role: "Editor",
+        status: "active",
+      },
+      {
+        id: "u5",
+        name: "Eva Torres",
+        email: "eva@example.com",
+        role: "Analyst",
+        status: "pending",
+      },
+      {
+        id: "u9",
+        name: "Irene Costa",
+        email: "irene@example.com",
+        role: "Copywriter",
+        status: "active",
+      },
+      {
+        id: "u12",
+        name: "Liam Park",
+        email: "liam@example.com",
+        role: "Designer",
+        status: "active",
+      },
+    ],
+  },
+  {
+    id: "design",
+    name: "Design",
+    email: "design@example.com",
+    role: "Team",
+    status: "inactive",
+    children: [
+      {
+        id: "u3",
+        name: "Carol White",
+        email: "carol@example.com",
+        role: "Lead",
+        status: "inactive",
+      },
+    ],
+  },
+]
+
+const deptColumnHelper = createColumnHelper<Department>()
+
+const deptColumns = [
+  deptColumnHelper.accessor("name", {
+    header: "Name",
+    enableSorting: false,
+    cell: (info) => (
+      <span className="text-word-primary font-medium">{info.getValue()}</span>
+    ),
+  }),
+  deptColumnHelper.accessor("email", {
+    header: "Email",
+    enableSorting: false,
+    cell: (info) => <span className="text-word-secondary">{info.getValue()}</span>,
+  }),
+  deptColumnHelper.accessor("role", {
+    header: "Role",
+    enableSorting: false,
+    meta: { width: "6rem" },
+  }),
+  deptColumnHelper.accessor("status", {
+    header: "Status",
+    enableSorting: false,
+    meta: { width: "6rem" },
+    cell: (info) => (
+      <Badge intent={statusIntent[info.getValue()]}>{info.getValue()}</Badge>
+    ),
+  }),
+]
+
+export const WithSubRows: Story = {
+  render: () => (
+    <div className="mx-auto w-full max-w-7xl">
+      <DataGrid
+        columns={deptColumns}
+        data={DEPARTMENTS}
+        enableRowExpansion
+        getSubRows={(row) => row.children}
+        getRowId={(row) => row.id}
+        aria-label="Organization tree"
+      />
+    </div>
+  ),
+}
+
+// ---------------------------------------------------------------------------
+// KitchenSink
+// ---------------------------------------------------------------------------
+
 export const KitchenSink: Story = {
   render: function Render() {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(5)
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
-      left: ["name"],
-      right: [],
-    })
-
-    const togglePin = (columnId: string, side: "left" | "right") => {
-      setColumnPinning((prev) => {
-        const isAlreadyPinned = prev[side]?.includes(columnId)
-        if (isAlreadyPinned) {
-          return {
-            ...prev,
-            [side]: (prev[side] ?? []).filter((id) => id !== columnId),
-          }
-        }
-        const otherSide = side === "left" ? "right" : "left"
-        return {
-          [otherSide]: (prev[otherSide] ?? []).filter((id) => id !== columnId),
-          [side]: [...(prev[side] ?? []), columnId],
-        }
-      })
-    }
-
     const sorted = [...USERS].sort((a, b) => {
       if (sorting.length === 0) return 0
       const { id, desc } = sorting[0]
@@ -850,16 +985,6 @@ export const KitchenSink: Story = {
         <DataTableToolbar
           search={<Input type="search" placeholder="Search users" />}
           filter={
-            <Select aria-label="Role filter" items={ROLE_OPTIONS} placeholder="Role" />
-          }
-          sort={
-            <Select
-              aria-label="Status filter"
-              items={STATUS_OPTIONS}
-              placeholder="Status"
-            />
-          }
-          action={
             <div className="flex items-center gap-2">
               <Dropdown>
                 <Dropdown.Trigger asChild>
@@ -881,40 +1006,12 @@ export const KitchenSink: Story = {
                   ))}
                 </Dropdown.Content>
               </Dropdown>
-              <Dropdown>
-                <Dropdown.Trigger asChild>
-                  <Button intent="secondary" leftIcon="pin-outline">
-                    Pin
-                  </Button>
-                </Dropdown.Trigger>
-                <Dropdown.Content align="end">
-                  <Dropdown.Label>Pin left</Dropdown.Label>
-                  {KITCHEN_SINK_PINNABLE.map((col) => (
-                    <Dropdown.CheckboxItem
-                      key={`left-${col.id}`}
-                      checked={columnPinning.left?.includes(col.id)}
-                      onCheckedChange={() => togglePin(col.id, "left")}
-                    >
-                      {col.label}
-                    </Dropdown.CheckboxItem>
-                  ))}
-                  <Dropdown.Separator />
-                  <Dropdown.Label>Pin right</Dropdown.Label>
-                  {KITCHEN_SINK_PINNABLE.map((col) => (
-                    <Dropdown.CheckboxItem
-                      key={`right-${col.id}`}
-                      checked={columnPinning.right?.includes(col.id)}
-                      onCheckedChange={() => togglePin(col.id, "right")}
-                    >
-                      {col.label}
-                    </Dropdown.CheckboxItem>
-                  ))}
-                </Dropdown.Content>
-              </Dropdown>
-              <Button leftIcon="plus-outline" intent="primary">
-                Add user
-              </Button>
             </div>
+          }
+          action={
+            <Button leftIcon="plus-outline" intent="primary">
+              Add user
+            </Button>
           }
         >
           <DataGrid
@@ -938,12 +1035,10 @@ export const KitchenSink: Story = {
             }}
             limitOptions={[5, 10]}
             renderRowDetail={(row) => <UserDetail user={row.original} />}
-            getRowHref={(row) => `#/users/${row.original.id}`}
+            onRowClick={(row) => alert(`Clicked: ${row.original.name}`)}
             getRowId={(row) => row.id}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
-            columnPinning={columnPinning}
-            onColumnPinningChange={setColumnPinning}
           />
         </DataTableToolbar>
       </div>

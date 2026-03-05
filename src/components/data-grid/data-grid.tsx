@@ -66,7 +66,7 @@ const rootVariants = cva(
     // expansion
     "[--data-table-expand-col-w:3rem]",
 
-    // row link
+    // row hover
     "[--data-table-cell-bg-hover:var(--color-gray-100)]",
   ],
   {
@@ -191,16 +191,14 @@ type DataGridProps<TData> = Pick<
     enableRowExpansion?: boolean
     /** Render function for the detail panel content */
     renderRowDetail?: (row: Row<TData>) => React.ReactNode
+    /** Extract sub-rows from a data item for tree/hierarchical display */
+    getSubRows?: (row: TData) => TData[] | undefined
     /** Controlled expanded state */
     expandedRows?: ExpandedState
     /** Called when expansion changes */
     onExpandedChange?: OnChangeFn<ExpandedState>
-    /** Generate an href for each row. Row becomes clickable when this returns a string. */
-    getRowHref?: (row: Row<TData>) => string | undefined
-    /** Additional props for the row link anchor element */
-    getRowLinkProps?: (
-      row: Row<TData>
-    ) => Pick<React.ComponentProps<"a">, "target" | "rel" | "aria-label">
+    /** Called when a row is clicked (ignores clicks on interactive elements) */
+    onRowClick?: (row: Row<TData>) => void
     /** Controlled column visibility state */
     columnVisibility?: VisibilityState
     /** Called when column visibility changes */
@@ -250,10 +248,10 @@ function DataGridInner<TData>(
     limitOptions,
     enableRowExpansion,
     renderRowDetail,
+    getSubRows,
     expandedRows,
     onExpandedChange,
-    getRowHref,
-    getRowLinkProps,
+    onRowClick,
     columnVisibility,
     onColumnVisibilityChange,
     columnPinning: columnPinningProp,
@@ -273,25 +271,29 @@ function DataGridInner<TData>(
         id: "__expand",
         size: 48,
         header: () => <span className="sr-only">Expand</span>,
-        cell: ({ row }) => (
-          <div className="flex items-center justify-center">
-            <span
-              className={cn(
-                "inline-flex transition-transform duration-200",
-                row.getIsExpanded() && "rotate-90"
-              )}
-            >
-              <IconButton
-                size="sm"
-                shape="circle"
-                intent="ghost"
-                icon="chevron-right-outline"
-                aria-label={row.getIsExpanded() ? "Collapse row" : "Expand row"}
-                onClick={() => row.toggleExpanded()}
-              />
-            </span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          if (!row.getCanExpand()) return null
+
+          return (
+            <div className="flex items-center justify-center">
+              <span
+                className={cn(
+                  "inline-flex transition-transform duration-200",
+                  row.getIsExpanded() && "rotate-90"
+                )}
+              >
+                <IconButton
+                  size="sm"
+                  shape="circle"
+                  intent="ghost"
+                  icon="chevron-right-outline"
+                  aria-label={row.getIsExpanded() ? "Collapse row" : "Expand row"}
+                  onClick={() => row.toggleExpanded()}
+                />
+              </span>
+            </div>
+          )
+        },
         meta: {
           flushLeft: true,
           flushRight: true,
@@ -378,12 +380,17 @@ function DataGridInner<TData>(
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getRowId,
+    getSubRows,
     onSortingChange,
     manualSorting: manualSorting ?? true,
     onExpandedChange: handleExpandedChange,
     onColumnVisibilityChange,
     onColumnPinningChange,
-    getRowCanExpand: enableRowExpansion ? () => true : undefined,
+    getRowCanExpand: enableRowExpansion
+      ? getSubRows
+        ? (row) => row.depth === 0 && row.subRows.length > 0
+        : () => true
+      : undefined,
     state: {
       sorting,
       expanded: resolvedExpanded,
@@ -427,12 +434,14 @@ function DataGridInner<TData>(
     }
   }, [pagination, onPageChange])
 
-  const handleRowClick = React.useCallback((e: React.MouseEvent<HTMLTableRowElement>) => {
-    const target = e.target as HTMLElement
-    if (target.closest("a, button, input, select, [role='checkbox']")) return
-    const link = e.currentTarget.querySelector<HTMLAnchorElement>("[data-table-row-link]")
-    link?.click()
-  }, [])
+  const handleRowClickInternal = React.useCallback(
+    (e: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => {
+      const target = e.target as HTMLElement
+      if (target.closest("a, button, input, select, [role='checkbox']")) return
+      onRowClick?.(row)
+    },
+    [onRowClick]
+  )
 
   const handleExpandRowClick = React.useCallback(
     (e: React.MouseEvent<HTMLTableRowElement>, row: Row<TData>) => {
@@ -442,6 +451,97 @@ function DataGridInner<TData>(
     },
     []
   )
+
+  const renderCells = (row: Row<TData>, depth: number, isLastSubRow?: boolean) =>
+    row.getVisibleCells().map((cell) => {
+      const cellPinStyle = getPinnedCellStyle(cell.column)
+      const cellPinned = cell.column.getIsPinned()
+      const cellIsLastLeft = cellPinned === "left" && cell.column.getIsLastColumn("left")
+      const cellIsFirstRight =
+        cellPinned === "right" && cell.column.getIsFirstColumn("right")
+
+      const isExpandColumn = cell.column.id === "__expand"
+
+      if (isExpandColumn) {
+        // Tree connector for sub-rows
+        if (depth > 0) {
+          return (
+            <td
+              key={cell.id}
+              data-table-expand=""
+              style={{ width: "3rem", ...cellPinStyle }}
+              className={cn(
+                "relative bg-clip-padding",
+                "py-(--data-table-cell-py)",
+                "bg-(--data-table-row-bg,var(--data-table-cell-bg))"
+              )}
+            >
+              {/* Curved branch: vertical line from top + curve to right */}
+              <div
+                className="absolute top-0 left-1/2 h-1/2 w-3 border-b border-l border-gray-300"
+                style={{ borderBottomLeftRadius: "0.5rem" }}
+              />
+              {/* Vertical continuation for non-last items */}
+              {!isLastSubRow && (
+                <div className="absolute top-1/2 bottom-0 left-1/2 w-px bg-gray-300" />
+              )}
+            </td>
+          )
+        }
+
+        return (
+          <td
+            key={cell.id}
+            data-table-expand=""
+            style={{
+              width: "3rem",
+              ...cellPinStyle,
+              ...(cellIsLastLeft && {
+                boxShadow: "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
+                clipPath: "inset(-1px -20px -1px 0)",
+              }),
+            }}
+            className={cn(
+              "overflow-hidden bg-clip-padding text-left",
+              "px-(--data-table-cell-px) py-(--data-table-cell-py)",
+              "bg-(--data-table-row-bg,var(--data-table-cell-bg))",
+              "group-data-expanded/table-row:bg-gray-100",
+              "border-border"
+            )}
+          >
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </td>
+        )
+      }
+
+      const meta = cell.column.columnDef.meta
+
+      return (
+        <td
+          key={cell.id}
+          data-table-cell=""
+          style={{
+            ...cellPinStyle,
+            ...(cellIsLastLeft && {
+              boxShadow: "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
+              clipPath: "inset(-1px -20px -1px 0)",
+            }),
+            ...(cellIsFirstRight && {
+              boxShadow: "-4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-right, 0))",
+              clipPath: "inset(-1px 0 -1px -20px)",
+            }),
+          }}
+          className={cn(
+            cellVariants({
+              flushLeft: meta?.flushLeft ?? false,
+              flushRight: meta?.flushRight || meta?.actions || false,
+            })
+          )}
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      )
+    })
 
   return (
     <>
@@ -630,10 +730,9 @@ function DataGridInner<TData>(
                                     )}
                                     <span
                                       className={cn(
-                                        "inline-flex shrink-0 transition-opacity duration-150",
-                                        active
-                                          ? "opacity-100"
-                                          : "opacity-0 group-hover/sort:opacity-100"
+                                        "inline-flex shrink-0 opacity-100 transition-opacity duration-150",
+                                        !active &&
+                                          "opacity-0 group-hover/sort:opacity-100"
                                       )}
                                     >
                                       <AnimatePresence mode="wait" initial={false}>
@@ -649,7 +748,7 @@ function DataGridInner<TData>(
                                             name={
                                               active
                                                 ? SORT_ICON[sortDirection!]
-                                                : "chevron-down-outline"
+                                                : "chevron-up-down-outline"
                                             }
                                             size="sm"
                                             aria-hidden
@@ -688,181 +787,172 @@ function DataGridInner<TData>(
                       "[&>tr:last-child>td:last-child]:rounded-br-(--data-table-body-rounded)"
                     )}
                   >
-                    {table.getRowModel().rows.map((row) => {
-                      const rowHref = getRowHref?.(row)
-                      const hasRowLink = !!rowHref
+                    {table
+                      .getRowModel()
+                      .rows.filter((r) => !getSubRows || r.depth === 0)
+                      .map((row) => {
+                        const isClickable = !!onRowClick
+                        const hasSubRows = !!getSubRows && row.subRows.length > 0
 
-                      const firstDataCellId = row
-                        .getVisibleCells()
-                        .find((c) => c.column.id !== "__expand")?.id
-
-                      return (
-                        <React.Fragment key={row.id}>
-                          <tr
-                            data-expanded={row.getIsExpanded() ? "" : undefined}
-                            aria-expanded={
-                              enableRowExpansion ? row.getIsExpanded() : undefined
-                            }
-                            onClick={
-                              hasRowLink
-                                ? handleRowClick
-                                : enableRowExpansion
-                                  ? (e) => handleExpandRowClick(e, row)
-                                  : undefined
-                            }
-                            className={cn(
-                              "group/table-row text-base",
-                              "[&+&>*]:border-t [[data-table-detail]+&>*]:border-t",
-                              enableRowExpansion &&
-                                !hasRowLink && [
+                        return (
+                          <React.Fragment key={row.id}>
+                            <tr
+                              data-expanded={row.getIsExpanded() ? "" : undefined}
+                              aria-expanded={
+                                enableRowExpansion ? row.getIsExpanded() : undefined
+                              }
+                              onClick={
+                                isClickable
+                                  ? (e) => handleRowClickInternal(e, row)
+                                  : enableRowExpansion
+                                    ? (e) => handleExpandRowClick(e, row)
+                                    : undefined
+                              }
+                              className={cn(
+                                "group/table-row text-base",
+                                "[&+&>*]:border-t [[data-table-detail]+&>*]:border-t",
+                                (isClickable || enableRowExpansion) && [
                                   "cursor-pointer",
                                   "hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
-                                ],
-                              hasRowLink && [
-                                "relative isolate cursor-pointer *:overflow-visible",
-                                "hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
-                                "[&:has([data-table-row-link]:focus-visible)]:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
-                                "[&>:where([data-table-expand])]:relative [&>:where([data-table-expand])]:z-1",
-                                "[&_:where(a,button)]:relative [&_:where(a,button)]:z-1",
-                                !hasPinning && "[clip-path:inset(0)]",
-                              ]
-                            )}
-                          >
-                            {row.getVisibleCells().map((cell) => {
-                              const cellPinStyle = getPinnedCellStyle(cell.column)
-                              const cellPinned = cell.column.getIsPinned()
-                              const cellIsLastLeft =
-                                cellPinned === "left" &&
-                                cell.column.getIsLastColumn("left")
-                              const cellIsFirstRight =
-                                cellPinned === "right" &&
-                                cell.column.getIsFirstColumn("right")
+                                ]
+                              )}
+                            >
+                              {renderCells(row, 0)}
+                            </tr>
 
-                              const isExpandColumn = cell.column.id === "__expand"
-
-                              if (isExpandColumn) {
-                                return (
-                                  <td
-                                    key={cell.id}
-                                    data-table-expand=""
-                                    style={{
-                                      width: "3rem",
-                                      ...cellPinStyle,
-                                      ...(cellIsLastLeft && {
-                                        boxShadow:
-                                          "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
-                                        clipPath: "inset(-1px -20px -1px 0)",
-                                      }),
-                                    }}
-                                    className={cellVariants({
-                                      flushLeft: false,
-                                      flushRight: false,
-                                    })}
-                                  >
-                                    {flexRender(
-                                      cell.column.columnDef.cell,
-                                      cell.getContext()
-                                    )}
-                                  </td>
-                                )
-                              }
-
-                              const meta = cell.column.columnDef.meta
-                              const shouldRenderLink =
-                                hasRowLink && cell.id === firstDataCellId
-
-                              return (
-                                <td
-                                  key={cell.id}
-                                  data-table-cell=""
-                                  style={{
-                                    ...cellPinStyle,
-                                    ...(cellIsLastLeft && {
-                                      boxShadow:
-                                        "4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-left, 0))",
-                                      clipPath: "inset(-1px -20px -1px 0)",
-                                    }),
-                                    ...(cellIsFirstRight && {
-                                      boxShadow:
-                                        "-4px 0 16px -4px rgb(0 0 0 / var(--pin-shadow-right, 0))",
-                                      clipPath: "inset(-1px 0 -1px -20px)",
-                                    }),
-                                  }}
-                                  className={cn(
-                                    cellVariants({
-                                      flushLeft: meta?.flushLeft ?? false,
-                                      flushRight:
-                                        meta?.flushRight || meta?.actions || false,
-                                    })
-                                  )}
-                                >
-                                  {shouldRenderLink ? (
-                                    <a
-                                      data-table-row-link=""
-                                      href={rowHref}
-                                      {...getRowLinkProps?.(row)}
-                                      className={cn(
-                                        "static -mx-1 -my-0.5 appearance-none rounded px-1 py-0.5",
-                                        "outline-none focus-visible:relative focus-visible:z-5",
-                                        "focus-visible:ring-[3px] focus-visible:ring-offset-1",
-                                        "focus-visible:ring-[color-mix(in_srgb,black_13%,transparent)]",
-                                        "focus-visible:ring-offset-[color-mix(in_srgb,black_15%,transparent)]",
-                                        "before:pointer-events-auto before:absolute before:inset-0",
-                                        "before:z-0 before:block before:cursor-pointer"
-                                      )}
-                                    >
-                                      {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                      )}
-                                    </a>
-                                  ) : (
-                                    flexRender(
-                                      cell.column.columnDef.cell,
-                                      cell.getContext()
-                                    )
-                                  )}
-                                </td>
-                              )
-                            })}
-                          </tr>
-
-                          <AnimatePresence initial={false}>
-                            {row.getIsExpanded() && renderRowDetail && (
-                              <motion.tr
-                                key={`${row.id}-detail`}
-                                data-table-detail=""
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <td colSpan={table.getVisibleLeafColumns().length}>
-                                  <motion.div
-                                    initial={{ height: 0 }}
-                                    animate={{ height: "auto" }}
-                                    exit={{ height: 0 }}
+                            {/* Sub-rows with height animation */}
+                            {hasSubRows && (
+                              <AnimatePresence initial={false}>
+                                {row.getIsExpanded() && (
+                                  <motion.tr
+                                    key={`${row.id}-children`}
+                                    data-table-detail=""
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
                                     transition={{ duration: 0.2 }}
-                                    style={{ overflow: "hidden" }}
                                   >
-                                    <div
-                                      className={cn(
-                                        "ml-[calc(var(--data-table-expand-col-w)/2)]",
-                                        "border-l border-gray-300 bg-(--data-table-cell-bg)",
-                                        "py-(--data-table-cell-py) pr-(--data-table-cell-px)",
-                                        "pl-(--data-table-cell-px)"
-                                      )}
+                                    <td
+                                      colSpan={table.getVisibleLeafColumns().length}
+                                      className="p-0!"
                                     >
-                                      {renderRowDetail(row)}
-                                    </div>
-                                  </motion.div>
-                                </td>
-                              </motion.tr>
+                                      <motion.div
+                                        initial={{ height: 0 }}
+                                        animate={{ height: "auto" }}
+                                        exit={{ height: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{ overflow: "hidden" }}
+                                      >
+                                        <table
+                                          className={cn(
+                                            "table-fixed border-separate border-spacing-0 [--data-table-cell-py:0.625rem]",
+                                            !hasPinning && "w-full"
+                                          )}
+                                          style={
+                                            hasPinning
+                                              ? {
+                                                  width: table.getTotalSize() || "100%",
+                                                }
+                                              : undefined
+                                          }
+                                        >
+                                          <colgroup>
+                                            {table.getVisibleLeafColumns().map((col) => {
+                                              const colMeta = col.columnDef.meta
+                                              const w =
+                                                col.id === "__expand"
+                                                  ? "3rem"
+                                                  : colMeta?.actions
+                                                    ? "48px"
+                                                    : (colMeta?.width ??
+                                                      (col.columnDef.size
+                                                        ? `${col.columnDef.size}px`
+                                                        : undefined))
+                                              return (
+                                                <col
+                                                  key={col.id}
+                                                  style={{
+                                                    width:
+                                                      typeof w === "number"
+                                                        ? `${w}px`
+                                                        : w,
+                                                  }}
+                                                />
+                                              )
+                                            })}
+                                          </colgroup>
+                                          <tbody>
+                                            {row.subRows.map((subRow, subIdx) => (
+                                              <tr
+                                                key={subRow.id}
+                                                className={cn(
+                                                  "group/table-row text-base",
+                                                  "*:border-0",
+                                                  isClickable && [
+                                                    "cursor-pointer",
+                                                    "hover:[--data-table-row-bg:var(--data-table-cell-bg-hover)]",
+                                                  ]
+                                                )}
+                                                onClick={
+                                                  isClickable
+                                                    ? (e) =>
+                                                        handleRowClickInternal(e, subRow)
+                                                    : undefined
+                                                }
+                                              >
+                                                {renderCells(
+                                                  subRow,
+                                                  subRow.depth,
+                                                  subIdx === row.subRows.length - 1
+                                                )}
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </motion.div>
+                                    </td>
+                                  </motion.tr>
+                                )}
+                              </AnimatePresence>
                             )}
-                          </AnimatePresence>
-                        </React.Fragment>
-                      )
-                    })}
+
+                            {/* Detail panel */}
+                            <AnimatePresence initial={false}>
+                              {row.getIsExpanded() && renderRowDetail && (
+                                <motion.tr
+                                  key={`${row.id}-detail`}
+                                  data-table-detail=""
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <td colSpan={table.getVisibleLeafColumns().length}>
+                                    <motion.div
+                                      initial={{ height: 0 }}
+                                      animate={{ height: "auto" }}
+                                      exit={{ height: 0 }}
+                                      transition={{ duration: 0.2 }}
+                                      style={{ overflow: "hidden" }}
+                                    >
+                                      <div
+                                        className={cn(
+                                          "ml-[calc(var(--data-table-expand-col-w)/2)]",
+                                          "border-l border-gray-300 bg-(--data-table-cell-bg)",
+                                          "py-(--data-table-cell-py) pr-(--data-table-cell-px)",
+                                          "pl-(--data-table-cell-px)"
+                                        )}
+                                      >
+                                        {renderRowDetail(row)}
+                                      </div>
+                                    </motion.div>
+                                  </td>
+                                </motion.tr>
+                              )}
+                            </AnimatePresence>
+                          </React.Fragment>
+                        )
+                      })}
                   </tbody>
                 </table>
               </div>
