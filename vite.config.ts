@@ -5,6 +5,7 @@ import { storybookTest } from "@storybook/addon-vitest/vitest-plugin"
 import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import { playwright } from "@vitest/browser-playwright"
+import dts from "vite-plugin-dts"
 import { defineConfig } from "vitest/config"
 
 const dirname =
@@ -13,11 +14,35 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    dts({
+      tsconfigPath: "./tsconfig.lib.json",
+      rollupTypes: true,
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(dirname, "./src"),
     },
+  },
+  build: {
+    lib: {
+      entry: path.resolve(dirname, "src/index.ts"),
+      formats: ["es", "cjs"],
+      fileName: "index",
+    },
+    rollupOptions: {
+      external: ["react", "react-dom", "react/jsx-runtime"],
+      output: {
+        globals: {
+          react: "React",
+          "react-dom": "ReactDOM",
+        },
+      },
+    },
+    cssCodeSplit: false,
   },
   test: {
     projects: [
@@ -34,8 +59,6 @@ export default defineConfig({
       {
         extends: true,
         plugins: [
-          // The plugin will run tests for the stories defined in your Storybook config
-          // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
           storybookTest({
             configDir: path.join(dirname, ".storybook"),
           }),
