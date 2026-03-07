@@ -1,5 +1,11 @@
 # @bernardinorafael/ds
 
+## 0.2.0
+
+### Minor Changes
+
+- [`a57482b`](https://github.com/bernardinorafael/ds/commit/a57482be9b5a0446d10560f4ef89cfa00e6387e3) Thanks [@bernardinorafael](https://github.com/bernardinorafael)! - Update relative DataGridToolbar
+
 ## 0.1.1
 
 ### Patch Changes
