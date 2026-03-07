@@ -33,7 +33,7 @@ export function DataGridToolbar(props: DataGridToolbarProps) {
   return (
     <section className={cn("flex flex-col gap-4", props.className)}>
       {(props.action || hasControls) && (
-        <header className="relative z-1 flex items-center justify-between gap-x-8 gap-y-4">
+        <header className="flex items-center justify-between gap-x-8 gap-y-4">
           {hasControls && (
             <div className="flex grow items-center gap-3">
               {props.search && <div className="max-w-75 grow">{props.search}</div>}
